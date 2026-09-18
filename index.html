@@ -6,10 +6,12 @@
 <meta name="robots" content="noindex, nofollow">
 <meta name="theme-color" content="#0f1115">
 <meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="何待ち？">
+<link rel="manifest" href="data:application/manifest+json,%7B%22name%22%3A%22%E4%BD%95%E5%BE%85%E3%81%A1%EF%BC%9F%22%2C%22short_name%22%3A%22%E4%BD%95%E5%BE%85%E3%81%A1%EF%BC%9F%22%2C%22start_url%22%3A%22.%22%2C%22display%22%3A%22standalone%22%2C%22orientation%22%3A%22portrait%22%2C%22background_color%22%3A%22%230f1115%22%2C%22theme_color%22%3A%22%230f1115%22%7D">
 <style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0}[hidden]{display:none!important}img{max-width:100%}</style>
 </head>
 <body>
-<title>牌読み</title>
+<title>何待ち？</title>
 <meta name="description" content="手牌を入力するとシャンテン数・待ち・点数をすぐに計算する麻雀アプリ">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -161,7 +163,7 @@ h2 {
   flex: none;
   font-family: var(--font-display);
   font-weight: 800;
-  font-size: 20px;
+  font-size: 24px;
   letter-spacing: 0.06em;
   line-height: 1;
   white-space: nowrap;
@@ -178,13 +180,57 @@ h2 {
   flex: none;
   display: flex;
   align-items: center;
-  gap: 8px;
-  margin: 0 max(12px, env(safe-area-inset-left, 0px)) 6px;
-  padding: 6px 10px;
-  border: 1px solid var(--line);
+  flex-wrap: wrap;
+  gap: 6px 8px;
+  margin: 0 max(12px, env(safe-area-inset-left, 0px)) 4px;
+  padding: 6px 8px 6px 10px;
+  border: 2px solid var(--line);
   border-radius: 12px;
   background: var(--surface);
   min-width: 0;
+}
+.bar-steppers {
+  flex: 1 0 100%;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 6px;
+}
+.bstep {
+  display: inline-flex;
+  align-items: center;
+  gap: 1px;
+  border-radius: 999px;
+  padding: 1px 3px 1px 8px;
+  background: var(--surface-2);
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--muted);
+}
+.bstep[data-on='true'] {
+  background: var(--warn-soft);
+  color: var(--ink);
+}
+.bstep button {
+  width: 24px;
+  height: 24px;
+  border: 0;
+  border-radius: 50%;
+  background: none;
+  color: var(--ink);
+  font-size: 15px;
+  line-height: 1;
+}
+.bstep button:active {
+  background: rgb(0 0 0 / 0.1);
+}
+.bstep output {
+  min-width: 1.2em;
+  text-align: center;
+  font-variant-numeric: tabular-nums;
+  font-size: 14px;
+  font-weight: 800;
+  color: var(--ink);
 }
 .rules-label {
   flex: none;
@@ -194,13 +240,12 @@ h2 {
   color: var(--muted);
 }
 .rules-bar .set-chips {
-  flex: 1;
+  flex: 1 1 0;
   min-width: 0;
   display: flex;
   gap: 6px;
-  flex-wrap: nowrap;
-  overflow-x: auto;
-  scrollbar-width: none;
+  flex-wrap: wrap;
+  overflow-x: visible;
 }
 .rules-bar .gchip {
   background: var(--surface-2);
@@ -282,7 +327,7 @@ h2 {
   grid-template-rows: auto minmax(0, 1fr) auto;
   grid-template-areas: 'table' 'results' 'keyboard';
 }
-@media (min-width: 720px) {
+@media (min-width: 720px) and (min-height: 600px) {
   .workspace {
     grid-template-columns: minmax(0, clamp(342px, 42%, 470px)) minmax(0, 1fr);
     grid-template-rows: auto minmax(0, 1fr);
@@ -1035,6 +1080,17 @@ details.more[open] > summary::before {
   opacity: 0.4;
   cursor: not-allowed;
 }
+/* 文字数に合わせて幅を変える（「なし」は細く、長いほうは広く） */
+.seg.auto button {
+  flex: 0 1 auto;
+  padding-inline: 10px;
+  white-space: normal;
+  font-size: 12px;
+}
+.seg.auto button:last-child {
+  flex: 0 0 auto;
+  padding-inline: 14px;
+}
 .chips {
   display: flex;
   flex-wrap: wrap;
@@ -1290,16 +1346,38 @@ details.more[open] > summary::before {
 }
 
 /* ---------- カメラ画面 ---------- */
+/* スマホは縦向きのまま使う前提。横にしても同じ積み方（上＝写真／下＝結果）にする */
 .cam {
   height: 100%;
   display: grid;
-  grid-template-columns: minmax(0, 1fr) clamp(236px, 31%, 340px);
-  gap: 10px;
-  padding-block: 8px;
+  grid-template-columns: minmax(0, 1fr);
+  grid-template-rows: minmax(0, 52%) minmax(0, 1fr);
+  gap: 6px;
+  padding-block: 2px 8px;
   padding-inline: max(16px, env(safe-area-inset-left, 0px)) max(16px, env(safe-area-inset-right, 0px));
 }
+/* 十分に大きい画面（タブレット・PC）のときだけ横に2枚並べる */
+@media (min-width: 720px) and (min-height: 600px) {
+  .cam {
+    grid-template-columns: minmax(0, 1fr) clamp(236px, 31%, 340px);
+    grid-template-rows: minmax(0, 1fr);
+    gap: 10px;
+  }
+}
+/* 横向きのときだけ「縦にすると使いやすい」と出す */
+.rotate-hint {
+  display: none;
+  margin: 0 max(12px, env(safe-area-inset-left, 0px)) 4px;
+  font-size: 11px;
+  color: var(--muted);
+}
+@media (orientation: landscape) and (max-height: 560px) {
+  .rotate-hint {
+    display: block;
+  }
+}
 .cam-stage {
-  --roi-h: clamp(76px, 30cqh, 170px);
+  --roi-h: clamp(56px, 11svh, 120px);
   --roi-inset: 10px;
   position: relative;
   min-height: 0;
@@ -1307,13 +1385,14 @@ details.more[open] > summary::before {
   border-radius: 16px;
   background: #0a0f0d;
   color: #f3f6f4;
-  container-type: size;
+  /* 高さは外から決める（size にすると中身の高さが枠に伝わらず、横向きで手牌がはみ出す） */
+  container-type: inline-size;
   isolation: isolate;
   /* 設定チップ → 案内 → 手牌 の順に積む。下は読み取り枠のぶんを空ける（重ならないように） */
   display: flex;
   flex-direction: column;
   gap: 6px;
-  padding: 8px 8px calc(var(--roi-inset) + var(--roi-h) + 6px);
+  padding: 6px 8px calc(var(--roi-inset) + var(--roi-h) + 2px);
 }
 .cam-stage[data-source='photo'] {
   touch-action: none;
@@ -1570,40 +1649,58 @@ details.more[open] > summary::before {
 }
 
 .cam-actions {
-  position: absolute;
+  position: relative;
   z-index: 3;
-  top: 8px;
-  right: 10px;
-  display: grid;
-  justify-items: center;
+  flex: none;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
   gap: 8px;
+  min-height: 0;
 }
+/* 認識ボタン。丸だと iPhone の画面内アクセシビリティボタンと紛らわしいので四角にする */
 .shutter {
+  flex: none;
   display: grid;
   justify-items: center;
-  gap: 3px;
+  align-content: center;
+  gap: 1px;
+  width: 64px;
+  height: 64px;
   border: 0;
+  border-radius: 16px;
   padding: 0;
-  background: none;
-  color: #fff;
+  background: #f5f7f6;
+  color: #10352a;
   font-size: 11px;
-  font-weight: 700;
-  text-shadow: 0 1px 3px rgb(0 0 0 / 0.7);
+  font-weight: 800;
+  letter-spacing: 0.02em;
+  box-shadow: 0 6px 18px rgb(0 0 0 / 0.45), inset 0 0 0 2px rgb(255 255 255 / 0.75);
+  transition: transform 0.08s ease, background 0.18s ease, color 0.18s ease;
 }
-.sh-ring {
+.sh-ic {
   display: block;
-  width: 54px;
-  height: 54px;
-  border-radius: 50%;
-  background: #fff;
-  box-shadow: 0 0 0 4px rgb(255 255 255 / 0.32), 0 6px 18px rgb(0 0 0 / 0.45);
-  transition: transform 0.08s ease;
+  line-height: 0;
 }
-.shutter:active .sh-ring {
-  transform: scale(0.93);
+.shutter svg {
+  width: 26px;
+  height: 26px;
+  stroke-width: 2.1;
 }
-.shutter.busy .sh-ring {
-  background: conic-gradient(#8fe3bd 0 28%, rgb(255 255 255 / 0.22) 0);
+.shutter:active {
+  transform: scale(0.95);
+}
+/* 読み取り済み＝緑（色で完了が分かる。押せばもう一度認識できる） */
+.shutter[data-state='done'] {
+  background: #2fae7d;
+  color: #04241a;
+  box-shadow: 0 6px 18px rgb(0 0 0 / 0.45), inset 0 0 0 2px rgb(255 255 255 / 0.45);
+}
+.shutter[data-state='busy'] {
+  background: #e9b949;
+  color: #1b1406;
+}
+.shutter[data-state='busy'] .sh-ic {
   animation: spin 0.9s linear infinite;
 }
 @keyframes spin {
@@ -1612,18 +1709,23 @@ details.more[open] > summary::before {
   }
 }
 .retake {
+  flex: none;
   border: 0;
   border-radius: 999px;
-  padding: 4px 10px;
+  padding: 6px 12px;
   background: rgb(0 0 0 / 0.55);
   color: #fff;
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 700;
   box-shadow: inset 0 0 0 1px rgb(255 255 255 / 0.2);
 }
 
 .cam-overlay {
-  flex: none;
+  flex: 0 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  scrollbar-width: none;
   margin-top: auto;
   z-index: 2;
   padding-inline: 2px;
@@ -1734,7 +1836,7 @@ details.more[open] > summary::before {
   gap: 8px;
   overflow-x: auto;
   scrollbar-width: none;
-  padding: 12px 3px 0;
+  padding: 4px 3px 0;
 }
 .twin-hand,
 .twin-melds {
@@ -1845,14 +1947,15 @@ details.more[open] > summary::before {
 }
 
 .pop {
-  position: absolute;
-  z-index: 5;
-  top: 44px;
-  left: 8px;
-  right: 8px;
-  max-height: calc(100% - 52px);
-  overflow: auto;
-  overscroll-behavior: contain;
+  position: fixed;
+  z-index: 15;
+  left: max(8px, env(safe-area-inset-left, 0px));
+  right: max(8px, env(safe-area-inset-right, 0px));
+  bottom: max(8px, env(safe-area-inset-bottom, 0px));
+  max-height: min(82vh, 640px);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
   padding: 10px 12px 12px;
   border-radius: 14px;
   background: rgb(13 20 17 / 0.95);
@@ -1862,11 +1965,31 @@ details.more[open] > summary::before {
   box-shadow: 0 14px 34px rgb(0 0 0 / 0.5), inset 0 0 0 1px rgb(255 255 255 / 0.1);
 }
 .pop-head {
+  flex: none;
   display: flex;
   align-items: center;
   flex-wrap: wrap;
   gap: 8px;
   margin-bottom: 8px;
+}
+/* 下までスクロールしても、選んだ内容と決定ボタンは見えたままにする */
+.pop-fixed {
+  flex: none;
+  display: grid;
+  gap: 8px;
+  margin-bottom: 8px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid rgb(255 255 255 / 0.14);
+}
+.pop-buttons {
+  display: flex;
+  gap: 8px;
+}
+.pop-buttons .btn {
+  flex: 1 1 0;
+}
+.pop-buttons .btn:disabled {
+  opacity: 0.45;
 }
 .pop-head b {
   font-size: 14px;
@@ -1883,7 +2006,12 @@ details.more[open] > summary::before {
   line-height: 1;
 }
 .pop-body {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
   display: grid;
+  align-content: start;
   gap: 6px;
 }
 .pop-body p {
@@ -2250,13 +2378,9 @@ details.more[open] > summary::before {
   border-radius: 8px;
   background: rgb(255 255 255 / 0.08);
 }
-@media (orientation: portrait) {
-  .cam {
-    grid-template-columns: minmax(0, 1fr);
-    grid-template-rows: minmax(0, 50%) minmax(0, 1fr);
-  }
+@media (min-width: 720px) and (min-height: 600px) {
   .cam-stage {
-    --roi-h: clamp(60px, 22cqh, 120px);
+    --roi-h: clamp(76px, 20svh, 170px);
   }
 }
 
@@ -2460,13 +2584,7 @@ details.more[open] > summary::before {
   gap: 2px;
 }
 
-/* 縦向きは幅が狭いので、設定チップを2行まで折り返す */
-@media (orientation: portrait) {
-  .set-chips {
-    flex-wrap: wrap;
-    overflow-x: visible;
-  }
-}
+
 /* 画面が低いとき（横向きのスマホ）は使い方カードを詰める */
 @media (max-height: 480px) {
   .guide-card {
@@ -2493,29 +2611,39 @@ details.more[open] > summary::before {
     line-height: 1.45;
   }
 }
-/* 並べ替え（読み取るの下）。設定チップと区別できるよう、明るい緑の「操作ボタン」にする */
+/* 配牌整理の ON/OFF。設定チップと区別できるよう「操作ボタン」の見た目にする */
 #cam-sort {
+  flex: none;
   display: inline-flex;
   align-items: center;
-  gap: 5px;
+  gap: 6px;
   border: 0;
   border-radius: 999px;
-  padding: 6px 13px;
-  background: #8fe3bd;
-  color: #10352a;
+  padding: 6px 6px 6px 12px;
+  background: rgb(255 255 255 / 0.16);
+  color: #fff;
   font-size: 12px;
   font-weight: 700;
-  box-shadow: 0 2px 10px rgb(0 0 0 / 0.4);
+  box-shadow: inset 0 0 0 1px rgb(255 255 255 / 0.32), 0 2px 10px rgb(0 0 0 / 0.35);
   -webkit-backdrop-filter: none;
   backdrop-filter: none;
 }
-#cam-sort:active {
-  background: #6cc6a0;
+#cam-sort .st-state {
+  border-radius: 999px;
+  padding: 2px 8px;
+  background: rgb(0 0 0 / 0.4);
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.04em;
 }
-#cam-sort svg {
-  width: 15px;
-  height: 15px;
-  stroke-width: 2.2;
+#cam-sort[aria-pressed='true'] {
+  background: #8fe3bd;
+  color: #10352a;
+  box-shadow: 0 2px 10px rgb(0 0 0 / 0.4);
+}
+#cam-sort[aria-pressed='true'] .st-state {
+  background: #10352a;
+  color: #8fe3bd;
 }
 .s-waits small {
   font-size: 11px;
@@ -2589,7 +2717,7 @@ details.more[open] > summary::before {
     padding-block: 3px 2px;
   }
   .brand-mini {
-    font-size: 17px;
+    font-size: 20px;
   }
   .rules-bar {
     padding: 3px 8px;
@@ -2598,6 +2726,59 @@ details.more[open] > summary::before {
   .rules-bar .gchip {
     padding: 3px 9px;
     font-size: 11px;
+  }
+}
+
+
+/* リーチは1タップで なし → リーチ → ダブリー。色でも分かるようにする */
+.rules-bar .gchip.riichi[data-riichi='0'] {
+  background: var(--surface-2);
+  color: var(--muted);
+}
+.rules-bar .gchip.riichi[data-riichi='1'] {
+  background: var(--warn);
+  color: #fff;
+}
+.rules-bar .gchip.riichi[data-riichi='2'] {
+  background: #c0392b;
+  color: #fff;
+}
+
+
+/* 画面が低いとき（横向きのスマホ）は、認識ボタンまわりを詰める */
+@media (max-height: 560px) {
+  .shutter {
+    width: 54px;
+    height: 54px;
+    border-radius: 14px;
+    font-size: 10px;
+  }
+  .shutter svg {
+    width: 22px;
+    height: 22px;
+  }
+  .retake,
+  #cam-sort {
+    padding-block: 4px;
+    font-size: 11px;
+  }
+}
+
+
+/* 横向きは想定外（縦向き前提）。それでも潰れないよう、縦に積んでスクロールできるようにする */
+@media (orientation: landscape) and (max-height: 560px) {
+  .cam {
+    /* max-content にしないと、入りきらないときに写真の枠が最小の高さのままになる */
+    grid-template-rows: max-content max-content;
+    align-content: start;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+  }
+  .cam-stage {
+    min-height: 250px;
+  }
+  .cam-side {
+    min-height: 240px;
   }
 }
 
@@ -2611,7 +2792,7 @@ details.more[open] > summary::before {
 </noscript>
 <div class="app" id="app" data-mode="camera">
 <header class="appbar">
-  <b class="brand-mini">牌読み</b>
+  <b class="brand-mini">何待ち？</b>
   <div class="mode-switch" role="tablist" aria-label="入力の方法">
     <button type="button" role="tab" data-action="mode" data-mode="camera" aria-selected="true">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 8h3l2-2.5h6L17 8h3v11H4z"/><circle cx="12" cy="13.5" r="3.6"/></svg>
@@ -2627,7 +2808,9 @@ details.more[open] > summary::before {
 <section class="rules-bar" id="rules-bar" aria-label="ルール">
   <span class="rules-label">ルール</span>
   <div class="set-chips" id="set-chips"></div>
+  <div class="bar-steppers" id="bar-steppers"></div>
 </section>
+<p class="rotate-hint">縦向きにすると使いやすくなります</p>
 <section class="cam" id="cam-view" aria-label="カメラで読み取る">
   <div class="cam-stage" id="cam-stage" data-source="demo">
     <div class="cam-media">
@@ -2639,22 +2822,27 @@ details.more[open] > summary::before {
       <span class="roi-label" id="roi-label"></span>
       <i class="corner tl"></i><i class="corner tr"></i><i class="corner bl"></i><i class="corner br"></i>
     </div>
+    <div class="cam-actions">
+      <button type="button" class="retake" id="retake" data-action="cam-retake" hidden>撮り直す</button>
+      <button type="button" class="sort-toggle" id="cam-sort" data-action="cam-sort" hidden aria-pressed="false">
+        <span class="st-label">配牌整理</span><span class="st-state">OFF</span>
+      </button>
+      <button type="button" class="shutter" id="shutter" data-action="cam-read" hidden>
+        <span class="sh-ic"></span>
+        <span class="sh-label">認識する</span>
+      </button>
+    </div>
     <div class="cam-empty" id="cam-empty" hidden></div>
     <div class="cam-overlay" id="cam-overlay">
       <div class="band" id="band" aria-live="polite"></div>
       <div class="twin" id="twin"></div>
     </div>
-    <div class="cam-actions">
-      <button type="button" class="retake" id="retake" data-action="cam-retake" hidden>撮り直す</button>
-      <button type="button" class="shutter" id="shutter" data-action="cam-read" hidden><span class="sh-ring"></span><span class="sh-label">読み取る</span></button>
-      <button type="button" class="retake" id="cam-sort" data-action="cam-sort" hidden>手牌整理</button>
-    </div>
-    <div class="pop" id="pop" role="dialog" aria-label="設定" hidden></div>
   </div>
   <aside class="cam-side" id="cam-side" aria-label="役と点数">
     <div class="src-switch" id="src-switch" role="group" aria-label="手牌の入力元"></div>
     <div class="side-body" id="side-body" aria-live="polite"></div>
   </aside>
+  <div class="pop" id="pop" role="dialog" aria-label="設定" hidden></div>
   <input type="file" id="file-capture" accept="image/*" capture="environment" hidden>
   <input type="file" id="file-pick" accept="image/*" hidden>
 </section>
@@ -5932,6 +6120,16 @@ const KEY_ROWS = [
 ];
 
 /** 牌キーボード（ポップアップ用）。isDisabled(id) で押せない牌を指定 */
+/** ルールの帯に出す積み棒（本場・供託・抜きドラ）。−[数字]＋ の小さいボタン */
+function barSteppersHTML(s, sanma) {
+  const item = (key, label) =>
+    `<span class="bstep" data-on="${(s[key] | 0) > 0}"><b>${label}</b>` +
+    `<button type="button" data-action="bar-step" data-key="${key}" data-delta="-1" aria-label="${label}を減らす">−</button>` +
+    `<output>${s[key] | 0}</output>` +
+    `<button type="button" data-action="bar-step" data-key="${key}" data-delta="1" aria-label="${label}を増やす">＋</button></span>`;
+  return item('honba', '本場') + item('kyotaku', '供託') + (sanma ? item('nuki', '抜き') : '');
+}
+
 function paletteHTML(action, isDisabled = () => false, extra = '') {
   const keys = KEY_ROWS.flat().map(
     (id) =>
@@ -6055,6 +6253,8 @@ const state = {
     panY: 0,
     scanning: false,
     read: false, // 写真から読み取り済み（枠の外を暗くする）
+    sorted: false, // 配牌整理（理牌）ON/OFF。既定は OFF＝写真と同じ並び
+    sortPerm: null, // 整理前の並びへ戻すための順番
   },
 };
 
@@ -6079,7 +6279,7 @@ function persisted() {
     rules: state.rules,
     sample: state.sample,
     seenStart: state.seenStart,
-    cam: { source: state.cam.source === 'live' ? 'live' : state.cam.source, demo: state.cam.demo },
+    cam: { source: state.cam.source === 'live' ? 'live' : state.cam.source, demo: state.cam.demo, sorted: !!state.cam.sorted },
   };
 }
 
@@ -6134,6 +6334,7 @@ function load() {
   // デモは使い方画面から入るものなので、次に開いたときは写真の画面から始める
   state.cam.source = c.source === 'live' ? 'live' : 'photo';
   state.cam.demo = DEMOS.some((d) => d.id === c.demo) ? c.demo : 'chinitsu';
+  state.cam.sorted = !!c.sorted;
 }
 
 function update() {
@@ -6334,7 +6535,7 @@ const GICON = {
   hand: gsvg('<rect x="3" y="9" width="4.5" height="11" rx="1"/><rect x="9.75" y="9" width="4.5" height="11" rx="1"/><rect x="16.5" y="9" width="4.5" height="11" rx="1"/><path d="M5.25 13h0M12 13h0M18.75 13h0"/>'),
   help: gsvg('<circle cx="12" cy="12" r="9"/><path d="M9.5 9.5a2.5 2.5 0 1 1 3.2 2.4c-.7.2-1.2.9-1.2 1.6v.5"/><path d="M11.5 17h0"/>'),
   rotate: gsvg('<rect x="7" y="2.5" width="10" height="19" rx="2"/><path d="M10 18.5h4"/><path d="M4 9.5h2M18 9.5h2"/>'),
-  read: gsvg('<circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="3.2"/>'),
+  read: gsvg('<rect x="3.5" y="4" width="17" height="16" rx="3"/><path d="M8 12h8M12 8v8"/>'),
   fix: gsvg('<path d="M4 19h16"/><path d="M6.5 16 16 6.5a2.1 2.1 0 0 1 3 3L9.5 19z"/>'),
   wait: gsvg('<path d="M12 3.5 14.4 9l5.6.5-4.3 3.9 1.3 5.6L12 16l-5 3 1.3-5.6L4 9.5 9.6 9z"/>'),
   gear: gsvg('<circle cx="12" cy="12" r="3.2"/><path d="M12 3.5v2.2M12 18.3v2.2M20.5 12h-2.2M5.7 12H3.5M18 6l-1.6 1.6M7.6 16.4 6 18M18 18l-1.6-1.6M7.6 7.6 6 6"/>'),
@@ -6343,7 +6544,7 @@ const GICON = {
 
 const STEPS = [
   ['rotate', 'スマホは縦のままでOK', '下の横長の枠に、手牌が一列に入るように写します（並び順はバラバラでも大丈夫）'],
-  ['read', '「読み取る」を押す', '牌の判別は端末の中だけで行います（通信なし・約1秒）'],
+  ['read', '「認識する」を押す', '牌の判別は端末の中だけで行います（通信なし・約1秒）'],
   ['fix', '違う牌はタップで直す', '読み違えた牌をタップすると、候補から選び直せます'],
   ['wait', '待ち牌が手牌の上に出る', '待ち牌をタップすると、役と点数が出ます'],
   ['gear', '設定を合わせる', '三人麻雀・ツモ損・符の数え方・花牌のあり／なしを切り替えられます'],
@@ -6359,7 +6560,7 @@ function bigButton(kind, icon, label, note) {
 function startHTML() {
   return (
     '<div class="guide-card">' +
-    '<div class="guide-hero"><b>牌読み</b><span>手牌の写真から、シャンテン数・待ち・点数</span></div>' +
+    '<div class="guide-hero"><b>何待ち？</b><span>手牌の写真から、シャンテン数・待ち・点数</span></div>' +
     bigButton('photo', 'photo', '写真から読み取る', '撮る／アルバムから選ぶ') +
     bigButton('manual', 'hand', '牌をタップで入力', '写真を使わずに手牌を入れる') +
     bigButton('help', 'help', '使い方を見る', '流れを絵で確認する') +
@@ -6449,6 +6650,10 @@ const TARGETS = [
   ['ura', '裏ドラ'],
 ];
 
+/** ドラ・裏ドラの表示牌は王牌からめくるので、手牌とは別に数える（カンで同じ表示牌が出る） */
+const INDICATOR_TARGETS = new Set(['dora', 'ura']);
+const scopeFor = (t) => (INDICATOR_TARGETS.has(t) ? state.dora.concat(state.ura) : allInputTiles());
+
 function keyAvailable(id, used, redsUsed) {
   const b = tileBase(id);
   const t = state.target;
@@ -6468,7 +6673,7 @@ function keyAvailable(id, used, redsUsed) {
 
 function addTile(id) {
   const t = state.target;
-  const all = allInputTiles();
+  const all = scopeFor(t);
   const used = countsOf(all);
   const b = tileBase(id);
   if (MELD_TYPES.has(t)) {
@@ -6490,7 +6695,8 @@ function addTile(id) {
     if (meld.type !== 'ankan' && state.situation.riichi) toast('鳴きがあるためリーチは計算に含めません');
     state.lastAdded = { where: 'meld', index: state.melds.length - 1 };
   } else {
-    if (used[b] >= 4) return toast(`${tileLabel(b)}はすでに4枚使われています`);
+    const what = INDICATOR_TARGETS.has(t) ? '表示牌として' : '';
+    if (used[b] >= 4) return toast(`${tileLabel(b)}は${what}すでに4枚使われています`);
     if (isRed(id) && all.includes(id)) return toast(`${tileLabel(id)}はすでに使われています`);
     if (t === 'hand') {
       if (state.concealed.length < need()) {
@@ -6534,6 +6740,7 @@ function renderRulesBar() {
     (r.sanma ? chip(`三人麻雀${s.nuki ? `・抜き${s.nuki}` : ''}`, 'rules-card') : '') +
     chip(fuLabel, 'rules-card') +
     (r.flowers ? chip('花牌あり', 'rules-card') : '');
+  $('bar-steppers').innerHTML = barSteppersHTML(s, !!r.sanma);
 }
 
 function renderTable() {
@@ -6606,7 +6813,7 @@ function renderKeyboard() {
     : '';
   $('kb-hint').innerHTML = `<span>${hint}</span>${redBtn}`;
 
-  const all = allInputTiles();
+  const all = scopeFor(t);
   const used = countsOf(all);
   const redsUsed = new Set(all.filter(isRed));
   const keys = KEY_ROWS.flatMap((row) =>
@@ -6960,6 +7167,11 @@ const ICON = {
 };
 
 // ---------- クラウドAI（β）の読み取り ----------
+const SH_ICON = {
+  scan: svg('<path d="M4 7V4.5h3M20 7V4.5h-3M4 17v2.5h3M20 17v2.5h-3"/><path d="M7.5 12h9M12 7.5v9"/>'),
+  done: svg('<path d="m5 12.5 4.5 4.5L19 7.5"/>'),
+};
+
 let sampleFn = null;
 let sampleImages = false;
 let sampleChecked = false;
@@ -6994,6 +7206,7 @@ function clearForNewCapture() {
   cam.sel = null;
   cam.recog = null;
   cam.cands = null;
+  cam.sortPerm = null;
   return true;
 }
 
@@ -7458,23 +7671,67 @@ function applyRecognition(r) {
   state.sample = false;
   cam.sel = null;
   cam.recog = { confidence: r.confidence, warnings: r.warnings };
+  cam.sortPerm = null;
+  if (cam.sorted) sortNow();
   if (!r.tiles.length && r.win == null) toast('牌が見つかりませんでした。枠に手牌を合わせて撮り直してください');
   update();
 }
 
-/** 読み取った並びのまま計算はできるが、見やすいように並べ替える（理牌） */
-function sortHand() {
-  const cmp = (x, y) => sortKey(x) - sortKey(y);
-  snapshot();
+/**
+ * 配牌整理（理牌）。並べ替えた「順番」を覚えておき、OFF にしたら写真と同じ並びへ戻す。
+ * 読み取りの候補（cam.cands）も一緒に入れ替えるので、並べ替えても候補は出せる。
+ */
+function sortPermOf(ids) {
+  const order = ids.map((_, i) => i);
+  order.sort((a, b) => {
+    const x = ids[a];
+    const y = ids[b];
+    if (x == null && y == null) return a - b;
+    if (x == null) return 1;
+    if (y == null) return -1;
+    return sortKey(x) - sortKey(y) || a - b;
+  });
+  return order;
+}
+
+function applyPerm(perm) {
   if (cam.draft) {
-    const known = cam.draft.tiles.filter((t) => t != null).sort(cmp);
-    const unknown = cam.draft.tiles.filter((t) => t == null);
-    cam.draft.tiles = [...known, ...unknown];
+    cam.draft.tiles = perm.map((i) => cam.draft.tiles[i]);
+    state.concealed = cam.draft.tiles.filter((x) => x != null);
   } else {
-    state.concealed.sort(cmp);
+    state.concealed = perm.map((i) => state.concealed[i]);
+  }
+  if (cam.cands) cam.cands = perm.map((i) => cam.cands[i]);
+}
+
+function sortNow() {
+  const perm = sortPermOf(handIds());
+  applyPerm(perm);
+  cam.sortPerm = perm;
+}
+
+function unsortNow() {
+  const perm = cam.sortPerm;
+  cam.sortPerm = null;
+  if (!perm || perm.length !== handIds().length) return;
+  const back = new Array(perm.length);
+  perm.forEach((from, to) => {
+    back[from] = to;
+  });
+  if (back.some((v) => v == null)) return;
+  applyPerm(back);
+}
+
+function toggleSort() {
+  snapshot();
+  if (cam.sorted) {
+    unsortNow();
+    cam.sorted = false;
+  } else {
+    sortNow();
+    cam.sorted = true;
   }
   cam.sel = null;
-  cam.cands = null;
   return update();
 }
 
@@ -7502,6 +7759,18 @@ function limitMessage(id, replacing = null) {
   const used = countsOf(all);
   if (used[tileBase(id)] >= 4) return `${tileLabel(tileBase(id))}はすでに4枚使われています`;
   if (isRed(id) && all.includes(id)) return `${tileLabel(id)}はすでに使われています`;
+  return '';
+}
+
+/**
+ * ドラ表示牌は王牌からめくるので、手牌に同じ牌があっても選べる。
+ * カンをすると同じ表示牌が2枚以上出ることもあるため、表示牌どうしで4枚までだけを見る。
+ */
+function doraLimitMessage(id) {
+  if (state.rules.sanma && (isSanmaMissing(tileBase(id)) || id === 34)) return '三人麻雀では使わない牌です';
+  const inds = state.dora.concat(state.ura);
+  if (countsOf(inds)[tileBase(id)] >= 4) return `${tileLabel(tileBase(id))}は表示牌としてすでに4枚です`;
+  if (isRed(id) && inds.includes(id)) return `${tileLabel(id)}はすでに表示牌になっています`;
   return '';
 }
 
@@ -7562,7 +7831,7 @@ function deleteEditTile() {
 }
 
 function addDora(id) {
-  const msg = limitMessage(id);
+  const msg = doraLimitMessage(id);
   if (msg) return toast(msg);
   if (state.dora.length >= 5) return toast('ドラ表示牌は5枚までです');
   snapshot();
@@ -7614,6 +7883,8 @@ function switchSource(src) {
 }
 
 // ---------- 表示: 上部の設定 ----------
+const RIICHI_LABELS = ['リーチなし', 'リーチ', 'ダブリー'];
+
 function chipsHTML() {
   const s = state.situation;
   const tag = state.situationTouched ? '' : '<em>仮</em>';
@@ -7622,7 +7893,7 @@ function chipsHTML() {
   return (
     `<button type="button" class="gchip" data-action="cam-pop" data-pop="settings" aria-pressed="${cam.pop === 'settings'}">${windLabel(s.roundWind)}場・${windLabel(s.seatWind)}家${s.seatWind === 27 ? '（親）' : ''}${tag}</button>` +
     `<button type="button" class="gchip" data-action="cam-pop" data-pop="dora" aria-pressed="${cam.pop === 'dora'}">ドラ ${doraTiles}</button>` +
-    `<button type="button" class="gchip toggle" data-action="cam-riichi" aria-pressed="${!!s.riichi && !open}"${open ? ' disabled' : ''}>${s.riichi === 2 ? 'Wリーチ' : 'リーチ'}</button>` +
+    `<button type="button" class="gchip riichi" data-action="cam-riichi" data-riichi="${open ? 0 : s.riichi | 0}" aria-pressed="${!!s.riichi && !open}"${open ? ' disabled' : ''}>${RIICHI_LABELS[s.riichi | 0] || RIICHI_LABELS[0]}</button>` +
     `<button type="button" class="gchip toggle" data-action="cam-tsumo" aria-pressed="${!!s.tsumo}">${s.tsumo ? 'ツモ' : 'ロン'}</button>` +
     (state.rules.sanma ? `<button type="button" class="gchip" data-action="cam-pop" data-pop="settings">三人麻雀${s.nuki ? `・抜き${s.nuki}` : ''}</button>` : '')
   );
@@ -7951,7 +8222,7 @@ function summaryHTML(a) {
   if (!a || cam.draft || a.phase === 'error' || a.phase === 'incomplete') {
     const lines = [
       'スマホは縦のままでOK。下の枠に手牌が横一列に入るように写します',
-      getTileModel() ? '「読み取る」を押すと、端末内のAIが牌を読みます' : sampleImages ? '「読み取る」でAIが牌を読みます（β）' : '読み取れない場合は「＋」から牌をタップで入力',
+      getTileModel() ? '「認識する」を押すと、端末内のAIが牌を読みます' : sampleImages ? '「認識する」でAIが牌を読みます（β）' : '読み取れない場合は「＋」から牌をタップで入力',
       '手牌の上に待ち牌が出ます。タップするとここに役と点数',
     ];
     return `<div class="s-sum"><span class="eyebrow">使い方</span><ol class="howto">${lines.map((l) => `<li>${l}</li>`).join('')}</ol></div>`;
@@ -8026,15 +8297,19 @@ function meldKeyDisabled(id, type) {
   return false;
 }
 
-function popShell(title, body, headExtra = '') {
-  return `<div class="pop-head"><b>${title}</b>${headExtra}<button type="button" class="pop-x" data-action="cam-pop-close" aria-label="閉じる">×</button></div><div class="pop-body">${body}</div>`;
+function popShell(title, body, headExtra = '', fixed = '') {
+  return (
+    `<div class="pop-head"><b>${title}</b>${headExtra}<button type="button" class="pop-x" data-action="cam-pop-close" aria-label="閉じる">×</button></div>` +
+    (fixed ? `<div class="pop-fixed">${fixed}</div>` : '') +
+    `<div class="pop-body">${body}</div>`
+  );
 }
 
-function ruleRow(label, key, options, current) {
+function ruleRow(label, key, options, current, cls = '') {
   const buttons = options
     .map(([v, l]) => `<button type="button" data-action="cam-rule" data-key="${key}" data-value="${v}" aria-pressed="${String(current) === String(v)}">${l}</button>`)
     .join('');
-  return `<div class="prow"><span class="plabel">${label}</span><div class="seg">${buttons}</div></div>`;
+  return `<div class="prow"><span class="plabel">${label}</span><div class="seg${cls ? ' ' + cls : ''}">${buttons}</div></div>`;
 }
 
 function segRow(label, key, options, current, disabled = false) {
@@ -8051,8 +8326,6 @@ function popHTML() {
       const open = hasOpenMeld();
       const winds = state.rules.sanma ? [[27, '東'], [28, '南'], [29, '西']] : [[27, '東'], [28, '南'], [29, '西'], [30, '北']];
       const specials = [['rinshan', '嶺上開花'], ['chankan', '槍槓'], ['haitei', '海底'], ['houtei', '河底']];
-      const stepper = (key, label) =>
-        `<span class="stepper">${label}<span class="ctl"><button type="button" data-action="cam-step" data-key="${key}" data-delta="-1" aria-label="${label}を減らす">−</button><output>${s[key] | 0}</output><button type="button" data-action="cam-step" data-key="${key}" data-delta="1" aria-label="${label}を増やす">＋</button></span></span>`;
       const r = state.rules;
       const seats = r.sanma ? [[27, '東（親）'], [28, '南'], [29, '西']] : [[27, '東（親）'], [28, '南'], [29, '西'], [30, '北']];
       const body =
@@ -8060,7 +8333,7 @@ function popHTML() {
         (r.sanma ? ruleRow('ツモ損', 'tsumoLoss', [[1, 'あり'], [0, 'なし']], r.tsumoLoss === false ? 0 : 1) : '') +
         ruleRow('符', 'fuMode', [['normal', '正規'], ['fix30', '30符'], ['fix40', '40符']], r.fuMode || 'normal') +
         (r.fuMode && r.fuMode !== 'normal'
-          ? ruleRow('符の例外', 'fuExceptions', [[1, '七対子25・平和ツモ20'], [0, 'なし']], r.fuExceptions === false ? 0 : 1)
+          ? ruleRow('符の例外', 'fuExceptions', [[1, '七対子25・平和ツモ20'], [0, 'なし']], r.fuExceptions === false ? 0 : 1, 'auto')
           : '') +
         segRow('場風', 'roundWind', winds, s.roundWind) +
         segRow('自風', 'seatWind', seats, s.seatWind) +
@@ -8070,9 +8343,8 @@ function popHTML() {
         `<button type="button" class="chip" data-action="cam-special" data-value="ippatsu" aria-pressed="${!!s.ippatsu}"${!s.riichi || open ? ' disabled' : ''}>一発</button>` +
         specials.map(([v, l]) => `<button type="button" class="chip" data-action="cam-special" data-value="${v}" aria-pressed="${s.special === v}">${l}</button>`).join('') +
         `</div></div>` +
-        `<div class="prow"><span class="plabel">積み棒</span><div class="steppers">${stepper('honba', '本場')}${stepper('kyotaku', '供託')}${r.sanma ? stepper('nuki', '抜きドラ') : ''}</div></div>` +
         ruleRow('花牌', 'flowers', [[0, '使わない'], [1, '使う']], r.flowers ? 1 : 0) +
-        `<p class="muted">設定しなくても待ちとシャンテン数は表示されます。ルールや裏ドラは「手入力」画面で設定できます。</p>`;
+        `<p class="muted">本場・供託は上の「ルール」の帯で増やせます。裏ドラは「手入力」画面で設定できます。</p>`;
       return popShell('点数の計算条件', body);
     }
     case 'dora': {
@@ -8080,11 +8352,16 @@ function popHTML() {
         .map((id, i) => `<button type="button" class="ind" data-action="cam-dora-del" data-index="${i}" aria-label="${tileLabel(id)}を外す">${tileHTML(id, { size: 'sm' })}<span>外す</span></button>`)
         .join('');
       const derived = state.dora.length ? `<span class="derived">ドラ ${tilesInline(state.dora.map(doraFromIndicator))}</span>` : '';
-      const body =
+      // 選んだ表示牌と「戻す・決定」は、下までスクロールしても見えるように固定する
+      const fixed =
         `<div class="ind-line">${inds || '<span class="muted">表示牌なし</span>'}${derived}</div>` +
-        `<p class="muted">ドラ表示牌をタップして追加します（ドラはその次の牌）。</p>` +
-        paletteHTML('cam-dora-add', (id) => !!limitMessage(id));
-      return popShell('ドラ表示牌', body);
+        `<div class="pop-buttons">` +
+        `<button type="button" class="btn ghost" data-action="cam-dora-undo"${state.dora.length ? '' : ' disabled'}>戻す</button>` +
+        `<button type="button" class="btn" data-action="cam-pop-close">決定</button></div>`;
+      const body =
+        `<p class="muted">ドラ表示牌をタップして追加します（ドラはその次の牌）。カンで同じ表示牌が出たときは同じ牌を2枚以上選べます。</p>` +
+        paletteHTML('cam-dora-add', (id) => !!doraLimitMessage(id));
+      return popShell('ドラ表示牌', body, '', fixed);
     }
     case 'add': {
       const ids = handIds();
@@ -8096,7 +8373,8 @@ function popHTML() {
       const preview = ids.length
         ? `<div class="pop-preview">${ids.map((id) => (id == null ? '<span class="tile t-xxs qm">？</span>' : tileHTML(id, { size: 'xxs' }))).join('')}</div>`
         : '';
-      return popShell(title, `${preview}<p class="muted">左から順にタップ。${n}枚のあとにタップした牌はアガリ牌になります。</p>` + paletteHTML('cam-key', (id) => !!limitMessage(id), extra));
+      const body = `<p class="muted">左から順にタップ。${n}枚のあとにタップした牌はアガリ牌になります。</p>` + paletteHTML('cam-key', (id) => !!limitMessage(id), extra);
+      return popShell(title, body, '', preview);
     }
     case 'edit': {
       const cur = currentEditTile();
@@ -8183,10 +8461,7 @@ function mediaMessage() {
     }
     return '';
   }
-  if (cam.source === 'photo' && !cam.photoUrl) {
-    if (compact) return photoButtons;
-    return `<p>手牌の写真を撮るか、アルバムから選んでください。</p>${photoButtons}`;
-  }
+  if (cam.source === 'photo' && !cam.photoUrl) return photoButtons;
   return '';
 }
 
@@ -8208,7 +8483,7 @@ function renderMedia() {
   }
   if (!$('cam-photo').hidden) applyPhotoTransform();
   let label = '手牌を横一列に';
-  if (src === 'photo' && cam.photoSize) label = 'ドラッグ・2本指で手牌を枠に合わせる';
+  if (src === 'photo' && cam.photoSize) label = cam.read ? '' : 'ドラッグ・2本指で手牌を枠に合わせる';
   if (src === 'demo') label = `デモ画像・${(DEMOS.find((x) => x.id === cam.demo) || DEMOS[0]).title}`;
   if (src === 'live' && cam.live === 'frozen') label = '撮影した画像';
   $('roi-label').textContent = label;
@@ -8221,13 +8496,24 @@ function renderControls() {
   const sh = $('shutter');
   sh.hidden = !(canRead || cam.busy);
   sh.dataset.action = cam.busy ? 'cam-stop' : 'cam-read';
-  sh.classList.toggle('busy', cam.busy);
-  const text = cam.busy ? '中止' : getTileModel() || sampleImages ? '読み取る' : src === 'live' ? '撮る' : '入力する';
-  sh.setAttribute('aria-label', cam.busy ? '読み取りを中止' : text);
+  // 読み取り前＝白／読み取り中＝黄／読み取り後＝緑（色で完了が分かるように）
+  const done = !cam.busy && cam.read && handIds().length > 0;
+  sh.dataset.state = cam.busy ? 'busy' : done ? 'done' : 'ready';
+  const text = cam.busy ? '中止' : done ? '認識済み' : getTileModel() || sampleImages ? '認識する' : src === 'live' ? '撮る' : '入力する';
+  sh.setAttribute('aria-label', cam.busy ? '読み取りを中止' : done ? 'もう一度認識する' : text);
   sh.querySelector('.sh-label').textContent = text;
+  const ic = sh.querySelector('.sh-ic');
+  const want = done ? 'done' : 'scan';
+  if (ic.dataset.ic !== want) {
+    ic.innerHTML = SH_ICON[want];
+    ic.dataset.ic = want;
+  }
   $('retake').hidden = !(!cam.busy && ((src === 'live' && cam.live === 'frozen') || (src === 'photo' && cam.photoSize)));
   $('retake').textContent = src === 'live' ? '撮り直す' : '別の写真';
-  $('cam-sort').hidden = handIds().length < 2 || cam.busy;
+  const sort = $('cam-sort');
+  sort.hidden = handIds().length < 2 || cam.busy;
+  sort.setAttribute('aria-pressed', String(!!cam.sorted));
+  sort.querySelector('.st-state').textContent = cam.sorted ? 'ON' : 'OFF';
   $('src-switch').innerHTML = [
     ['live', 'カメラ'],
     ['photo', '写真'],
@@ -8253,13 +8539,20 @@ function renderCamera(analysis) {
   renderMedia();
   renderControls();
   $('set-chips').innerHTML = chipsHTML();
+  $('bar-steppers').innerHTML = barSteppersHTML(state.situation, !!state.rules.sanma);
   $('band').innerHTML = bandHTML(a);
   $('twin').innerHTML = twinHTML(a);
   $('side-body').innerHTML = summaryHTML(a) + detailHTML(a) + notesHTML();
   const pop = $('pop');
   const html = cam.pop ? popHTML() : '';
+  // 同じポップアップを描き直すときは、スクロール位置を保つ（選ぶたびに先頭へ飛ばない）
+  const prev = pop.querySelector('.pop-body');
+  const keep = pop.dataset.kind === String(cam.pop) && prev ? prev.scrollTop : 0;
   pop.hidden = !html;
   pop.innerHTML = html;
+  pop.dataset.kind = String(cam.pop);
+  const body = pop.querySelector('.pop-body');
+  if (keep && body) body.scrollTop = keep;
 }
 
 /** 画面の向き・大きさが変わったとき。縦横が入れ替わったら写真の位置を初期化する */
@@ -8332,7 +8625,8 @@ function handleCamera(el) {
     case 'cam-step':
       return step(d.key, +d.delta);
     case 'cam-riichi':
-      return setSituation('riichi', state.situation.riichi ? 0 : 1);
+      // なし → リーチ → ダブル → なし
+      return setSituation('riichi', ((state.situation.riichi | 0) + 1) % 3);
     case 'cam-tsumo':
       return setSituation('tsumo', !state.situation.tsumo);
     case 'cam-dora-add':
@@ -8340,6 +8634,11 @@ function handleCamera(el) {
     case 'cam-dora-del':
       snapshot();
       state.dora.splice(+d.index, 1);
+      return update();
+    case 'cam-dora-undo':
+      if (!state.dora.length) return undefined;
+      snapshot();
+      state.dora.pop();
       return update();
     case 'cam-undo':
       return undo();
@@ -8356,12 +8655,12 @@ function handleCamera(el) {
       setRule(d.key, value);
       if (d.key === 'sanma' && value && state.situation.seatWind === 30) setSituation('seatWind', 27);
       if (d.key === 'flowers' && cam.source === 'photo') {
-        toast('花牌の設定を変えました。「読み取る」を押すと反映します');
+        toast('花牌の設定を変えました。「認識する」を押すと反映します');
       }
       return undefined;
     }
     case 'cam-sort':
-      return sortHand();
+      return toggleSort();
     case 'cam-read':
       return readTiles();
     case 'cam-read-ai':
@@ -8428,6 +8727,7 @@ function render(a) {
   $('app').dataset.mode = state.mode;
   $('cam-view').hidden = !camera;
   $('manual-view').hidden = camera;
+  if (!camera) $('pop').hidden = true;
   document.querySelectorAll('[data-action="mode"]').forEach((b) => {
     b.setAttribute('aria-selected', String(b.dataset.mode === state.mode));
   });
@@ -8448,6 +8748,7 @@ function onClick(e) {
   if (!el || el.disabled) return;
   const action = el.dataset.action;
   if (action === 'mode') setMode(el.dataset.mode);
+  else if (action === 'bar-step') step(el.dataset.key, +el.dataset.delta);
   else if (action.startsWith('guide-')) handleGuide(el);
   else if (action.startsWith('cam-')) handleCamera(el);
   else handleManual(el);
