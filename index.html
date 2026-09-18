@@ -2408,15 +2408,29 @@ details.more[open] > summary::before {
     line-height: 1.45;
   }
 }
-/* 並べ替え（読み取るの下） */
+/* 並べ替え（読み取るの下）。設定チップと区別できるよう、明るい緑の「操作ボタン」にする */
 #cam-sort {
   display: inline-flex;
   align-items: center;
-  gap: 4px;
+  gap: 5px;
+  border: 0;
+  border-radius: 999px;
+  padding: 6px 13px;
+  background: #8fe3bd;
+  color: #10352a;
+  font-size: 12px;
+  font-weight: 700;
+  box-shadow: 0 2px 10px rgb(0 0 0 / 0.4);
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+}
+#cam-sort:active {
+  background: #6cc6a0;
 }
 #cam-sort svg {
-  width: 14px;
-  height: 14px;
+  width: 15px;
+  height: 15px;
+  stroke-width: 2.2;
 }
 .s-waits small {
   font-size: 11px;
@@ -2626,13 +2640,13 @@ details.more[open] > summary::before {
               <button type="button" data-action="rule-seg2" data-rule-seg="fuExceptions" data-value="0">なし</button>
             </div>
           </div>
-          <label class="rule"><span>花牌を使う<small>春夏秋冬を入れている卓だけオンにする（写真から花牌として読む）</small></span><input type="checkbox" class="switch" id="rule-flowers" data-rule="flowers"></label>
           <label class="rule"><span>喰いタン<small>鳴いた断幺九を認める</small></span><input type="checkbox" class="switch" id="rule-kuitan" data-rule="kuitan"></label>
           <label class="rule"><span>切り上げ満貫<small>30符4翻・60符3翻を満貫にする</small></span><input type="checkbox" class="switch" id="rule-kiriage" data-rule="kiriage"></label>
           <label class="rule"><span>数え役満<small>13翻以上を役満にする（なしは三倍満）</small></span><input type="checkbox" class="switch" id="rule-kazoe" data-rule="kazoe"></label>
           <label class="rule"><span>役満の複合<small>大三元＋字一色などを加算する</small></span><input type="checkbox" class="switch" id="rule-multi" data-rule="multipleYakuman"></label>
           <label class="rule"><span>ダブル役満<small>四暗刻単騎・国士13面・純正九蓮・大四喜</small></span><input type="checkbox" class="switch" id="rule-double" data-rule="doubleYakuman"></label>
           <label class="rule"><span>緑一色に發が必須</span><input type="checkbox" class="switch" id="rule-hatsu" data-rule="ryuuiisouNeedsHatsu"></label>
+          <label class="rule"><span>花牌を使う<small>春夏秋冬を入れている卓だけオンにする（写真から花牌として読む）</small></span><input type="checkbox" class="switch" id="rule-flowers" data-rule="flowers"></label>
           <div class="rule"><span>連風牌の雀頭<small>場風と自風が同じ牌の対子</small></span>
             <div class="seg" data-group="doubleWindPairFu">
               <button type="button" data-action="rule-seg" data-value="2">2符</button>
@@ -7868,7 +7882,6 @@ function popHTML() {
       const body =
         ruleRow('人数', 'sanma', [[0, '四人麻雀'], [1, '三人麻雀']], r.sanma ? 1 : 0) +
         (r.sanma ? ruleRow('ツモ損', 'tsumoLoss', [[1, 'あり'], [0, 'なし']], r.tsumoLoss === false ? 0 : 1) : '') +
-        ruleRow('花牌', 'flowers', [[0, '使わない'], [1, '使う']], r.flowers ? 1 : 0) +
         ruleRow('符', 'fuMode', [['normal', '正規'], ['fix30', '30符'], ['fix40', '40符']], r.fuMode || 'normal') +
         (r.fuMode && r.fuMode !== 'normal'
           ? ruleRow('符の例外', 'fuExceptions', [[1, '七対子25・平和ツモ20'], [0, 'なし']], r.fuExceptions === false ? 0 : 1)
@@ -7882,6 +7895,7 @@ function popHTML() {
         specials.map(([v, l]) => `<button type="button" class="chip" data-action="cam-special" data-value="${v}" aria-pressed="${s.special === v}">${l}</button>`).join('') +
         `</div></div>` +
         `<div class="prow"><span class="plabel">積み棒</span><div class="steppers">${stepper('honba', '本場')}${stepper('kyotaku', '供託')}${r.sanma ? stepper('nuki', '抜きドラ') : ''}</div></div>` +
+        ruleRow('花牌', 'flowers', [[0, '使わない'], [1, '使う']], r.flowers ? 1 : 0) +
         `<p class="muted">設定しなくても待ちとシャンテン数は表示されます。ルールや裏ドラは「手入力」画面で設定できます。</p>`;
       return popShell('点数の計算条件', body);
     }
