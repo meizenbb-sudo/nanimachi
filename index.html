@@ -139,6 +139,83 @@ h2 {
 /* ---------- レイアウト ---------- */
 .app {
   height: 100%;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+.app > .cam,
+.app > .manual {
+  flex: 1;
+  min-height: 0;
+}
+
+/* ---------- 共通のヘッダー（どちらの画面でも同じ位置・同じ見た目） ---------- */
+.appbar {
+  flex: none;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px max(12px, env(safe-area-inset-left, 0px)) 6px max(12px, env(safe-area-inset-right, 0px));
+}
+.brand-mini {
+  flex: none;
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 20px;
+  letter-spacing: 0.06em;
+  line-height: 1;
+  white-space: nowrap;
+}
+.appbar .mode-switch {
+  margin-left: auto;
+}
+.appbar .help-btn {
+  flex: none;
+}
+
+/* ---------- ルールの帯（画像の外に出して、枠で囲う） ---------- */
+.rules-bar {
+  flex: none;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0 max(12px, env(safe-area-inset-left, 0px)) 6px;
+  padding: 6px 10px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: var(--surface);
+  min-width: 0;
+}
+.rules-label {
+  flex: none;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  color: var(--muted);
+}
+.rules-bar .set-chips {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  gap: 6px;
+  flex-wrap: nowrap;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+.rules-bar .gchip {
+  background: var(--surface-2);
+  color: var(--ink);
+  box-shadow: none;
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+}
+.rules-bar .gchip[aria-pressed='true'] {
+  background: var(--ink);
+  color: var(--surface);
+}
+.rules-bar .gchip.toggle[aria-pressed='true'] {
+  background: var(--warn);
+  color: #fff;
 }
 .manual {
   height: 100%;
@@ -205,9 +282,9 @@ h2 {
   grid-template-rows: auto minmax(0, 1fr) auto;
   grid-template-areas: 'table' 'results' 'keyboard';
 }
-@media (min-width: 880px) {
+@media (min-width: 720px) {
   .workspace {
-    grid-template-columns: minmax(0, 470px) minmax(0, 1fr);
+    grid-template-columns: minmax(0, clamp(342px, 42%, 470px)) minmax(0, 1fr);
     grid-template-rows: auto minmax(0, 1fr);
     grid-template-areas: 'table results' 'keyboard results';
     column-gap: 24px;
@@ -653,7 +730,7 @@ h2 {
 }
 .wait-row > details > summary {
   display: grid;
-  grid-template-columns: auto 3.4em minmax(0, 1fr) minmax(0, 1.15fr);
+  grid-template-columns: auto minmax(0, 1fr) minmax(0, 1.15fr);
   align-items: center;
   gap: 10px;
   padding: 8px 10px;
@@ -1174,24 +1251,29 @@ details.more[open] > summary::before {
   display: inline-flex;
   padding: 3px;
   border-radius: 999px;
-  background: rgb(0 0 0 / 0.5);
-  -webkit-backdrop-filter: blur(8px);
-  backdrop-filter: blur(8px);
-  box-shadow: inset 0 0 0 1px rgb(255 255 255 / 0.12);
+  background: var(--surface-2);
 }
 .mode-switch button {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
   border: 0;
   background: transparent;
-  color: rgb(255 255 255 / 0.78);
-  font-size: 12px;
+  color: var(--muted);
+  font-size: 13px;
   font-weight: 700;
-  padding: 4px 11px;
+  padding: 6px 13px;
   border-radius: 999px;
   white-space: nowrap;
 }
+.mode-switch button svg {
+  width: 17px;
+  height: 17px;
+  flex: none;
+}
 .mode-switch button[aria-selected='true'] {
-  background: #f3efe3;
-  color: #15201b;
+  background: var(--felt);
+  color: var(--felt-ink);
 }
 .mode-switch.light {
   background: var(--surface-2);
@@ -1356,6 +1438,9 @@ details.more[open] > summary::before {
   justify-self: start;
 }
 
+.cam-stage[data-read] .roi {
+  box-shadow: 0 0 0 200vmax rgb(2 5 4 / 0.88);
+}
 .roi {
   position: absolute;
   z-index: 1;
@@ -2440,6 +2525,82 @@ details.more[open] > summary::before {
 
 
 
+
+/* ---------- 画面が低いとき（横向きのスマホ）の手入力画面 ---------- */
+@media (max-height: 540px) {
+  .manual {
+    padding-inline: 10px;
+  }
+  .table {
+    padding: 4px 8px 6px;
+  }
+  .table-head {
+    font-size: 11px;
+  }
+  .hand {
+    margin-top: 6px;
+    min-height: 0;
+  }
+  .keyboard {
+    padding-block: 2px 4px;
+    max-width: 308px;
+  }
+  .workspace {
+    column-gap: 12px;
+  }
+  .kb-grid {
+    grid-template-columns: repeat(10, minmax(0, 1fr));
+  }
+  .hand {
+    --w: min(26px, calc((100cqw - 40px) / 14.2));
+    gap: 1px;
+  }
+  .melds {
+    --w: min(20px, calc((100cqw - 60px) / 15));
+    margin-top: 5px;
+  }
+  .win-slot {
+    margin-left: 6px;
+  }
+  .win-caption {
+    font-size: 9px;
+  }
+  .kb-tab {
+    padding: 3px 0;
+    font-size: 11px;
+  }
+  .kb-hint {
+    min-height: 18px;
+    padding-block: 1px;
+    font-size: 10px;
+    line-height: 1.25;
+  }
+  .red-toggle {
+    padding: 2px 8px;
+    font-size: 11px;
+  }
+  .kb-grid {
+    gap: 4px 3px;
+  }
+  .key.act {
+    font-size: 10px;
+  }
+  .appbar {
+    padding-block: 3px 2px;
+  }
+  .brand-mini {
+    font-size: 17px;
+  }
+  .rules-bar {
+    padding: 3px 8px;
+    margin-bottom: 4px;
+  }
+  .rules-bar .gchip {
+    padding: 3px 9px;
+    font-size: 11px;
+  }
+}
+
 </style>
 <noscript>
   <div class="noscript-note">
@@ -2449,6 +2610,24 @@ details.more[open] > summary::before {
   </div>
 </noscript>
 <div class="app" id="app" data-mode="camera">
+<header class="appbar">
+  <b class="brand-mini">牌読み</b>
+  <div class="mode-switch" role="tablist" aria-label="入力の方法">
+    <button type="button" role="tab" data-action="mode" data-mode="camera" aria-selected="true">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 8h3l2-2.5h6L17 8h3v11H4z"/><circle cx="12" cy="13.5" r="3.6"/></svg>
+      <span>カメラ</span>
+    </button>
+    <button type="button" role="tab" data-action="mode" data-mode="manual" aria-selected="false">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 20h4L19.5 8.5a2.1 2.1 0 0 0-3-3L5 17z"/><path d="M14.5 6.5l3 3"/></svg>
+      <span>手入力</span>
+    </button>
+  </div>
+  <button type="button" class="help-btn light" data-action="guide-open" data-kind="help" aria-label="使い方">？</button>
+</header>
+<section class="rules-bar" id="rules-bar" aria-label="ルール">
+  <span class="rules-label">ルール</span>
+  <div class="set-chips" id="set-chips"></div>
+</section>
 <section class="cam" id="cam-view" aria-label="カメラで読み取る">
   <div class="cam-stage" id="cam-stage" data-source="demo">
     <div class="cam-media">
@@ -2460,14 +2639,6 @@ details.more[open] > summary::before {
       <span class="roi-label" id="roi-label"></span>
       <i class="corner tl"></i><i class="corner tr"></i><i class="corner bl"></i><i class="corner br"></i>
     </div>
-    <header class="cam-top">
-      <div class="mode-switch" role="tablist" aria-label="画面の切り替え">
-        <button type="button" role="tab" data-action="mode" data-mode="camera" aria-selected="true">カメラ</button>
-        <button type="button" role="tab" data-action="mode" data-mode="manual" aria-selected="false">手入力</button>
-      </div>
-      <button type="button" class="help-btn" data-action="guide-open" data-kind="help" aria-label="使い方">？</button>
-      <div class="set-chips" id="set-chips"></div>
-    </header>
     <div class="cam-empty" id="cam-empty" hidden></div>
     <div class="cam-overlay" id="cam-overlay">
       <div class="band" id="band" aria-live="polite"></div>
@@ -2476,7 +2647,7 @@ details.more[open] > summary::before {
     <div class="cam-actions">
       <button type="button" class="retake" id="retake" data-action="cam-retake" hidden>撮り直す</button>
       <button type="button" class="shutter" id="shutter" data-action="cam-read" hidden><span class="sh-ring"></span><span class="sh-label">読み取る</span></button>
-      <button type="button" class="retake" id="cam-sort" data-action="cam-sort" hidden>並べ替え</button>
+      <button type="button" class="retake" id="cam-sort" data-action="cam-sort" hidden>手牌整理</button>
     </div>
     <div class="pop" id="pop" role="dialog" aria-label="設定" hidden></div>
   </div>
@@ -2489,18 +2660,6 @@ details.more[open] > summary::before {
 </section>
 
 <div class="manual" id="manual-view" hidden>
-  <header class="topbar">
-    <div class="brand"><b>牌読み</b><span>シャンテン・待ち・点数</span></div>
-    <div class="topbar-right">
-      <div class="mode-switch light" role="tablist" aria-label="画面の切り替え">
-        <button type="button" role="tab" data-action="mode" data-mode="camera" aria-selected="false">カメラ</button>
-        <button type="button" role="tab" data-action="mode" data-mode="manual" aria-selected="true">手入力</button>
-      </div>
-      <button type="button" class="help-btn light" data-action="guide-open" data-kind="help" aria-label="使い方">？</button>
-      <button class="status-chip" id="status-chip" type="button" data-action="goto" data-goto="situation-card"></button>
-    </div>
-  </header>
-
   <div class="workspace">
     <section class="table" id="table" aria-label="手牌">
       <div class="table-head">
@@ -5895,6 +6054,7 @@ const state = {
     panX: 0,
     panY: 0,
     scanning: false,
+    read: false, // 写真から読み取り済み（枠の外を暗くする）
   },
 };
 
@@ -6173,7 +6333,7 @@ const GICON = {
   photo: gsvg('<rect x="3.5" y="5" width="17" height="14" rx="2"/><circle cx="9" cy="10" r="1.8"/><path d="m20.5 16-5-4.5-8.5 7.5"/>'),
   hand: gsvg('<rect x="3" y="9" width="4.5" height="11" rx="1"/><rect x="9.75" y="9" width="4.5" height="11" rx="1"/><rect x="16.5" y="9" width="4.5" height="11" rx="1"/><path d="M5.25 13h0M12 13h0M18.75 13h0"/>'),
   help: gsvg('<circle cx="12" cy="12" r="9"/><path d="M9.5 9.5a2.5 2.5 0 1 1 3.2 2.4c-.7.2-1.2.9-1.2 1.6v.5"/><path d="M11.5 17h0"/>'),
-  rotate: gsvg('<rect x="2.5" y="7" width="19" height="10" rx="2"/><path d="M8 11.5h8M8 14h5"/>'),
+  rotate: gsvg('<rect x="7" y="2.5" width="10" height="19" rx="2"/><path d="M10 18.5h4"/><path d="M4 9.5h2M18 9.5h2"/>'),
   read: gsvg('<circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="3.2"/>'),
   fix: gsvg('<path d="M4 19h16"/><path d="M6.5 16 16 6.5a2.1 2.1 0 0 1 3 3L9.5 19z"/>'),
   wait: gsvg('<path d="M12 3.5 14.4 9l5.6.5-4.3 3.9 1.3 5.6L12 16l-5 3 1.3-5.6L4 9.5 9.6 9z"/>'),
@@ -6182,7 +6342,7 @@ const GICON = {
 };
 
 const STEPS = [
-  ['rotate', 'スマホを横向きにする', '下の横長の枠に、手牌を一列に入れます（並び順はバラバラでも大丈夫）'],
+  ['rotate', 'スマホは縦のままでOK', '下の横長の枠に、手牌が一列に入るように写します（並び順はバラバラでも大丈夫）'],
   ['read', '「読み取る」を押す', '牌の判別は端末の中だけで行います（通信なし・約1秒）'],
   ['fix', '違う牌はタップで直す', '読み違えた牌をタップすると、候補から選び直せます'],
   ['wait', '待ち牌が手牌の上に出る', '待ち牌をタップすると、役と点数が出ます'],
@@ -6359,9 +6519,26 @@ function addTile(id) {
 }
 
 // ---------- 描画 ----------
+/** 画面上部の「ルール」の帯（手入力画面版。押すと該当のカードへ移動する） */
+function renderRulesBar() {
+  const s = state.situation;
+  const r = state.rules;
+  const chip = (label, goto) => `<button type="button" class="gchip" data-action="goto" data-goto="${goto}">${label}</button>`;
+  const dora = state.dora.length ? tilesInline(state.dora.map(doraFromIndicator), 'xxs') : 'なし';
+  const fuLabel = { normal: '符 正規', fix30: '符 30固定', fix40: '符 40固定' }[r.fuMode || 'normal'];
+  $('set-chips').innerHTML =
+    chip(`${windLabel(s.roundWind)}場・${windLabel(s.seatWind)}家${s.seatWind === 27 ? '（親）' : ''}`, 'situation-card') +
+    chip(`ドラ ${dora}`, 'dora-card') +
+    chip(s.riichi ? (s.riichi === 2 ? 'Wリーチ' : 'リーチ') : 'リーチなし', 'situation-card') +
+    chip(s.tsumo ? 'ツモ' : 'ロン', 'situation-card') +
+    (r.sanma ? chip(`三人麻雀${s.nuki ? `・抜き${s.nuki}` : ''}`, 'rules-card') : '') +
+    chip(fuLabel, 'rules-card') +
+    (r.flowers ? chip('花牌あり', 'rules-card') : '');
+}
+
 function renderTable() {
   const s = state.situation;
-  $('status-chip').innerHTML = `${windLabel(s.roundWind)}場 ${windLabel(s.seatWind)}家・${s.seatWind === 27 ? '<span class="dealer">親</span>' : '子'}`;
+  renderRulesBar();
   const n = need();
   $('count-label').innerHTML =
     `手牌 <strong>${state.concealed.length}/${n}</strong>` +
@@ -6462,7 +6639,6 @@ function waitRows(waits) {
         .join('');
       return (
         `<li class="wait-row"><details><summary>${tileHTML(w.tile, { size: 'md' })}` +
-        `<span class="left${w.remaining ? '' : ' zero'}">残り<b>${w.remaining}枚</b></span>` +
         `${scoreCell('ロン', w.ron)}${scoreCell('ツモ', w.tsumo)}</summary>` +
         `<div class="wait-detail">${detail}${shapeHTML(w.ron) ? `<div><h3>ロン時の面子の分け方</h3>${shapeHTML(w.ron)}</div>` : ''}</div></details></li>`
       );
@@ -6478,10 +6654,10 @@ function drawListHTML(draws, limitOptions = 2) {
         .slice(0, limitOptions)
         .map(
           (o) =>
-            `<div class="draw-opt"><span class="cut-lbl">${tileHTML(o.discard, { size: 'xs' })}切り</span><span class="arrow">→</span><span class="tiles-inline">${tilesInline(o.waits.map((w) => w.tile))}</span><b>${o.kinds}種${o.total}枚</b></div>`,
+            `<div class="draw-opt"><span class="cut-lbl">${tileHTML(o.discard, { size: 'xs' })}切り</span><span class="arrow">→</span><span class="tiles-inline">${tilesInline(o.waits.map((w) => w.tile))}</span><b>${o.kinds}種待ち</b></div>`,
         )
         .join('');
-      return `<li class="draw-row"><span class="draw-tile">${tileHTML(d.draw, { size: 'sm' })}<small>残${d.remaining}</small></span><div class="draw-opts">${opts}${d.options.length > limitOptions ? `<small class="more-note">ほか${d.options.length - limitOptions}通り</small>` : ''}</div></li>`;
+      return `<li class="draw-row"><span class="draw-tile">${tileHTML(d.draw, { size: 'sm' })}</span><div class="draw-opts">${opts}${d.options.length > limitOptions ? `<small class="more-note">ほか${d.options.length - limitOptions}通り</small>` : ''}</div></li>`;
     })
     .join('')}</ul>`;
 }
@@ -6500,7 +6676,7 @@ function verdict13(a) {
       cls: ' ok',
       html:
         `<div class="eyebrow">${eyebrow}</div><div class="big">テンパイ</div>` +
-        `<p class="sub">待ち <b>${a.waits.length}種 ${a.waitTotal}枚</b>${bestText}</p>` +
+        `<p class="sub">待ち <b>${a.waits.length}種</b>${bestText}</p>` +
         formsHTML(a.shanten) +
         `<div class="section-title">待ち牌と点数<span>タップで役の内訳</span></div>` +
         waitRows(a.waits),
@@ -6508,7 +6684,7 @@ function verdict13(a) {
   }
   let html =
     `<div class="eyebrow">${eyebrow}</div><div class="big"><span class="num">${s}</span><span class="unit">シャンテン</span></div>` +
-    `<p class="sub">受け入れ <b>${a.ukeire.length}種 ${a.ukeireTotal}枚</b>（引くとシャンテン数が進む牌）</p>` +
+    `<p class="sub">受け入れ <b>${a.ukeire.length}種</b>（引くとシャンテン数が進む牌）</p>` +
     formsHTML(a.shanten);
   if (s === 1 && a.tenpaiDraws && a.tenpaiDraws.length) {
     html +=
@@ -6516,9 +6692,9 @@ function verdict13(a) {
       drawListHTML(a.tenpaiDraws);
   } else {
     html +=
-      `<div class="section-title">受け入れ<span>数字は残り枚数</span></div>` +
+      `<div class="section-title">受け入れ<span>引くとシャンテン数が進む牌</span></div>` +
       `<div class="uke-grid">${a.ukeire
-        .map((u) => `<span class="uke${u.remaining ? '' : ' zero'}">${tileHTML(u.tile, { size: 'sm' })}${u.remaining}</span>`)
+        .map((u) => `<span class="uke">${tileHTML(u.tile, { size: 'sm' })}</span>`)
         .join('')}</div>`;
   }
   return { cls: '', html };
@@ -6559,12 +6735,12 @@ function verdict14(a) {
     if (d.waits) {
       const best = d.waits.reduce((m, w) => (w.ron.ok && w.ron.points > m ? w.ron.points : m), 0);
       info =
-        `<p>待ち <b>${d.kinds}種 ${d.total}枚</b>${best ? `・ロン最高 <b>${fmt(best)}点</b>` : '・ロンは役なし'}</p>` +
-        `<div class="tiles-inline">${d.waits.map((w) => `<span class="uke${w.remaining ? '' : ' zero'}">${tileHTML(w.tile, { size: 'xs' })}${w.remaining}</span>`).join('')}</div>`;
+        `<p>待ち <b>${d.kinds}種</b>${best ? `・ロン最高 <b>${fmt(best)}点</b>` : '・ロンは役なし'}</p>` +
+        `<div class="tiles-inline">${d.waits.map((w) => `<span class="uke">${tileHTML(w.tile, { size: 'xs' })}</span>`).join('')}</div>`;
     } else {
       info =
-        `<p>受け入れ <b>${d.kinds}種 ${d.total}枚</b></p>` +
-        `<div class="tiles-inline">${d.ukeire.map((u) => `<span class="uke${u.remaining ? '' : ' zero'}">${tileHTML(u.tile, { size: 'xs' })}${u.remaining}</span>`).join('')}</div>`;
+        `<p>受け入れ <b>${d.kinds}種</b></p>` +
+        `<div class="tiles-inline">${d.ukeire.map((u) => `<span class="uke">${tileHTML(u.tile, { size: 'xs' })}</span>`).join('')}</div>`;
     }
     return `<li class="discard"><span class="cut">${tileHTML(d.discard, { size: 'sm' })}打</span><div class="info">${info}</div></li>`;
   });
@@ -6574,9 +6750,9 @@ function verdict14(a) {
     cls: s === 0 ? ' ok' : '',
     html:
       `<div class="eyebrow">${14 - 3 * k}枚・アガリ形ではありません</div><div class="big">${title}</div>` +
-      `<p class="sub">何を切るか：受け入れ枚数の多い順</p>` +
+      `<p class="sub">何を切るか：受け入れの多い順</p>` +
       formsHTML(a.shanten) +
-      `<div class="section-title">打牌候補<span>数字は残り枚数</span></div>` +
+      `<div class="section-title">打牌候補<span>受け入れの多い順</span></div>` +
       `<ul class="discard-list">${head}</ul>` +
       (rest ? `<details class="more"><summary>ほかの候補（${rows.length - 5}件）</summary><ul class="discard-list" style="margin-top:8px">${rest}</ul></details>` : ''),
   };
@@ -6601,9 +6777,9 @@ function renderVerdict(a) {
       const h = a.hidden;
       html +=
         `<div class="section-title">${a.count}枚の問題として見ると<span>鳴き${h.k}組を省略</span></div>` +
-        `<p class="sub"><b>テンパイ</b>・待ち <b>${h.waits.length}種 ${h.waitTotal}枚</b>（点数は${a.need}枚そろえるか鳴きを入れると表示）</p>` +
+        `<p class="sub"><b>テンパイ</b>・待ち <b>${h.waits.length}種</b>（点数は${a.need}枚そろえるか鳴きを入れると表示）</p>` +
         `<div class="uke-grid">${h.waits
-          .map((w) => `<span class="uke${w.remaining ? '' : ' zero'}">${tileHTML(w.tile, { size: 'sm' })}${w.remaining}</span>`)
+          .map((w) => `<span class="uke">${tileHTML(w.tile, { size: 'sm' })}</span>`)
           .join('')}</div>`;
     }
   } else {
@@ -6758,7 +6934,7 @@ function handleManualChange(el) {
 }
 
 // ---- src/ui/camera.js ----
-// カメラ画面（横向き推奨）
+// カメラ画面（縦向きのまま使える。横向きでも動く）
 //   下の横長の枠に手牌を写す → 読み取り → 手牌の上に「待ち」「テンパイになる牌」を表示
 //   → 表示された牌をタップすると右の枠に役と点数（設定を変えるとすぐ再計算）
 
@@ -6781,7 +6957,6 @@ const ICON = {
   live: svg('<path d="M4 8h3l2-2.5h6L17 8h3v11H4z"/><circle cx="12" cy="13.5" r="3.6"/>'),
   photo: svg('<rect x="3.5" y="5" width="17" height="14" rx="2"/><circle cx="9" cy="10" r="1.8"/><path d="m20.5 16-5-4.5-8.5 7.5"/>'),
   demo: svg('<rect x="4" y="6" width="5" height="12" rx="1"/><rect x="10" y="6" width="5" height="12" rx="1"/><path d="M17.5 9.5 21 12l-3.5 2.5z"/>'),
-  sort: svg('<path d="M7 20V5m0 0L4 8m3-3 3 3"/><path d="M17 4v15m0 0 3-3m-3 3-3-3"/>'),
 };
 
 // ---------- クラウドAI（β）の読み取り ----------
@@ -6920,6 +7095,7 @@ function stopLive() {
 }
 
 function retake() {
+  cam.read = false;
   if (cam.source === 'live' && stream) {
     $('cam-video').play().catch(() => {});
     cam.live = 'on';
@@ -6937,7 +7113,7 @@ function loadPhoto(file) {
   const reader = new FileReader();
   reader.onerror = () => toast('この画像は読み込めませんでした');
   reader.onload = () => {
-    Object.assign(cam, { source: 'photo', photoUrl: String(reader.result), photoSize: null, zoom: 1, panX: 0, panY: 0, pop: null, note: '' });
+    Object.assign(cam, { source: 'photo', photoUrl: String(reader.result), photoSize: null, zoom: 1, panX: 0, panY: 0, pop: null, note: '', read: false });
     if (state.sample && clearForNewCapture()) update();
     const img = $('cam-photo');
     img.onload = () => {
@@ -7202,6 +7378,7 @@ async function readOnDevice() {
   }
   cam.cands = r.tiles.map((t) => t.top);
   cam.note = `端末内のAIで読み取りました（${((Date.now() - t0) / 1000).toFixed(1)}秒）`;
+  cam.read = true; // 読み取り後は枠の外を暗くする
   applyRecognition({ tiles, melds: [], win: null, confidence: r.confidence, warnings });
   suggestMeld(tiles.length);
   return true;
@@ -7515,33 +7692,32 @@ function bandHTML(a) {
       if (!a.waits.length) return bandHead('テンパイ形', '待ち牌を自分で4枚使っているためアガれません', 'warn');
       if (a.hiddenMelds) {
         return (
-          bandHead('テンパイ', `待ち ${a.waits.length}種 ${a.waitTotal}枚・${a.count}枚（鳴き${a.hiddenMelds}組は省略）として計算`, 'ok') +
-          chipRow('wait', a.waits.map((w) => ({ tile: w.tile, rem: w.remaining })))
+          bandHead('テンパイ', `待ち ${a.waits.length}種・${a.count}枚（鳴き${a.hiddenMelds}組は省略）として計算`, 'ok') +
+          chipRow('wait', a.waits.map((w) => ({ tile: w.tile })))
         );
       }
       return (
-        bandHead('テンパイ', `待ち ${a.waits.length}種 ${a.waitTotal}枚・タップで役と点数`, 'ok') +
+        bandHead('テンパイ', `待ち ${a.waits.length}種・タップで役と点数`, 'ok') +
         chipRow(
           'wait',
           a.waits.map((w) => {
             let pt = '役なし';
             if (w.ron.ok) pt = fmt(w.ron.points);
             else if (w.tsumo.ok) pt = 'ツモのみ';
-            return { tile: w.tile, rem: w.remaining, pt, dim: !w.ron.ok };
+            return { tile: w.tile, pt, dim: !w.ron.ok };
           }),
         )
       );
     }
     if (s === 1 && a.tenpaiDraws && a.tenpaiDraws.length) {
-      const total = a.tenpaiDraws.reduce((t, d) => t + d.remaining, 0);
       return (
-        bandHead('1シャンテン', `この牌が来ればテンパイ ${a.tenpaiDraws.length}種 ${total}枚`) +
-        chipRow('draw', a.tenpaiDraws.map((d) => ({ tile: d.draw, rem: d.remaining, pt: d.best ? `${d.best.kinds}種待ち` : '' })))
+        bandHead('1シャンテン', `この牌が来ればテンパイ ${a.tenpaiDraws.length}種`) +
+        chipRow('draw', a.tenpaiDraws.map((d) => ({ tile: d.draw, pt: d.best ? `${d.best.kinds}種待ち` : '' })))
       );
     }
     // 2シャンテン以上は牌を並べても見づらいので、シャンテン数だけ出す
-    if (s >= 2) return bandHead(`${s}シャンテン`, `受け入れ ${a.ukeire.length}種 ${a.ukeireTotal}枚（あと${s}回の入れ替えでテンパイ）`);
-    return bandHead(`${s}シャンテン`, `受け入れ ${a.ukeire.length}種 ${a.ukeireTotal}枚`) + chipRow('uke', a.ukeire.map((u) => ({ tile: u.tile, rem: u.remaining })));
+    if (s >= 2) return bandHead(`${s}シャンテン`, `受け入れ ${a.ukeire.length}種（あと${s}回の入れ替えでテンパイ）`);
+    return bandHead(`${s}シャンテン`, `受け入れ ${a.ukeire.length}種`) + chipRow('uke', a.ukeire.map((u) => ({ tile: u.tile })));
   }
   if (a.agari) {
     const r = a.agari;
@@ -7659,7 +7835,7 @@ function waitDetail(a) {
   if (a.hiddenMelds) {
     const shape = shapeHTML(w.ron);
     return (
-      selHead(w.tile, `${tileLabel(w.tile)}でアガリ`, `残り${w.remaining}枚${waitText(w.ron) ? '・' + waitText(w.ron) : ''}`) +
+      selHead(w.tile, `${tileLabel(w.tile)}でアガリ`, waitText(w.ron) || 'アガリ牌') +
       `<div class="notice">鳴き${a.hiddenMelds}組を省いた${a.count}枚の形として、待ちだけを計算しています。点数を出すには、手牌の右の「鳴」から鳴いた面子（チー・ポン・カン）を入れてください。</div>` +
       (shape ? `<div class="section-title">面子の分け方（省いた鳴きを除く）</div>${shape}` : '')
     );
@@ -7686,7 +7862,7 @@ function waitDetail(a) {
   }
   const shape = shapeHTML(r);
   return (
-    selHead(w.tile, `${tileLabel(w.tile)}でアガリ`, `残り${w.remaining}枚${waitText(w.ron) ? '・' + waitText(w.ron) : ''}`) +
+    selHead(w.tile, `${tileLabel(w.tile)}でアガリ`, waitText(w.ron) || 'アガリ牌') +
     seg +
     body +
     (shape ? `<div class="section-title">面子の分け方</div>${shape}` : '') +
@@ -7705,15 +7881,15 @@ function drawDetail(a) {
       const r = evaluateWin({ ...ctx, concealed: rest, winTile: w.tile, tsumo: false });
       if (r.ok && r.points > best) best = r.points;
     }
-    const waits = o.waits.map((w) => `<span class="uke${w.remaining ? '' : ' zero'}">${tileHTML(w.tile, { size: 'xs' })}${w.remaining}</span>`).join('');
+    const waits = o.waits.map((w) => `<span class="uke">${tileHTML(w.tile, { size: 'xs' })}</span>`).join('');
     return (
-      `<li class="opt"><div class="opt-top"><span class="cut-lbl">${tileHTML(o.discard, { size: 'xs' })}を切る</span><b>${o.kinds}種 ${o.total}枚待ち</b></div>` +
+      `<li class="opt"><div class="opt-top"><span class="cut-lbl">${tileHTML(o.discard, { size: 'xs' })}を切る</span><b>${o.kinds}種待ち</b></div>` +
       `<div class="tiles-inline">${waits}</div>` +
       `<small>${best ? `ロン最高 ${fmt(best)}点` : 'ロンは役なし（リーチかツモが必要）'}</small></li>`
     );
   });
   return (
-    selHead(d.draw, `${tileLabel(d.draw)}を引いたらテンパイ`, `残り${d.remaining}枚・切る牌と待ち`) +
+    selHead(d.draw, `${tileLabel(d.draw)}を引いたらテンパイ`, '切る牌と待ち') +
     `<ol class="opt-list">${opts.join('')}</ol>` +
     (d.options.length > 5 ? `<p class="muted">ほか${d.options.length - 5}通りの切り方があります</p>` : '')
   );
@@ -7726,17 +7902,17 @@ function discardDetail(a) {
     const rows = d.waits
       .map((w) => {
         const r = state.situation.tsumo ? w.tsumo : w.ron;
-        return `<li>${tileHTML(w.tile, { size: 'xs' })}<span>残${w.remaining}</span><b>${r.ok ? fmt(r.points) + '点' : '役なし'}</b></li>`;
+        return `<li>${tileHTML(w.tile, { size: 'xs' })}<span></span><b>${r.ok ? fmt(r.points) + '点' : '役なし'}</b></li>`;
       })
       .join('');
     return (
-      selHead(d.discard, `${tileLabel(d.discard)}を切るとテンパイ`, `待ち ${d.kinds}種 ${d.total}枚`) +
+      selHead(d.discard, `${tileLabel(d.discard)}を切るとテンパイ`, `待ち ${d.kinds}種`) +
       `<ul class="mini-waits">${rows}</ul>`
     );
   }
-  const uke = d.ukeire.map((u) => `<span class="uke${u.remaining ? '' : ' zero'}">${tileHTML(u.tile, { size: 'xs' })}${u.remaining}</span>`).join('');
+  const uke = d.ukeire.map((u) => `<span class="uke">${tileHTML(u.tile, { size: 'xs' })}</span>`).join('');
   return (
-    selHead(d.discard, `${tileLabel(d.discard)}を切ると${d.shanten}シャンテン`, `受け入れ ${d.kinds}種 ${d.total}枚`) +
+    selHead(d.discard, `${tileLabel(d.discard)}を切ると${d.shanten}シャンテン`, `受け入れ ${d.kinds}種`) +
     `<div class="tiles-inline">${uke}</div>`
   );
 }
@@ -7774,7 +7950,7 @@ function summaryHTML(a) {
   const k = state.melds.length;
   if (!a || cam.draft || a.phase === 'error' || a.phase === 'incomplete') {
     const lines = [
-      'スマホを横向きにして、下の枠に手牌を横一列に入れます',
+      'スマホは縦のままでOK。下の枠に手牌が横一列に入るように写します',
       getTileModel() ? '「読み取る」を押すと、端末内のAIが牌を読みます' : sampleImages ? '「読み取る」でAIが牌を読みます（β）' : '読み取れない場合は「＋」から牌をタップで入力',
       '手牌の上に待ち牌が出ます。タップするとここに役と点数',
     ];
@@ -7978,7 +8154,7 @@ function popHTML() {
     }
     case 'photo': {
       const body =
-        `<p class="muted">スマホを横向きにして、手牌が画面の下のほうに横一列で入るように撮ってください。撮ったあとはドラッグと2本指で手牌を枠に合わせます。</p>` +
+        `<p class="muted">スマホは縦のままで、手牌が横一列に写るように撮ってください。撮ったあとはドラッグと2本指で手牌を枠に合わせます。</p>` +
         `<div class="btn-row"><label class="btn" for="file-capture">${ICON.live}写真を撮る</label><label class="btn ghost" for="file-pick">${ICON.photo}アルバムから選ぶ</label></div>`;
       return popShell('写真から読み取る', body);
     }
@@ -8020,6 +8196,7 @@ function renderMedia() {
   $('cam-photo').hidden = !(src === 'photo' && cam.photoUrl && cam.photoSize);
   $('demo-scene').hidden = src !== 'demo';
   if (src === 'demo') renderDemoScene();
+  $('cam-stage').toggleAttribute('data-read', !!cam.read && src === 'photo' && !!cam.photoSize);
   const msg = mediaMessage();
   const empty = $('cam-empty');
   empty.hidden = !msg;
@@ -8051,7 +8228,6 @@ function renderControls() {
   $('retake').hidden = !(!cam.busy && ((src === 'live' && cam.live === 'frozen') || (src === 'photo' && cam.photoSize)));
   $('retake').textContent = src === 'live' ? '撮り直す' : '別の写真';
   $('cam-sort').hidden = handIds().length < 2 || cam.busy;
-  $('cam-sort').innerHTML = `${ICON.sort}並べ替え`;
   $('src-switch').innerHTML = [
     ['live', 'カメラ'],
     ['photo', '写真'],
@@ -8084,6 +8260,17 @@ function renderCamera(analysis) {
   const html = cam.pop ? popHTML() : '';
   pop.hidden = !html;
   pop.innerHTML = html;
+}
+
+/** 画面の向き・大きさが変わったとき。縦横が入れ替わったら写真の位置を初期化する */
+let lastLandscape = null;
+function onViewportChange() {
+  const land = window.innerWidth > window.innerHeight;
+  if (lastLandscape !== null && land !== lastLandscape && cam.photoSize) {
+    Object.assign(cam, { zoom: 1, panX: 0, panY: 0 });
+  }
+  lastLandscape = land;
+  if (state.mode === 'camera') renderCamera(view.analysis);
 }
 
 // ---------- 操作 ----------
@@ -8272,6 +8459,14 @@ function init() {
   setRenderer(render);
   document.addEventListener('click', onClick);
   document.addEventListener('change', (e) => handleManualChange(e.target));
+  // 画面の向きが変わったら作り直す（写真の枠と表示がずれないように）
+  let resizeTimer = null;
+  const onResize = () => {
+    clearTimeout(resizeTimer);
+    resizeTimer = setTimeout(() => (state.mode === 'camera' ? onViewportChange() : render(view.analysis)), 150);
+  };
+  window.addEventListener('resize', onResize);
+  window.addEventListener('orientationchange', onResize);
   initCamera();
   update();
   // 外部（今後の端末内認識モデルなど）からの入力口
