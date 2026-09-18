@@ -155,8 +155,9 @@ h2 {
 .appbar {
   flex: none;
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
-  gap: 10px;
+  gap: 6px 10px;
   padding: 8px max(12px, env(safe-area-inset-left, 0px)) 6px max(12px, env(safe-area-inset-right, 0px));
 }
 .brand-mini {
@@ -169,7 +170,32 @@ h2 {
   white-space: nowrap;
 }
 .appbar .mode-switch {
+  /* 見出しと「？」のあとに回して、狭い画面では下の行いっぱいに広げる */
+  order: 3;
+  flex: 1 1 100%;
+}
+.appbar .mode-switch button {
+  flex: 1 1 0;
+  min-width: 0;
+  justify-content: center;
+  padding-inline: 6px;
+}
+.appbar .help-btn {
   margin-left: auto;
+}
+@media (min-width: 560px) {
+  .appbar .mode-switch {
+    order: 0;
+    flex: 0 0 auto;
+    margin-left: auto;
+  }
+  .appbar .mode-switch button {
+    flex: 0 0 auto;
+    padding-inline: 13px;
+  }
+  .appbar .help-btn {
+    margin-left: 0;
+  }
 }
 .appbar .help-btn {
   flex: none;
@@ -248,6 +274,8 @@ h2 {
   overflow-x: visible;
 }
 .rules-bar .gchip {
+  padding: 4px 9px;
+  font-size: 11.5px;
   background: var(--surface-2);
   color: var(--ink);
   box-shadow: none;
@@ -374,7 +402,9 @@ h2 {
   font-size: 11px;
 }
 .hand {
-  --w: min(40px, calc((100cqw - 13 * 2px - 10px) / 14.2));
+  /* --w0 が普通の牌の幅。入力中の枠だけ 1.25 倍にするので、そのぶんの余裕を見ておく */
+  --w0: min(40px, calc((100cqw - 34px) / 15.6));
+  --w: var(--w0);
   display: flex;
   align-items: flex-end;
   gap: 2px;
@@ -409,12 +439,59 @@ h2 {
   color: var(--tile-back-hi);
   font-weight: 700;
 }
-.slot {
+.slot,
+.hand > .slot,
+.win-slot > .slot {
   flex: none;
   width: var(--w);
   aspect-ratio: 3 / 4;
   border-radius: 14% / 10.5%;
-  border: 1.5px dashed rgb(255 255 255 / 0.2);
+  border: 1.5px dashed rgb(255 255 255 / 0.28);
+  padding: 0;
+  background: none;
+}
+.hand-tile {
+  flex: none;
+}
+/* 入力中の位置は赤く・大きく。入れると1つ右へ進む */
+.hand > .active,
+.win-slot > .active {
+  --w: calc(var(--w0) * 1.25);
+}
+.hand > .slot.active,
+.win-slot > .slot.active {
+  border: 2.5px solid #ff5a4d;
+  background: rgb(255 90 77 / 0.18);
+  box-shadow: 0 0 0 3px rgb(255 90 77 / 0.22);
+  animation: slot-blink 1.4s ease-in-out infinite;
+}
+.hand > .hand-tile.active .tile,
+.win-slot > .hand-tile.active .tile {
+  box-shadow:
+    0 0 0 2.5px #ff5a4d,
+    0 var(--edge) 0 var(--tile-back),
+    0 calc(var(--edge) + 1px) 4px rgb(0 0 0 / 0.35);
+}
+@keyframes slot-blink {
+  50% {
+    border-color: rgb(255 90 77 / 0.45);
+    box-shadow: 0 0 0 5px rgb(255 90 77 / 0.12);
+  }
+}
+/* 選んでいる牌を消すボタン（案内の右） */
+.del-btn {
+  flex: none;
+  border: 1px solid var(--danger);
+  background: transparent;
+  color: var(--danger);
+  border-radius: 999px;
+  padding: 3px 10px;
+  font-size: 12px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+.del-btn:active {
+  background: var(--danger-soft);
 }
 .melds {
   --w: min(30px, calc((100cqw - 60px) / 15));
@@ -513,8 +590,9 @@ h2 {
   width: 100%;
   --edge: 3px;
 }
-.tile.pop,
-.meld.pop {
+/* 入れたばかりの牌。クラス名はポップアップ（.pop）と必ず分けること */
+.tile.just-in,
+.meld.just-in {
   animation: pop 0.16s ease-out;
 }
 @keyframes pop {
@@ -1311,6 +1389,7 @@ details.more[open] > summary::before {
 }
 .mode-switch button {
   display: inline-flex;
+  min-height: 38px;
   align-items: center;
   gap: 5px;
   border: 0;
@@ -2127,38 +2206,6 @@ details.more[open] > summary::before {
   flex-direction: column;
   gap: 8px;
 }
-.src-switch {
-  display: flex;
-  gap: 3px;
-  padding: 3px;
-  border-radius: 12px;
-  background: var(--surface-2);
-}
-.src-switch button {
-  flex: 1 1 0;
-  min-width: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 4px;
-  border: 0;
-  border-radius: 9px;
-  padding: 6px 2px;
-  background: transparent;
-  color: var(--muted);
-  font-size: 12px;
-  font-weight: 700;
-}
-.src-switch svg {
-  width: 18px;
-  height: 18px;
-  flex: none;
-}
-.src-switch button[aria-pressed='true'] {
-  background: var(--surface);
-  color: var(--ink);
-  box-shadow: 0 1px 2px rgb(0 0 0 / 0.14);
-}
 .side-body {
   flex: 1;
   min-height: 0;
@@ -2680,7 +2727,8 @@ details.more[open] > summary::before {
     grid-template-columns: repeat(10, minmax(0, 1fr));
   }
   .hand {
-    --w: min(26px, calc((100cqw - 40px) / 14.2));
+    --w0: min(26px, calc((100cqw - 44px) / 15.6));
+    --w: var(--w0);
     gap: 1px;
   }
   .melds {
@@ -2794,11 +2842,15 @@ details.more[open] > summary::before {
 <header class="appbar">
   <b class="brand-mini">何待ち？</b>
   <div class="mode-switch" role="tablist" aria-label="入力の方法">
-    <button type="button" role="tab" data-action="mode" data-mode="camera" aria-selected="true">
+    <button type="button" role="tab" data-action="view" data-view="live" aria-selected="false">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 8h3l2-2.5h6L17 8h3v11H4z"/><circle cx="12" cy="13.5" r="3.6"/></svg>
       <span>カメラ</span>
     </button>
-    <button type="button" role="tab" data-action="mode" data-mode="manual" aria-selected="false">
+    <button type="button" role="tab" data-action="view" data-view="photo" aria-selected="false">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3.5" y="5" width="17" height="14" rx="2"/><circle cx="9" cy="10" r="1.8"/><path d="m20.5 16-5-4.5-8.5 7.5"/></svg>
+      <span>写真</span>
+    </button>
+    <button type="button" role="tab" data-action="view" data-view="manual" aria-selected="false">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 20h4L19.5 8.5a2.1 2.1 0 0 0-3-3L5 17z"/><path d="M14.5 6.5l3 3"/></svg>
       <span>手入力</span>
     </button>
@@ -2839,7 +2891,6 @@ details.more[open] > summary::before {
     </div>
   </div>
   <aside class="cam-side" id="cam-side" aria-label="役と点数">
-    <div class="src-switch" id="src-switch" role="group" aria-label="手牌の入力元"></div>
     <div class="side-body" id="side-body" aria-live="polite"></div>
   </aside>
   <div class="pop" id="pop" role="dialog" aria-label="設定" hidden></div>
@@ -2852,7 +2903,7 @@ details.more[open] > summary::before {
     <section class="table" id="table" aria-label="手牌">
       <div class="table-head">
         <span id="count-label"></span>
-        <span><span class="sample-tag" id="sample-tag" hidden>サンプル</span>牌をタップで削除</span>
+        <span><span class="sample-tag" id="sample-tag" hidden>サンプル</span>牌をタップで入れ直す</span>
       </div>
       <div class="hand" id="hand"></div>
       <div class="melds" id="melds"></div>
@@ -6233,6 +6284,7 @@ const state = {
   meldRed: false,
   kbFolded: false,
   lastAdded: null,
+  cursor: null, // 手入力で「今入れる位置」（null = いちばん左の空き）
   // カメラ画面
   cam: {
     source: 'photo', // photo | live | demo（デモは使い方画面から）
@@ -6373,7 +6425,7 @@ function undo() {
     return;
   }
   const s = JSON.parse(raw);
-  Object.assign(state, { concealed: s.concealed, win: s.win, melds: s.melds, dora: s.dora, ura: s.ura, lastAdded: null });
+  Object.assign(state, { concealed: s.concealed, win: s.win, melds: s.melds, dora: s.dora, ura: s.ura, lastAdded: null, cursor: null });
   state.cam.draft = s.draft;
   state.cam.sel = null;
   update();
@@ -6410,6 +6462,7 @@ function setHand({ concealed = [], win = null, melds = [] } = {}, { sample = fal
     melds: melds.map((m) => ({ type: m.type, tiles: m.tiles.slice() })),
     sample,
     lastAdded: null,
+    cursor: null,
   });
   state.cam.draft = null;
   state.cam.sel = null;
@@ -6424,6 +6477,7 @@ function removeAt(where, index) {
   else if (where === 'dora' || where === 'ura') state[where].splice(index, 1);
   state.sample = false;
   state.lastAdded = null;
+  state.cursor = null;
   state.cam.sel = null;
   update();
 }
@@ -6431,7 +6485,7 @@ function removeAt(where, index) {
 function clearHand() {
   if (!allInputTiles().length && !state.cam.draft) return;
   snapshot();
-  Object.assign(state, { concealed: [], win: null, melds: [], dora: [], ura: [], sample: false, target: 'hand', lastAdded: null });
+  Object.assign(state, { concealed: [], win: null, melds: [], dora: [], ura: [], sample: false, target: 'hand', lastAdded: null, cursor: null });
   state.cam.draft = null;
   state.cam.sel = null;
   // 1局ごとの条件は初期化（場風・自風・積み棒は残す）
@@ -6654,6 +6708,29 @@ const TARGETS = [
 const INDICATOR_TARGETS = new Set(['dora', 'ura']);
 const scopeFor = (t) => (INDICATOR_TARGETS.has(t) ? state.dora.concat(state.ura) : allInputTiles());
 
+/** 今どの位置に入れようとしているか（0..need()。need() はアガリ牌） */
+function cursorIndex() {
+  const n = need();
+  const c = state.cursor == null ? state.concealed.length : state.cursor;
+  return Math.max(0, Math.min(c, n));
+}
+
+/** その位置にすでに牌があるなら、入れ直しになる牌（追加のときは null） */
+function replacingTile() {
+  if (state.target !== 'hand') return null;
+  const c = cursorIndex();
+  if (c < state.concealed.length) return state.concealed[c];
+  if (state.concealed.length >= need()) return state.win;
+  return null;
+}
+
+function withoutOne(list, id) {
+  const out = list.slice();
+  const i = out.indexOf(id);
+  if (i >= 0) out.splice(i, 1);
+  return out;
+}
+
 function keyAvailable(id, used, redsUsed) {
   const b = tileBase(id);
   const t = state.target;
@@ -6673,7 +6750,8 @@ function keyAvailable(id, used, redsUsed) {
 
 function addTile(id) {
   const t = state.target;
-  const all = scopeFor(t);
+  const rep = replacingTile();
+  const all = rep == null ? scopeFor(t) : withoutOne(scopeFor(t), rep);
   const used = countsOf(all);
   const b = tileBase(id);
   if (MELD_TYPES.has(t)) {
@@ -6699,17 +6777,20 @@ function addTile(id) {
     if (used[b] >= 4) return toast(`${tileLabel(b)}は${what}すでに4枚使われています`);
     if (isRed(id) && all.includes(id)) return toast(`${tileLabel(id)}はすでに使われています`);
     if (t === 'hand') {
-      if (state.concealed.length < need()) {
-        snapshot();
+      // 左から順に入れる。赤い枠の位置に入り、入れたら1つ右へ進む
+      const c = cursorIndex();
+      snapshot();
+      if (c < state.concealed.length) {
+        state.concealed[c] = id;
+        state.lastAdded = { where: 'hand', index: c };
+      } else if (state.concealed.length < need()) {
         state.concealed.push(id);
         state.lastAdded = { where: 'hand', index: state.concealed.length - 1 };
-      } else if (state.win == null) {
-        snapshot();
+      } else {
         state.win = id;
         state.lastAdded = { where: 'win' };
-      } else {
-        return toast('手牌とアガリ牌がそろっています。変える牌をタップして削除してください');
       }
+      state.cursor = null;
     } else {
       const list = state[t];
       if (list.length >= 5) return toast('表示牌は5枚までです');
@@ -6754,17 +6835,27 @@ function renderTable() {
   $('sample-tag').hidden = !state.sample;
 
   const la = state.lastAdded;
-  const sorted = state.concealed.map((id, i) => ({ id, i })).sort((x, y) => sortKey(x.id) - sortKey(y.id));
-  const parts = sorted.map(
-    ({ id, i }) =>
-      `<button type="button" data-action="remove" data-where="hand" data-index="${i}" aria-label="${tileLabel(id)}を削除">${tileHTML(id, { size: 'hand', extra: la && la.where === 'hand' && la.index === i ? 'pop' : '' })}</button>`,
-  );
-  for (let k = state.concealed.length; k < n; k++) parts.push('<span class="slot" aria-hidden="true"></span>');
+  // 手元を見ながら入れるので並べ替えはしない（実物と同じ並びのまま）
+  const cur = cursorIndex();
+  const parts = [];
+  for (let i = 0; i < n; i++) {
+    const id = state.concealed[i];
+    const on = i === cur ? ' active' : '';
+    if (id == null) {
+      parts.push(`<button type="button" class="slot${on}" data-action="hand-sel" data-index="${i}" aria-label="左から${i + 1}枚目を入れる"></button>`);
+    } else {
+      const extra = la && la.where === 'hand' && la.index === i ? 'just-in' : '';
+      parts.push(
+        `<button type="button" class="hand-tile${on}" data-action="hand-sel" data-index="${i}" aria-label="左から${i + 1}枚目 ${tileLabel(id)}（タップで入れ直す）">${tileHTML(id, { size: 'hand', extra })}</button>`,
+      );
+    }
+  }
   const winLabel = state.situation.tsumo ? 'ツモ' : 'ロン';
+  const winOn = cur >= n ? ' active' : '';
   const winTile =
     state.win != null
-      ? `<button type="button" data-action="remove" data-where="win" data-index="0" aria-label="アガリ牌 ${tileLabel(state.win)}を削除">${tileHTML(state.win, { size: 'hand', extra: la && la.where === 'win' ? 'pop' : '' })}</button>`
-      : '<span class="slot" aria-hidden="true"></span>';
+      ? `<button type="button" class="hand-tile${winOn}" data-action="hand-sel" data-index="win" aria-label="アガリ牌 ${tileLabel(state.win)}（タップで入れ直す）">${tileHTML(state.win, { size: 'hand', extra: la && la.where === 'win' ? 'just-in' : '' })}</button>`
+      : `<button type="button" class="slot${winOn}" data-action="hand-sel" data-index="win" aria-label="アガリ牌を入れる"></button>`;
   parts.push(
     `<span class="win-slot">${winTile}<span class="win-caption${state.win != null ? ' on' : ''}">${state.win != null ? winLabel : 'アガリ牌'}</span></span>`,
   );
@@ -6781,7 +6872,7 @@ function renderTable() {
               tileHTML(m.tiles[3], { size: 'hand', back: true }),
             ]
           : m.tiles.map((id, k) => tileHTML(id, { size: 'hand', side: k === 0 }));
-      const pop = la && la.where === 'meld' && la.index === i ? ' pop' : '';
+      const pop = la && la.where === 'meld' && la.index === i ? ' just-in' : '';
       return `<button type="button" class="meld${pop}" data-action="remove" data-where="meld" data-index="${i}" aria-label="${MELD_LABELS[m.type]}を削除"><span class="meld-tiles">${tiles.join('')}</span><span class="meld-label">${MELD_LABELS[m.type]}</span></button>`;
     })
     .join('');
@@ -6800,20 +6891,24 @@ function renderKeyboard() {
   const t = state.target;
   let hint;
   if (t === 'hand') {
-    const rest = need() - state.concealed.length;
-    if (rest > 0) hint = `手牌をあと${rest}枚。続けて14枚目を入れるとアガリ牌になります`;
+    const c = cursorIndex();
+    if (c < state.concealed.length) hint = `赤い枠（左から${c + 1}枚目）を入れ直します`;
+    else if (state.concealed.length < need()) hint = `左から${c + 1}枚目。実際の並びのまま入れてOK`;
     else if (state.win == null) hint = '次にタップした牌がアガリ牌になります';
-    else hint = '入力完了。牌をタップすると削除できます';
+    else hint = 'アガリ牌を入れ直します（赤い枠）';
   } else if (t === 'chi') hint = '順子の一番小さい牌をタップ（3萬 → 345萬）';
   else if (MELD_TYPES.has(t)) hint = `${MELD_LABELS[t]}した牌をタップ`;
   else if (t === 'dora') hint = 'ドラ表示牌をタップ（ドラはその次の牌）';
   else hint = '裏ドラ表示牌をタップ（リーチ時のみ計算）';
   const redBtn = MELD_TYPES.has(t)
     ? `<button type="button" class="red-toggle" data-action="meld-red" aria-pressed="${state.meldRed}">赤5入り</button>`
-    : '';
+    : replacingTile() != null
+      ? '<button type="button" class="del-btn" data-action="hand-del">この牌を消す</button>'
+      : '';
   $('kb-hint').innerHTML = `<span>${hint}</span>${redBtn}`;
 
-  const all = scopeFor(t);
+  const rep = replacingTile();
+  const all = rep == null ? scopeFor(t) : withoutOne(scopeFor(t), rep);
   const used = countsOf(all);
   const redsUsed = new Set(all.filter(isRed));
   const keys = KEY_ROWS.flatMap((row) =>
@@ -7100,6 +7195,18 @@ function handleManual(el) {
       renderKeyboard();
       return renderDora();
     case 'remove': return removeAt(d.where, +d.index);
+    case 'hand-sel': {
+      state.cursor = d.index === 'win' ? need() : Math.min(+d.index, state.concealed.length);
+      state.target = 'hand';
+      state.lastAdded = null;
+      return update();
+    }
+    case 'hand-del': {
+      const c = cursorIndex();
+      if (c < state.concealed.length) return removeAt('hand', c);
+      if (state.win != null) return removeAt('win', 0);
+      return undefined;
+    }
     case 'seg': {
       const group = el.closest('.seg').dataset.group;
       const v = +d.value;
@@ -7869,7 +7976,8 @@ function pickDemo(id) {
   );
 }
 
-function switchSource(src) {
+/** 上の「カメラ／写真」タブから呼ぶ（入力元の切り替え） */
+function setCameraSource(src) {
   if (cam.busy) return;
   if (src === 'live') {
     if (cam.source === 'live' && (cam.live === 'on' || cam.live === 'frozen')) return;
@@ -8514,12 +8622,6 @@ function renderControls() {
   sort.hidden = handIds().length < 2 || cam.busy;
   sort.setAttribute('aria-pressed', String(!!cam.sorted));
   sort.querySelector('.st-state').textContent = cam.sorted ? 'ON' : 'OFF';
-  $('src-switch').innerHTML = [
-    ['live', 'カメラ'],
-    ['photo', '写真'],
-  ]
-    .map(([key, label]) => `<button type="button" data-action="cam-src" data-src="${key}" aria-pressed="${src === key}"${cam.busy ? ' disabled' : ''}>${ICON[key]}<span>${label}</span></button>`)
-    .join('');
 }
 
 /** 鳴きを省いた10枚・7枚の「何待ち問題」の形は、テンパイの画面として見せる（点数は出さない） */
@@ -8645,8 +8747,6 @@ function handleCamera(el) {
     case 'cam-clear':
       cam.pop = null;
       return clearHand();
-    case 'cam-src':
-      return switchSource(d.src);
     case 'cam-live-start':
       return startLive();
     case 'cam-rule': {
@@ -8728,12 +8828,19 @@ function render(a) {
   $('cam-view').hidden = !camera;
   $('manual-view').hidden = camera;
   if (!camera) $('pop').hidden = true;
-  document.querySelectorAll('[data-action="mode"]').forEach((b) => {
-    b.setAttribute('aria-selected', String(b.dataset.mode === state.mode));
+  const now = currentView();
+  document.querySelectorAll('[data-action="view"]').forEach((b) => {
+    b.setAttribute('aria-selected', String(b.dataset.view === now));
   });
   if (camera) renderCamera(a);
   else renderManual(a);
   renderGuide();
+}
+
+/** 上のタブの今の選択（カメラ／写真／手入力。デモ中はどれでもない） */
+function currentView() {
+  if (state.mode === 'manual') return 'manual';
+  return state.cam.source === 'live' ? 'live' : state.cam.source === 'photo' ? 'photo' : '';
 }
 
 function setMode(mode) {
@@ -8743,11 +8850,21 @@ function setMode(mode) {
   update();
 }
 
+/** カメラ・写真・手入力を1つの切り替えにまとめた（下の入力元タブは廃止） */
+function setView(v) {
+  if (v === 'manual') return setMode('manual');
+  if (state.mode !== 'camera') {
+    state.mode = 'camera';
+    update();
+  }
+  setCameraSource(v);
+}
+
 function onClick(e) {
   const el = e.target.closest('[data-action]');
   if (!el || el.disabled) return;
   const action = el.dataset.action;
-  if (action === 'mode') setMode(el.dataset.mode);
+  if (action === 'view') setView(el.dataset.view);
   else if (action === 'bar-step') step(el.dataset.key, +el.dataset.delta);
   else if (action.startsWith('guide-')) handleGuide(el);
   else if (action.startsWith('cam-')) handleCamera(el);
