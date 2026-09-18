@@ -1227,6 +1227,11 @@ details.more[open] > summary::before {
   color: #f3f6f4;
   container-type: size;
   isolation: isolate;
+  /* 設定チップ → 案内 → 手牌 の順に積む。下は読み取り枠のぶんを空ける（重ならないように） */
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 8px 8px calc(var(--roi-inset) + var(--roi-h) + 6px);
 }
 .cam-stage[data-source='photo'] {
   touch-action: none;
@@ -1280,16 +1285,19 @@ details.more[open] > summary::before {
   width: 14px;
 }
 .cam-empty {
-  position: absolute;
-  inset: 0;
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+  z-index: 2;
   display: grid;
-  place-content: center;
+  /* safe を付けると、入りきらないときに上が切れず、上から表示される */
+  align-content: safe center;
+  justify-content: center;
   justify-items: center;
-  gap: 12px;
-  padding: 52px 24px calc(var(--roi-h) + 64px);
+  gap: 10px;
+  padding: 4px 12px;
   text-align: center;
   font-size: 14px;
-  background: radial-gradient(90% 80% at 50% 30%, #1d2a25 0%, #0a0f0d 100%);
 }
 .cam-empty p {
   margin: 0;
@@ -1303,7 +1311,10 @@ details.more[open] > summary::before {
   font-size: 11px;
 }
 .cam-stage[data-empty] .roi {
-  box-shadow: none;
+  display: none;
+}
+.cam-stage[data-empty] {
+  padding-bottom: 8px;
 }
 .btn-row {
   display: flex;
@@ -1419,15 +1430,13 @@ details.more[open] > summary::before {
 }
 
 .cam-top {
-  position: absolute;
+  flex: none;
   z-index: 3;
-  top: 8px;
-  left: 8px;
-  right: 92px;
   display: flex;
-  align-items: flex-start;
+  align-items: center;
   flex-wrap: wrap;
   gap: 6px;
+  padding-right: 112px;
 }
 .set-chips {
   display: flex;
@@ -1529,11 +1538,10 @@ details.more[open] > summary::before {
 }
 
 .cam-overlay {
-  position: absolute;
+  flex: none;
+  margin-top: auto;
   z-index: 2;
-  left: var(--roi-inset);
-  right: var(--roi-inset);
-  bottom: calc(var(--roi-inset) + var(--roi-h) + 6px);
+  padding-inline: 2px;
   display: flex;
   flex-direction: column;
   gap: 4px;
@@ -2343,11 +2351,7 @@ details.more[open] > summary::before {
   box-shadow: none;
 }
 
-/* 上の設定チップは1行に収めて、下の「テンパイ」表示と重ならないようにする */
-.cam-top {
-  flex-wrap: nowrap;
-  align-items: center;
-}
+/* 横向きは設定チップを1行スクロールにして、画面の高さを手牌側に回す */
 .set-chips {
   flex-wrap: nowrap;
   overflow-x: auto;
@@ -2355,11 +2359,6 @@ details.more[open] > summary::before {
 }
 .set-chips::-webkit-scrollbar {
   display: none;
-}
-.cam-overlay {
-  top: 46px;
-  justify-content: flex-end;
-  min-height: 0;
 }
 
 /* テンパイの見出しのすぐ横にアガリ牌 */
@@ -2376,17 +2375,11 @@ details.more[open] > summary::before {
   gap: 2px;
 }
 
-/* 縦向きでは設定チップを2行まで出す（横向きは1行スクロールで重なりを防ぐ） */
+/* 縦向きは幅が狭いので、設定チップを2行まで折り返す */
 @media (orientation: portrait) {
-  .cam-top {
-    flex-wrap: wrap;
-  }
   .set-chips {
     flex-wrap: wrap;
     overflow-x: visible;
-  }
-  .cam-overlay {
-    top: 84px;
   }
 }
 /* 画面が低いとき（横向きのスマホ）は使い方カードを詰める */
@@ -2431,10 +2424,7 @@ details.more[open] > summary::before {
   margin-right: 2px;
 }
 
-/* 右上の操作ボタン（読み取る・並べ替え）と設定チップが重ならないように */
-.cam-top {
-  right: 120px;
-}
+
 
 </style>
 <noscript>
@@ -2451,7 +2441,6 @@ details.more[open] > summary::before {
       <video id="cam-video" playsinline muted autoplay hidden></video>
       <img id="cam-photo" alt="撮影した手牌" draggable="false" hidden>
       <div class="demo-scene" id="demo-scene" hidden></div>
-      <div class="cam-empty" id="cam-empty" hidden></div>
     </div>
     <div class="roi" id="roi" aria-hidden="true">
       <span class="roi-label" id="roi-label"></span>
@@ -2465,6 +2454,7 @@ details.more[open] > summary::before {
       <button type="button" class="help-btn" data-action="guide-open" data-kind="help" aria-label="使い方">？</button>
       <div class="set-chips" id="set-chips"></div>
     </header>
+    <div class="cam-empty" id="cam-empty" hidden></div>
     <div class="cam-overlay" id="cam-overlay">
       <div class="band" id="band" aria-live="polite"></div>
       <div class="twin" id="twin"></div>
@@ -5316,6 +5306,40 @@ function nearRoi(corners, roi) {
   return true;
 }
 
+/**
+ * 読み取った並びが「手牌」としてありえるか。
+ * 手牌でない写真（風景・人物など）でも分類器は必ず何かの牌を答えてしまうため、
+ * 並びの構造（列が見つかったか・区切りのはっきりさ）と、牌の組み合わせの可否で判断する。
+ *   返り値 { ok, reason }  reason: noRow | tooFew | impossible | unsure
+ */
+function checkHand(r, opts = {}) {
+  if (!r || !r.ok) return { ok: false, reason: 'noRow' };
+  const melds = opts.melds | 0;
+  const minP = opts.minP != null ? opts.minP : 0.45;
+  const tiles = r.tiles || [];
+  const n = tiles.length;
+  // 1) 牌の列を見つけられず、牌どうしの区切りもはっきりしない（＝並んだ牌が写っていない）
+  if (r.source === 'fallback' && r.gap < (opts.minGap != null ? opts.minGap : 0)) return { ok: false, reason: 'noRow' };
+  // 2) 手牌として少なすぎる（鳴きを入れても足りない）
+  if (n < 7 - 3 * melds) return { ok: false, reason: 'tooFew' };
+  // 3) 同じ牌が5枚以上、または同じ赤5が2枚以上（麻雀の牌としてありえない）
+  const counts = new Map();
+  for (const t of tiles) {
+    if (t.p < minP || t.id == null || t.id === FLOWER) continue;
+    const base = t.id >= 34 && t.id <= 36 ? [4, 13, 22][t.id - 34] : t.id;
+    counts.set(base, (counts.get(base) || 0) + 1);
+    if (t.id >= 34 && t.id <= 36) {
+      const key = 'red' + t.id;
+      counts.set(key, (counts.get(key) || 0) + 1);
+      if (counts.get(key) >= 2) return { ok: false, reason: 'impossible' };
+    }
+  }
+  for (const [k, v] of counts) if (typeof k === 'number' && v >= 5) return { ok: false, reason: 'impossible' };
+  // 4) 自信のない牌が半分以上
+  if (n && tiles.filter((t) => t.p < minP).length >= n / 2) return { ok: false, reason: 'unsure' };
+  return { ok: true };
+}
+
 /** 四隅から、行の長さと面の高さ（元画像の画素） */
 function rowSize(corners) {
   const len = (dist(corners[0], corners[1]) + dist(corners[3], corners[2])) / 2;
@@ -7029,6 +7053,13 @@ const DENIED = new Set(['not_granted', 'sampling_disabled', 'not_declared', 'cap
 
 // ---------- 端末内の読み取り（通信なし） ----------
 const FLOWER_ID = 37; // 花牌（抜きドラ）。手牌からは外す
+// 手牌として読めなかったときの案内（写真が手牌でない・小さすぎる・暗いなど）
+const REJECT_TEXT = {
+  noRow: '手牌が見つかりませんでした。枠の中に手牌を横一列に入れて撮り直してください（「＋」から手で入力もできます）',
+  tooFew: '手牌として読める牌が足りませんでした。手牌が枠いっぱいに入るように撮り直してください',
+  impossible: '同じ牌が5枚以上になりました。手牌の写真か確認して、はっきり写るように撮り直してください',
+  unsure: '牌をはっきり読み取れませんでした。明るい場所で、手牌を枠いっぱいに入れて撮り直してください',
+};
 const MIN_P = 0.45; // これより自信がなければ「？」にして直してもらう
 const MAX_W = 2600; // 読み取りに使う画像の最大の幅
 let tileModel = null;
@@ -7101,8 +7132,10 @@ async function readOnDevice() {
   await new Promise((r) => setTimeout(r, 0));
   const t0 = Date.now();
   let r = null;
+  let srcW = 0; // 写真の横幅（牌が小さく写っていないかの判定に使う）
   try {
     const px = sourcePixels();
+    srcW = px.img.w;
     const { x0, x1, y0, y1 } = px.roi;
     r = readHand(px.img, {
       model,
@@ -7120,6 +7153,15 @@ async function readOnDevice() {
     renderCamera(view.analysis);
     return true;
   }
+  // 手牌でない写真に無理やり牌を当てはめない（風景・人物など）
+  const check = checkHand(r, { melds: state.melds.length, minP: MIN_P, flowers: !!state.rules.flowers });
+  if (!check.ok) {
+    cam.note = REJECT_TEXT[check.reason] || REJECT_TEXT.noRow;
+    cam.cands = null;
+    toast(cam.note);
+    renderCamera(view.analysis);
+    return true;
+  }
   const flowers = r.tiles.filter((t) => t.id === FLOWER_ID && t.p >= MIN_P).length;
   const tiles = r.tiles.filter((t) => !(t.id === FLOWER_ID && t.p >= MIN_P)).map((t) => (t.p >= MIN_P ? t.id : null));
   const warnings = [];
@@ -7132,6 +7174,9 @@ async function readOnDevice() {
       warnings.push(`花牌${flowers}枚は手牌から外しました（三人麻雀にすると抜きドラとして数えます）`);
     }
   }
+  // 牌が小さく写っていると読み間違えやすいので知らせる
+  const tileW = rowSize(r.corners).len / Math.max(1, r.tiles.length);
+  if (srcW && tileW < 0.04 * srcW) warnings.push('牌が小さく写っています。手牌が枠いっぱいに入るように撮ると読み取りやすくなります');
   if (r.source === 'fallback') warnings.push('牌の列を自動で見つけられなかったので、枠の位置で読みました');
   if (r.source === 'auto-far') warnings.push('枠から離れた位置にあった手牌を読みました');
   if (r.source === 'roi') warnings.push('枠の中の牌の並びを読みました（牌の背の色が見えないとき）');
@@ -7930,6 +7975,8 @@ function popHTML() {
 
 // ---------- 表示: 全体 ----------
 function mediaMessage() {
+  // 手牌を表示しているときは案内を短くする（画面の高さを手牌側に回す）
+  const compact = handIds().length > 0;
   const photoButtons = `<div class="btn-row"><label class="btn" for="file-capture">${ICON.live}写真を撮る</label><label class="btn ghost" for="file-pick">${ICON.photo}アルバムから選ぶ</label></div>`;
   if (cam.source === 'live') {
     if (cam.live === 'starting') return '<p>カメラを起動しています…</p>';
@@ -7937,16 +7984,18 @@ function mediaMessage() {
     const blocked = cam.live === 'off' && cameraAllowedByPolicy() === false;
     if (cam.live === 'failed' || blocked) {
       const reason = blocked ? 'BlockedByPolicy' : liveError || '不明';
+      if (compact) return `${photoButtons}<p class="muted small">カメラは使えません（${reason}）</p>`;
       return `<p>${liveFailureText(reason)}<br>写真を撮るか、アルバムから選んで読み取れます。</p>${photoButtons}<p class="muted small">理由: ${reason}</p>`;
     }
     if (cam.live === 'off') {
-      return `<p>カメラで手牌を写します。</p><div class="btn-row"><button type="button" class="btn" data-action="cam-live-start">${ICON.live}カメラを起動</button></div>`;
+      const lead = compact ? '' : '<p>カメラで手牌を写します。</p>';
+      return `${lead}<div class="btn-row"><button type="button" class="btn" data-action="cam-live-start">${ICON.live}カメラを起動</button></div>`;
     }
     return '';
   }
   if (cam.source === 'photo' && !cam.photoUrl) {
-    const prev = handIds().length ? '<p class="muted">（下には前回の手牌を表示しています）</p>' : '';
-    return `<p>手牌の写真を撮るか、アルバムから選んでください。</p>${photoButtons}${prev}`;
+    if (compact) return photoButtons;
+    return `<p>手牌の写真を撮るか、アルバムから選んでください。</p>${photoButtons}`;
   }
   return '';
 }
