@@ -2181,6 +2181,261 @@ details.more[open] > summary::before {
   margin: 6px 0 0;
 }
 
+/* ---------- スタート画面・使い方画面 ---------- */
+.guide {
+  position: fixed;
+  inset: 0;
+  z-index: 20;
+  display: grid;
+  place-items: center;
+  padding: max(16px, env(safe-area-inset-top, 0px)) 16px max(16px, env(safe-area-inset-bottom, 0px));
+  background: rgb(8 14 12 / 0.62);
+  -webkit-backdrop-filter: blur(6px);
+  backdrop-filter: blur(6px);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+.guide-card {
+  width: min(100%, 540px);
+  max-height: 100%;
+  overflow-y: auto;
+  display: grid;
+  gap: 10px;
+  padding: 18px 18px 20px;
+  border-radius: 18px;
+  background: var(--surface);
+  color: var(--ink);
+  box-shadow: 0 18px 48px rgb(0 0 0 / 0.4);
+}
+.guide-hero {
+  display: grid;
+  gap: 2px;
+  justify-items: center;
+  text-align: center;
+  padding-bottom: 6px;
+}
+.guide-hero b {
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 30px;
+  letter-spacing: 0.08em;
+}
+.guide-hero span {
+  font-size: 13px;
+  color: var(--muted);
+}
+.guide-head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.guide-head b {
+  font-family: var(--font-display);
+  font-size: 20px;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+}
+.guide-head .pop-x {
+  background: var(--surface-2);
+  color: var(--ink);
+}
+.guide-btn {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  padding: 12px 14px;
+  background: var(--surface);
+  text-align: left;
+}
+.guide-btn:active {
+  background: var(--surface-2);
+}
+.gi {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  background: var(--accent-soft);
+  color: var(--accent);
+}
+.gi svg {
+  width: 22px;
+  height: 22px;
+}
+.gi.small {
+  width: 22px;
+  height: 22px;
+  border-radius: 6px;
+  background: none;
+  color: inherit;
+}
+.gi.small svg {
+  width: 16px;
+  height: 16px;
+}
+.gt {
+  display: grid;
+  gap: 1px;
+  min-width: 0;
+}
+.gt b {
+  font-size: 15px;
+}
+.gt small {
+  font-size: 12px;
+  color: var(--muted);
+  line-height: 1.5;
+}
+.guide-steps {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 10px;
+}
+.guide-steps li {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+}
+.guide-note {
+  margin: 2px 0 0;
+  font-size: 12px;
+  color: var(--muted);
+  text-align: center;
+}
+.guide-foot {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+  padding-top: 4px;
+}
+.guide-foot .btn.ghost {
+  background: var(--surface-2);
+  color: var(--ink);
+  box-shadow: none;
+}
+.help-btn {
+  flex: none;
+  width: 30px;
+  height: 30px;
+  border: 0;
+  border-radius: 50%;
+  background: rgb(0 0 0 / 0.5);
+  color: #fff;
+  font-size: 15px;
+  font-weight: 700;
+  line-height: 1;
+  -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(8px);
+  box-shadow: inset 0 0 0 1px rgb(255 255 255 / 0.18);
+}
+.help-btn.light {
+  background: var(--surface-2);
+  color: var(--muted);
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+  box-shadow: none;
+}
+
+/* 上の設定チップは1行に収めて、下の「テンパイ」表示と重ならないようにする */
+.cam-top {
+  flex-wrap: nowrap;
+  align-items: center;
+}
+.set-chips {
+  flex-wrap: nowrap;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+.set-chips::-webkit-scrollbar {
+  display: none;
+}
+.cam-overlay {
+  top: 46px;
+  justify-content: flex-end;
+  min-height: 0;
+}
+
+/* テンパイの見出しのすぐ横にアガリ牌 */
+.s-head {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 4px 10px;
+}
+.s-waits {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 2px;
+}
+
+/* 縦向きでは設定チップを2行まで出す（横向きは1行スクロールで重なりを防ぐ） */
+@media (orientation: portrait) {
+  .cam-top {
+    flex-wrap: wrap;
+  }
+  .set-chips {
+    flex-wrap: wrap;
+    overflow-x: visible;
+  }
+  .cam-overlay {
+    top: 84px;
+  }
+}
+/* 画面が低いとき（横向きのスマホ）は使い方カードを詰める */
+@media (max-height: 480px) {
+  .guide-card {
+    padding: 12px 14px 14px;
+    gap: 6px;
+  }
+  .guide-steps {
+    gap: 6px;
+  }
+  .guide-hero b {
+    font-size: 24px;
+  }
+  .gi {
+    width: 32px;
+    height: 32px;
+    border-radius: 10px;
+  }
+  .gi svg {
+    width: 18px;
+    height: 18px;
+  }
+  .gt small {
+    font-size: 11px;
+    line-height: 1.45;
+  }
+}
+/* 並べ替え（読み取るの下） */
+#cam-sort {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+#cam-sort svg {
+  width: 14px;
+  height: 14px;
+}
+.s-waits small {
+  font-size: 11px;
+  color: var(--muted);
+  margin-right: 2px;
+}
+
+/* 右上の操作ボタン（読み取る・並べ替え）と設定チップが重ならないように */
+.cam-top {
+  right: 120px;
+}
+
 </style>
 <noscript>
   <div class="noscript-note">
@@ -2207,6 +2462,7 @@ details.more[open] > summary::before {
         <button type="button" role="tab" data-action="mode" data-mode="camera" aria-selected="true">カメラ</button>
         <button type="button" role="tab" data-action="mode" data-mode="manual" aria-selected="false">手入力</button>
       </div>
+      <button type="button" class="help-btn" data-action="guide-open" data-kind="help" aria-label="使い方">？</button>
       <div class="set-chips" id="set-chips"></div>
     </header>
     <div class="cam-overlay" id="cam-overlay">
@@ -2216,6 +2472,7 @@ details.more[open] > summary::before {
     <div class="cam-actions">
       <button type="button" class="retake" id="retake" data-action="cam-retake" hidden>撮り直す</button>
       <button type="button" class="shutter" id="shutter" data-action="cam-read" hidden><span class="sh-ring"></span><span class="sh-label">読み取る</span></button>
+      <button type="button" class="retake" id="cam-sort" data-action="cam-sort" hidden>並べ替え</button>
     </div>
     <div class="pop" id="pop" role="dialog" aria-label="設定" hidden></div>
   </div>
@@ -2235,6 +2492,7 @@ details.more[open] > summary::before {
         <button type="button" role="tab" data-action="mode" data-mode="camera" aria-selected="false">カメラ</button>
         <button type="button" role="tab" data-action="mode" data-mode="manual" aria-selected="true">手入力</button>
       </div>
+      <button type="button" class="help-btn light" data-action="guide-open" data-kind="help" aria-label="使い方">？</button>
       <button class="status-chip" id="status-chip" type="button" data-action="goto" data-goto="situation-card"></button>
     </div>
   </header>
@@ -2274,7 +2532,7 @@ details.more[open] > summary::before {
             </div>
           </div>
           <div class="row">
-            <span class="label">和了</span>
+            <span class="label">アガリ</span>
             <div class="seg" data-group="tsumo">
               <button type="button" data-action="seg" data-value="0">ロン</button>
               <button type="button" data-action="seg" data-value="1">ツモ</button>
@@ -2406,6 +2664,7 @@ details.more[open] > summary::before {
 </div>
 <div class="toast" id="toast" role="status" hidden></div>
 </div>
+<div class="guide" id="guide" role="dialog" aria-label="使い方" hidden></div>
 
 <script>
 (() => {
@@ -2731,12 +2990,22 @@ function shantenKokushi(counts, meldCount = 0) {
   return 13 - kinds - pair;
 }
 
+/** 対子の数と、么九牌（1・9・字）の種類数。画面で「七対子・国士を出すか」の判断に使う */
+function handShape(counts) {
+  let pairs = 0;
+  for (let i = 0; i < 34; i++) if (counts[i] >= 2) pairs++;
+  let yaochu = 0;
+  for (const i of YAOCHU) if (counts[i] >= 1) yaochu++;
+  return { pairs, yaochu };
+}
+
 /** 3形式すべてを返す */
 function shantenAll(counts, meldCount = 0) {
   const normal = shantenNormal(counts, meldCount);
   const chiitoi = shantenChiitoi(counts, meldCount);
   const kokushi = shantenKokushi(counts, meldCount);
-  return { normal, chiitoi, kokushi, min: Math.min(normal, chiitoi, kokushi) };
+  const { pairs, yaochu } = handShape(counts);
+  return { normal, chiitoi, kokushi, min: Math.min(normal, chiitoi, kokushi), pairs, yaochu };
 }
 
 function shanten(counts, meldCount = 0) {
@@ -2849,12 +3118,12 @@ function waitInterpretations(dec, win) {
 }
 
 const WAIT_LABELS = {
-  ryanmen: '両面',
-  kanchan: '嵌張',
-  penchan: '辺張',
-  shanpon: '双碰',
-  tanki: '単騎',
-  chiitoitsu: '単騎',
+  ryanmen: 'リャンメン',
+  kanchan: 'カンチャン',
+  penchan: 'ペンチャン',
+  shanpon: 'シャンポン',
+  tanki: 'タンキ',
+  chiitoitsu: 'タンキ',
   kokushi: '国士',
   kokushi13: '国士13面',
 };
@@ -5343,7 +5612,7 @@ const fmt = (n) => Number(n).toLocaleString('ja-JP');
 
 function shantenText(n) {
   if (n === Infinity) return '—';
-  if (n === -1) return '和了';
+  if (n === -1) return 'アガリ';
   if (n === 0) return 'テンパイ';
   return `${n}シャンテン`;
 }
@@ -5393,7 +5662,7 @@ function blockTiles(b) {
   return new Array(b.kan ? 4 : 3).fill(b.tile);
 }
 
-/** 和了形の「面子の分け方」。和了牌が入ったブロックを強調する */
+/** アガリ形の「面子の分け方」。アガリ牌が入ったブロックを強調する */
 function shapeHTML(r, size = 'xs') {
   if (!r || r.form !== 'standard' || !r.blocks) return '';
   const winIdx = r.wait === 'tanki' ? -1 : r.waitIndex;
@@ -5415,7 +5684,7 @@ function shapeHTML(r, size = 'xs') {
 }
 
 /**
- * 待ち牌 winBase で和了したとき、手牌のどの牌とつながるか（牌の種類の配列）
+ * 待ち牌 winBase でアガリしたとき、手牌のどの牌とつながるか（牌の種類の配列）
  * r は evaluateWin の結果（役なしでも形の情報を持つ）
  */
 function waitBlockBases(r, winBase) {
@@ -5474,19 +5743,25 @@ function paletteHTML(action, isDisabled = () => false, extra = '') {
   return `<div class="palette">${keys.join('')}${extra}</div>`;
 }
 
+/**
+ * 七対子・国士は、実戦で狙い始める形のときだけ出す（情報を増やしすぎない）
+ *   七対子: 対子が5個以上／国士: 么九牌が8種類以上
+ *   ただし一般手より近いときは、そのシャンテン数の理由になるので必ず出す
+ */
 function formsHTML(sh) {
-  const items = [
-    ['一般手', sh.normal],
-    ['七対子', sh.chiitoi],
-    ['国士', sh.kokushi],
-  ].filter(([, v]) => v !== Infinity);
+  let items = [['一般手', sh.normal]];
+  if (sh.chiitoi !== Infinity && (sh.chiitoi < sh.normal || sh.pairs >= 5)) items.push(['七対子', sh.chiitoi]);
+  if (sh.kokushi !== Infinity && (sh.kokushi < sh.normal || sh.yaochu >= 8)) items.push(['国士', sh.kokushi]);
+  items = items.filter(([, v]) => v !== Infinity);
+  // テンパイ・アガリのときは、その形だけ
+  if (sh.min <= 0) items = items.filter(([, v]) => v === sh.min);
   if (items.length < 2) return '';
   return `<div class="forms">${items
     .map(([k, v]) => `<span class="form-pill${v === sh.min ? ' best' : ''}">${k} ${shantenText(v)}</span>`)
     .join('')}</div>`;
 }
 
-/** 和了時の支払い内訳 */
+/** アガリ時の支払い内訳 */
 function paymentList(r, situation) {
   const p = r.payment;
   const rows = [];
@@ -5542,7 +5817,7 @@ const DEMOS = [
   { id: 'chinitsu', title: '清一色の7面待ち', note: '待ちが見えにくい代表例', tiles: '1114445678999m' },
   { id: 'honitsu1', title: '混一色の1シャンテン', note: '何を引けばテンパイか', tiles: '1234567789p344z' },
   { id: 'honitsu', title: '混一色・字牌待ちあり', note: '4種の待ち', tiles: '11123456789s77z' },
-  { id: 'agari', title: 'ロン和了（赤ドラ）', note: '14枚で点数計算', tiles: '234m067m34p666p88s', win: '2p' },
+  { id: 'agari', title: 'ロンアガリ（赤ドラ）', note: '14枚で点数計算', tiles: '234m067m34p666p88s', win: '2p' },
 ];
 
 const state = {
@@ -5556,6 +5831,8 @@ const state = {
   situationTouched: false,
   rules: { ...DEFAULT_RULES },
   sample: false,
+  seenStart: false, // スタート画面を見たか（初回だけ出す）
+  overlay: null, // 重ねて出す画面: 'start' | 'help' | null
   // 手入力画面
   target: 'hand',
   meldRed: false,
@@ -5563,7 +5840,7 @@ const state = {
   lastAdded: null,
   // カメラ画面
   cam: {
-    source: 'demo', // demo | live | photo
+    source: 'photo', // photo | live | demo（デモは使い方画面から）
     demo: 'chinitsu',
     live: 'off', // off | starting | on | frozen | failed
     draft: null, // 読み取れない牌（null）を含む並び { tiles: (id|null)[] }
@@ -5603,6 +5880,7 @@ function persisted() {
     situationTouched: state.situationTouched,
     rules: state.rules,
     sample: state.sample,
+    seenStart: state.seenStart,
     cam: { source: state.cam.source === 'live' ? 'live' : state.cam.source, demo: state.cam.demo },
   };
 }
@@ -5637,7 +5915,7 @@ function load() {
     Array.isArray(s.melds) && s.melds.every((m) => m && MELD_TYPES.has(m.type) && Array.isArray(m.tiles) && m.tiles.every(isTileId)) &&
     Array.isArray(s.dora) && s.dora.every(isTileId) && Array.isArray(s.ura) && s.ura.every(isTileId);
   if (!ok) {
-    applyDemo('chinitsu');
+    state.overlay = 'start';
     return;
   }
   Object.assign(state, {
@@ -5651,9 +5929,12 @@ function load() {
     situationTouched: !!s.situationTouched,
     rules: { ...DEFAULT_RULES, ...(s.rules || {}) },
     sample: !!s.sample,
+    seenStart: !!s.seenStart,
   });
+  if (!state.seenStart) state.overlay = 'start';
   const c = s.cam || {};
-  state.cam.source = ['demo', 'live', 'photo'].includes(c.source) ? c.source : 'demo';
+  // デモは使い方画面から入るものなので、次に開いたときは写真の画面から始める
+  state.cam.source = c.source === 'live' ? 'live' : 'photo';
   state.cam.demo = DEMOS.some((d) => d.id === c.demo) ? c.demo : 'chinitsu';
 }
 
@@ -5842,6 +6123,117 @@ function toast(msg) {
   }, 2800);
 }
 
+// ---- src/ui/guide.js ----
+// スタート画面（初回だけ）と使い方画面（「？」からいつでも）
+
+
+
+const gsvg = (body) =>
+  `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${body}</svg>`;
+
+const GICON = {
+  photo: gsvg('<rect x="3.5" y="5" width="17" height="14" rx="2"/><circle cx="9" cy="10" r="1.8"/><path d="m20.5 16-5-4.5-8.5 7.5"/>'),
+  hand: gsvg('<rect x="3" y="9" width="4.5" height="11" rx="1"/><rect x="9.75" y="9" width="4.5" height="11" rx="1"/><rect x="16.5" y="9" width="4.5" height="11" rx="1"/><path d="M5.25 13h0M12 13h0M18.75 13h0"/>'),
+  help: gsvg('<circle cx="12" cy="12" r="9"/><path d="M9.5 9.5a2.5 2.5 0 1 1 3.2 2.4c-.7.2-1.2.9-1.2 1.6v.5"/><path d="M11.5 17h0"/>'),
+  rotate: gsvg('<rect x="2.5" y="7" width="19" height="10" rx="2"/><path d="M8 11.5h8M8 14h5"/>'),
+  read: gsvg('<circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="3.2"/>'),
+  fix: gsvg('<path d="M4 19h16"/><path d="M6.5 16 16 6.5a2.1 2.1 0 0 1 3 3L9.5 19z"/>'),
+  wait: gsvg('<path d="M12 3.5 14.4 9l5.6.5-4.3 3.9 1.3 5.6L12 16l-5 3 1.3-5.6L4 9.5 9.6 9z"/>'),
+  gear: gsvg('<circle cx="12" cy="12" r="3.2"/><path d="M12 3.5v2.2M12 18.3v2.2M20.5 12h-2.2M5.7 12H3.5M18 6l-1.6 1.6M7.6 16.4 6 18M18 18l-1.6-1.6M7.6 7.6 6 6"/>'),
+  demo: gsvg('<rect x="4" y="6" width="5" height="12" rx="1"/><rect x="10" y="6" width="5" height="12" rx="1"/><path d="M17.5 9.5 21 12l-3.5 2.5z"/>'),
+};
+
+const STEPS = [
+  ['rotate', 'スマホを横向きにする', '下の横長の枠に、手牌を一列に入れます（並び順はバラバラでも大丈夫）'],
+  ['read', '「読み取る」を押す', '牌の判別は端末の中だけで行います（通信なし・約1秒）'],
+  ['fix', '違う牌はタップで直す', '読み違えた牌をタップすると、候補から選び直せます'],
+  ['wait', '待ち牌が手牌の上に出る', '待ち牌をタップすると、役と点数が出ます'],
+  ['gear', '設定を合わせる', '三人麻雀・ツモ損・符の数え方・花牌のあり／なしを切り替えられます'],
+];
+
+function bigButton(kind, icon, label, note) {
+  return (
+    `<button type="button" class="guide-btn" data-action="guide-go" data-to="${kind}">` +
+    `<span class="gi">${GICON[icon]}</span><span class="gt"><b>${label}</b><small>${note}</small></span></button>`
+  );
+}
+
+function startHTML() {
+  return (
+    '<div class="guide-card">' +
+    '<div class="guide-hero"><b>牌読み</b><span>手牌の写真から、シャンテン数・待ち・点数</span></div>' +
+    bigButton('photo', 'photo', '写真から読み取る', '撮る／アルバムから選ぶ') +
+    bigButton('manual', 'hand', '牌をタップで入力', '写真を使わずに手牌を入れる') +
+    bigButton('help', 'help', '使い方を見る', '流れを絵で確認する') +
+    '<p class="guide-note">計算も牌の読み取りも、すべて端末の中で行います（通信なし）。</p>' +
+    '</div>'
+  );
+}
+
+function helpHTML() {
+  const steps = STEPS.map(
+    ([icon, title, note], i) =>
+      `<li><span class="gi">${GICON[icon]}</span><span class="gt"><b>${i + 1}. ${title}</b><small>${note}</small></span></li>`,
+  ).join('');
+  return (
+    '<div class="guide-card">' +
+    '<div class="guide-head"><b>使い方</b><button type="button" class="pop-x" data-action="guide-close" aria-label="閉じる">×</button></div>' +
+    `<ol class="guide-steps">${steps}</ol>` +
+    '<div class="guide-foot">' +
+    `<button type="button" class="btn ghost" data-action="guide-go" data-to="demo"><span class="gi small">${GICON.demo}</span>デモで試す</button>` +
+    '<button type="button" class="btn" data-action="guide-close">閉じる</button>' +
+    '</div></div>'
+  );
+}
+
+function renderGuide() {
+  const el = $('guide');
+  if (!el) return;
+  const html = state.overlay === 'start' ? startHTML() : state.overlay === 'help' ? helpHTML() : '';
+  el.hidden = !html;
+  if (el.dataset.kind !== String(state.overlay)) {
+    el.innerHTML = html;
+    el.dataset.kind = String(state.overlay);
+  }
+}
+
+function handleGuide(el) {
+  const d = el.dataset;
+  if (d.action === 'guide-open') {
+    state.overlay = d.kind || 'help';
+    return update();
+  }
+  if (d.action === 'guide-close') {
+    state.overlay = null;
+    state.seenStart = true;
+    return update();
+  }
+  // guide-go
+  state.seenStart = true;
+  switch (d.to) {
+    case 'photo':
+      state.overlay = null;
+      state.mode = 'camera';
+      state.cam.source = 'photo';
+      state.cam.pop = 'photo';
+      break;
+    case 'manual':
+      state.overlay = null;
+      state.mode = 'manual';
+      break;
+    case 'demo':
+      state.overlay = null;
+      state.mode = 'camera';
+      state.cam.source = 'demo';
+      state.cam.pop = null;
+      applyDemo(state.cam.demo);
+      break;
+    default:
+      state.overlay = 'help';
+  }
+  return update();
+}
+
 // ---- src/ui/manual.js ----
 // 手入力画面（縦向き）: 牌キーボードで入力 → シャンテン・待ち・点数
 
@@ -5912,7 +6304,7 @@ function addTile(id) {
         state.win = id;
         state.lastAdded = { where: 'win' };
       } else {
-        return toast('手牌と和了牌がそろっています。変える牌をタップして削除してください');
+        return toast('手牌とアガリ牌がそろっています。変える牌をタップして削除してください');
       }
     } else {
       const list = state[t];
@@ -5935,7 +6327,7 @@ function renderTable() {
   const n = need();
   $('count-label').innerHTML =
     `手牌 <strong>${state.concealed.length}/${n}</strong>` +
-    (state.win != null ? ' ＋和了牌' : '') +
+    (state.win != null ? ' ＋アガリ牌' : '') +
     (state.melds.length ? `　鳴き <strong>${state.melds.length}</strong>` : '');
   $('sample-tag').hidden = !state.sample;
 
@@ -5949,10 +6341,10 @@ function renderTable() {
   const winLabel = state.situation.tsumo ? 'ツモ' : 'ロン';
   const winTile =
     state.win != null
-      ? `<button type="button" data-action="remove" data-where="win" data-index="0" aria-label="和了牌 ${tileLabel(state.win)}を削除">${tileHTML(state.win, { size: 'hand', extra: la && la.where === 'win' ? 'pop' : '' })}</button>`
+      ? `<button type="button" data-action="remove" data-where="win" data-index="0" aria-label="アガリ牌 ${tileLabel(state.win)}を削除">${tileHTML(state.win, { size: 'hand', extra: la && la.where === 'win' ? 'pop' : '' })}</button>`
       : '<span class="slot" aria-hidden="true"></span>';
   parts.push(
-    `<span class="win-slot">${winTile}<span class="win-caption${state.win != null ? ' on' : ''}">${state.win != null ? winLabel : '和了牌'}</span></span>`,
+    `<span class="win-slot">${winTile}<span class="win-caption${state.win != null ? ' on' : ''}">${state.win != null ? winLabel : 'アガリ牌'}</span></span>`,
   );
   $('hand').innerHTML = parts.join('');
 
@@ -5987,8 +6379,8 @@ function renderKeyboard() {
   let hint;
   if (t === 'hand') {
     const rest = need() - state.concealed.length;
-    if (rest > 0) hint = `手牌をあと${rest}枚。続けて14枚目を入れると和了牌になります`;
-    else if (state.win == null) hint = '次にタップした牌が和了牌になります';
+    if (rest > 0) hint = `手牌をあと${rest}枚。続けて14枚目を入れるとアガリ牌になります`;
+    else if (state.win == null) hint = '次にタップした牌がアガリ牌になります';
     else hint = '入力完了。牌をタップすると削除できます';
   } else if (t === 'chi') hint = '順子の一番小さい牌をタップ（3萬 → 345萬）';
   else if (MELD_TYPES.has(t)) hint = `${MELD_LABELS[t]}した牌をタップ`;
@@ -6025,7 +6417,7 @@ function waitRows(waits) {
         ['ツモ', w.tsumo],
       ]
         .map(([k, r]) => {
-          if (!r.ok) return `<div><h3>${k}</h3><p style="margin:0">役がないため和了できません</p></div>`;
+          if (!r.ok) return `<div><h3>${k}</h3><p style="margin:0">役がないためアガれません</p></div>`;
           const wt = waitText(r);
           return `<div><h3>${k}：${paymentShort(r)}点（${hanFuText(r)}${wt ? '・' + wt : ''}）</h3>${yakuRows(r)}</div>`;
         })
@@ -6063,7 +6455,7 @@ function verdict13(a) {
   if (s === 0) {
     const bestRon = a.waits.reduce((m, w) => Math.max(m, w.ron.ok ? w.ron.points : 0), 0);
     const bestTsumo = a.waits.reduce((m, w) => Math.max(m, w.tsumo.ok ? w.tsumo.points : 0), 0);
-    let bestText = '・どの待ちも役なし（和了できません）';
+    let bestText = '・どの待ちも役なし（アガれません）';
     if (bestRon) bestText = `・ロン最高 <b>${fmt(bestRon)}点</b>`;
     else if (bestTsumo) bestText = `・ロンは役なし／ツモ最高 <b>${fmt(bestTsumo)}点</b>`;
     return {
@@ -6078,7 +6470,7 @@ function verdict13(a) {
   }
   let html =
     `<div class="eyebrow">${eyebrow}</div><div class="big"><span class="num">${s}</span><span class="unit">シャンテン</span></div>` +
-    `<p class="sub">有効牌 <b>${a.ukeire.length}種 ${a.ukeireTotal}枚</b>（引くとシャンテン数が進む牌）</p>` +
+    `<p class="sub">受け入れ <b>${a.ukeire.length}種 ${a.ukeireTotal}枚</b>（引くとシャンテン数が進む牌）</p>` +
     formsHTML(a.shanten);
   if (s === 1 && a.tenpaiDraws && a.tenpaiDraws.length) {
     html +=
@@ -6086,7 +6478,7 @@ function verdict13(a) {
       drawListHTML(a.tenpaiDraws);
   } else {
     html +=
-      `<div class="section-title">有効牌<span>数字は残り枚数</span></div>` +
+      `<div class="section-title">受け入れ<span>数字は残り枚数</span></div>` +
       `<div class="uke-grid">${a.ukeire
         .map((u) => `<span class="uke${u.remaining ? '' : ' zero'}">${tileHTML(u.tile, { size: 'sm' })}${u.remaining}</span>`)
         .join('')}</div>`;
@@ -6103,12 +6495,12 @@ function verdict14(a) {
       return {
         cls: ' warn',
         html:
-          `<div class="eyebrow">和了形です</div><div class="big">役なし</div>` +
-          `<p class="sub">役がないため和了できません。ドラ・赤ドラだけでは役になりません。</p>` +
+          `<div class="eyebrow">アガリ形です</div><div class="big">役なし</div>` +
+          `<p class="sub">役がないためアガれません。ドラ・赤ドラだけでは役になりません。</p>` +
           (hints ? `<div class="notice"><ul>${hints}</ul></div>` : ''),
       };
     }
-    const who = `${r.dealer ? '親' : '子'}の${r.tsumo ? 'ツモ和了' : 'ロン和了'}`;
+    const who = `${r.dealer ? '親' : '子'}の${r.tsumo ? 'ツモアガリ' : 'ロンアガリ'}`;
     const shape = shapeHTML(r);
     return {
       cls: ' ok',
@@ -6133,7 +6525,7 @@ function verdict14(a) {
         `<div class="tiles-inline">${d.waits.map((w) => `<span class="uke${w.remaining ? '' : ' zero'}">${tileHTML(w.tile, { size: 'xs' })}${w.remaining}</span>`).join('')}</div>`;
     } else {
       info =
-        `<p>有効牌 <b>${d.kinds}種 ${d.total}枚</b></p>` +
+        `<p>受け入れ <b>${d.kinds}種 ${d.total}枚</b></p>` +
         `<div class="tiles-inline">${d.ukeire.map((u) => `<span class="uke${u.remaining ? '' : ' zero'}">${tileHTML(u.tile, { size: 'xs' })}${u.remaining}</span>`).join('')}</div>`;
     }
     return `<li class="discard"><span class="cut">${tileHTML(d.discard, { size: 'sm' })}打</span><div class="info">${info}</div></li>`;
@@ -6143,7 +6535,7 @@ function verdict14(a) {
   return {
     cls: s === 0 ? ' ok' : '',
     html:
-      `<div class="eyebrow">${14 - 3 * k}枚・和了形ではありません</div><div class="big">${title}</div>` +
+      `<div class="eyebrow">${14 - 3 * k}枚・アガリ形ではありません</div><div class="big">${title}</div>` +
       `<p class="sub">何を切るか：受け入れ枚数の多い順</p>` +
       formsHTML(a.shanten) +
       `<div class="section-title">打牌候補<span>数字は残り枚数</span></div>` +
@@ -6165,7 +6557,7 @@ function renderVerdict(a) {
     const k = state.melds.length;
     html =
       `<div class="eyebrow">入力中</div><div class="big">あと<span class="num">${a.missing}</span><span class="unit">枚</span></div>` +
-      `<p class="sub">手牌 <b>${state.concealed.length}/${a.need}</b> 枚${k ? `（鳴き${k}組）` : ''}。${a.need}枚でシャンテン数と待ち、和了牌まで入れると点数を出します。</p>` +
+      `<p class="sub">手牌 <b>${state.concealed.length}/${a.need}</b> 枚${k ? `（鳴き${k}組）` : ''}。${a.need}枚でシャンテン数と待ち、アガリ牌まで入れると点数を出します。</p>` +
       (allInputTiles().length === 0 ? '<button type="button" class="start-btn" data-action="sample">サンプル手牌を読み込む</button>' : '');
     if (a.hidden) {
       const h = a.hidden;
@@ -6351,6 +6743,7 @@ const ICON = {
   live: svg('<path d="M4 8h3l2-2.5h6L17 8h3v11H4z"/><circle cx="12" cy="13.5" r="3.6"/>'),
   photo: svg('<rect x="3.5" y="5" width="17" height="14" rx="2"/><circle cx="9" cy="10" r="1.8"/><path d="m20.5 16-5-4.5-8.5 7.5"/>'),
   demo: svg('<rect x="4" y="6" width="5" height="12" rx="1"/><rect x="10" y="6" width="5" height="12" rx="1"/><path d="M17.5 9.5 21 12l-3.5 2.5z"/>'),
+  sort: svg('<path d="M7 20V5m0 0L4 8m3-3 3 3"/><path d="M17 4v15m0 0 3-3m-3 3-3-3"/>'),
 };
 
 // ---------- クラウドAI（β）の読み取り ----------
@@ -6744,11 +7137,23 @@ async function readOnDevice() {
   if (r.source === 'roi') warnings.push('枠の中の牌の並びを読みました（牌の背の色が見えないとき）');
   const unsure = tiles.filter((x) => x == null).length;
   if (unsure) warnings.push(`${unsure}枚は自信がないので「？」にしました。タップして選べます`);
-  if (tiles.length !== 13 && tiles.length !== 14) warnings.push(`${tiles.length}枚として読みました。多い・少ないときは牌をタップして直せます`);
+  if (tiles.length !== 13 && tiles.length !== 14) {
+    const melded = Number.isInteger((13 - tiles.length) / 3) && tiles.length < 13;
+    warnings.push(`${tiles.length}枚として読みました。${melded ? '鳴いているときは「鳴きを入れる」から面子を足してください' : '多い・少ないときは牌をタップして直せます'}`);
+  }
   cam.cands = r.tiles.map((t) => t.top);
   cam.note = `端末内のAIで読み取りました（${((Date.now() - t0) / 1000).toFixed(1)}秒）`;
   applyRecognition({ tiles, melds: [], win: null, confidence: r.confidence, warnings });
+  suggestMeld(tiles.length);
   return true;
+}
+
+/** 10枚・7枚・4枚で読めたときは「鳴き」の入力に誘導する（そのままだと枚数が足りない） */
+function suggestMeld(n) {
+  const k = (13 - n) / 3;
+  if (!Number.isInteger(k) || k < 1 || k > 3 || state.melds.length) return;
+  cam.pop = 'addmeld';
+  renderCamera(view.analysis);
 }
 
 async function readTiles() {
@@ -6892,7 +7297,7 @@ function onKey(id) {
         cam.draft.tiles.push(id);
         commitDraft();
       } else state.concealed.push(id);
-      // 手牌がそろった時点で閉じて、待ちを見せる（和了牌は「＋」から追加）
+      // 手牌がそろった時点で閉じて、待ちを見せる（アガリ牌は「＋」から追加）
       if (before + 1 === need()) cam.pop = null;
     } else if (state.win == null && !cam.draft) {
       snapshot();
@@ -6983,8 +7388,7 @@ function chipsHTML() {
     `<button type="button" class="gchip" data-action="cam-pop" data-pop="dora" aria-pressed="${cam.pop === 'dora'}">ドラ ${doraTiles}</button>` +
     `<button type="button" class="gchip toggle" data-action="cam-riichi" aria-pressed="${!!s.riichi && !open}"${open ? ' disabled' : ''}>${s.riichi === 2 ? 'Wリーチ' : 'リーチ'}</button>` +
     `<button type="button" class="gchip toggle" data-action="cam-tsumo" aria-pressed="${!!s.tsumo}">${s.tsumo ? 'ツモ' : 'ロン'}</button>` +
-    (state.rules.sanma ? `<button type="button" class="gchip" data-action="cam-pop" data-pop="settings">三人麻雀${s.nuki ? `・抜き${s.nuki}` : ''}</button>` : '') +
-    (handIds().length > 1 ? '<button type="button" class="gchip" data-action="cam-sort">並べ替え</button>' : '')
+    (state.rules.sanma ? `<button type="button" class="gchip" data-action="cam-pop" data-pop="settings">三人麻雀${s.nuki ? `・抜き${s.nuki}` : ''}</button>` : '')
   );
 }
 
@@ -7049,7 +7453,7 @@ function bandHTML(a) {
   if (a.phase === 'hand13') {
     const s = a.shanten.min;
     if (s === 0) {
-      if (!a.waits.length) return bandHead('テンパイ形', '待ち牌を自分で4枚使っているため和了れません', 'warn');
+      if (!a.waits.length) return bandHead('テンパイ形', '待ち牌を自分で4枚使っているためアガれません', 'warn');
       if (a.hiddenMelds) {
         return (
           bandHead('テンパイ', `待ち ${a.waits.length}種 ${a.waitTotal}枚・${a.count}枚（鳴き${a.hiddenMelds}組は省略）として計算`, 'ok') +
@@ -7077,13 +7481,13 @@ function bandHTML(a) {
       );
     }
     // 2シャンテン以上は牌を並べても見づらいので、シャンテン数だけ出す
-    if (s >= 2) return bandHead(`${s}シャンテン`, `有効牌 ${a.ukeire.length}種 ${a.ukeireTotal}枚（あと${s}回の入れ替えでテンパイ）`);
-    return bandHead(`${s}シャンテン`, `有効牌 ${a.ukeire.length}種 ${a.ukeireTotal}枚`) + chipRow('uke', a.ukeire.map((u) => ({ tile: u.tile, rem: u.remaining })));
+    if (s >= 2) return bandHead(`${s}シャンテン`, `受け入れ ${a.ukeire.length}種 ${a.ukeireTotal}枚（あと${s}回の入れ替えでテンパイ）`);
+    return bandHead(`${s}シャンテン`, `受け入れ ${a.ukeire.length}種 ${a.ukeireTotal}枚`) + chipRow('uke', a.ukeire.map((u) => ({ tile: u.tile, rem: u.remaining })));
   }
   if (a.agari) {
     const r = a.agari;
-    if (r.ok) return bandHead('和了', `${fmt(r.points)}点${r.limit ? '・' + r.limit : ''}（${r.dealer ? '親' : '子'}の${r.tsumo ? 'ツモ' : 'ロン'}）`, 'ok');
-    return bandHead('和了形・役なし', 'ドラだけでは和了できません', 'warn');
+    if (r.ok) return bandHead('アガリ', `${fmt(r.points)}点${r.limit ? '・' + r.limit : ''}（${r.dealer ? '親' : '子'}の${r.tsumo ? 'ツモ' : 'ロン'}）`, 'ok');
+    return bandHead('アガリ形・役なし', 'ドラだけではアガれません', 'warn');
   }
   const s = a.shanten.min;
   if (s >= 2) return bandHead(`${s}シャンテン`, '切る牌の候補は「手入力」画面で見られます');
@@ -7138,9 +7542,9 @@ function twinHTML(a) {
     const cls = ['tw', 'win'];
     if (m.cut === 'win') cls.push('cut');
     if (fade) cls.push('fade');
-    tail = `<button type="button" class="${cls.join(' ')}" data-action="cam-edit" data-index="win" aria-label="和了牌 ${tileLabel(state.win)}（タップで修正）">${tileHTML(state.win, { size: 'twin' })}<small>${state.situation.tsumo ? 'ツモ' : 'ロン'}</small></button>`;
+    tail = `<button type="button" class="${cls.join(' ')}" data-action="cam-edit" data-index="win" aria-label="アガリ牌 ${tileLabel(state.win)}（タップで修正）">${tileHTML(state.win, { size: 'twin' })}<small>${state.situation.tsumo ? 'ツモ' : 'ロン'}</small></button>`;
   } else if (cam.sel && (cam.sel.kind === 'wait' || cam.sel.kind === 'draw')) {
-    tail = `<span class="tw ghost" aria-hidden="true">${tileHTML(cam.sel.tile, { size: 'twin' })}<small>${cam.sel.kind === 'wait' ? '和了' : 'ツモ'}</small></span>`;
+    tail = `<span class="tw ghost" aria-hidden="true">${tileHTML(cam.sel.tile, { size: 'twin' })}<small>${cam.sel.kind === 'wait' ? 'アガリ' : 'ツモ'}</small></span>`;
   }
   const melds = state.melds
     .map((mm, i) => {
@@ -7158,10 +7562,15 @@ function twinHTML(a) {
   const canAdd = ids.length < n || (state.win == null && !cam.draft && ids.length === n);
   const missing = Math.max(0, n - ids.length);
   const add = canAdd
-    ? `<button type="button" class="tw-add" data-action="cam-pop" data-pop="add" aria-pressed="${cam.pop === 'add'}" aria-label="牌を追加">＋${missing ? `<small>あと${missing}</small>` : '<small>和了牌</small>'}</button>`
+    ? `<button type="button" class="tw-add" data-action="cam-pop" data-pop="add" aria-pressed="${cam.pop === 'add'}" aria-label="牌を追加">＋${missing ? `<small>あと${missing}</small>` : '<small>アガリ</small>'}</button>`
     : '';
-  if (!ids.length && !tail && !melds) return add;
-  return `<div class="twin-hand">${tiles.join('')}</div>${tail}${melds ? `<div class="twin-melds">${melds}</div>` : ''}${add}`;
+  // 鳴いているときは、枚数を合わせるために面子を入れてもらう
+  const meldAdd =
+    state.melds.length < 4 && ids.length > 0 && ids.length < 13
+      ? `<button type="button" class="tw-add" data-action="cam-pop" data-pop="addmeld" aria-pressed="${cam.pop === 'addmeld'}" aria-label="鳴きを入れる">鳴<small>チー/ポン</small></button>`
+      : '';
+  if (!ids.length && !tail && !melds) return add + meldAdd;
+  return `<div class="twin-hand">${tiles.join('')}</div>${tail}${melds ? `<div class="twin-melds">${melds}</div>` : ''}${add}${meldAdd}`;
 }
 
 // ---------- 表示: 右の枠 ----------
@@ -7191,8 +7600,8 @@ function waitDetail(a) {
   if (a.hiddenMelds) {
     const shape = shapeHTML(w.ron);
     return (
-      selHead(w.tile, `${tileLabel(w.tile)}で和了`, `残り${w.remaining}枚${waitText(w.ron) ? '・' + waitText(w.ron) : ''}`) +
-      `<div class="notice">鳴き${a.hiddenMelds}組を省いた${a.count}枚の形として、待ちだけを計算しています。点数は「＋」で牌を足して${need()}枚にするか、手入力画面で鳴きを入れると表示します。</div>` +
+      selHead(w.tile, `${tileLabel(w.tile)}でアガリ`, `残り${w.remaining}枚${waitText(w.ron) ? '・' + waitText(w.ron) : ''}`) +
+      `<div class="notice">鳴き${a.hiddenMelds}組を省いた${a.count}枚の形として、待ちだけを計算しています。点数を出すには、手牌の右の「鳴」から鳴いた面子（チー・ポン・カン）を入れてください。</div>` +
       (shape ? `<div class="section-title">面子の分け方（省いた鳴きを除く）</div>${shape}` : '')
     );
   }
@@ -7211,14 +7620,14 @@ function waitDetail(a) {
     const menzen = state.melds.every((m) => m.type === 'ankan');
     if (menzen && !state.situation.riichi) {
       const rr = evaluateWin({ ...scoringContext(state), concealed: state.concealed, winTile: w.tile, tsumo, riichi: 1 });
-      if (rr.ok) hint = `リーチをかけていれば ${fmt(rr.points)}点で和了できます。`;
+      if (rr.ok) hint = `リーチをかけていれば ${fmt(rr.points)}点でアガれます。`;
     }
-    if (!tsumo && w.tsumo.ok) hint += 'ツモなら門前清自摸和で和了できます。';
-    body = `<div class="notice">役がないため${tsumo ? 'ツモ' : 'ロン'}では和了できません。${hint}</div>`;
+    if (!tsumo && w.tsumo.ok) hint += 'ツモなら門前清自摸和でアガれます。';
+    body = `<div class="notice">役がないため${tsumo ? 'ツモ' : 'ロン'}ではアガれません。${hint}</div>`;
   }
   const shape = shapeHTML(r);
   return (
-    selHead(w.tile, `${tileLabel(w.tile)}で和了`, `残り${w.remaining}枚${waitText(w.ron) ? '・' + waitText(w.ron) : ''}`) +
+    selHead(w.tile, `${tileLabel(w.tile)}でアガリ`, `残り${w.remaining}枚${waitText(w.ron) ? '・' + waitText(w.ron) : ''}`) +
     seg +
     body +
     (shape ? `<div class="section-title">面子の分け方</div>${shape}` : '') +
@@ -7268,7 +7677,7 @@ function discardDetail(a) {
   }
   const uke = d.ukeire.map((u) => `<span class="uke${u.remaining ? '' : ' zero'}">${tileHTML(u.tile, { size: 'xs' })}${u.remaining}</span>`).join('');
   return (
-    selHead(d.discard, `${tileLabel(d.discard)}を切ると${d.shanten}シャンテン`, `有効牌 ${d.kinds}種 ${d.total}枚`) +
+    selHead(d.discard, `${tileLabel(d.discard)}を切ると${d.shanten}シャンテン`, `受け入れ ${d.kinds}種 ${d.total}枚`) +
     `<div class="tiles-inline">${uke}</div>`
   );
 }
@@ -7279,18 +7688,24 @@ function agariDetail(a) {
     const hints = (a.hints || []).map((h) => `<li>${h}</li>`).join('');
     const shape = shapeHTML(r);
     return (
-      `<div class="notice">和了形ですが役がありません。ドラ・赤ドラだけでは和了できません。${hints ? `<ul>${hints}</ul>` : ''}</div>` +
+      `<div class="notice">アガリ形ですが役がありません。ドラ・赤ドラだけではアガれません。${hints ? `<ul>${hints}</ul>` : ''}</div>` +
       (shape ? `<div class="section-title">面子の分け方</div>${shape}` : '')
     );
   }
   const shape = shapeHTML(r);
   return (
-    selHead(state.win, `${tileLabel(state.win)}で${r.tsumo ? 'ツモ' : 'ロン'}和了`, `${r.dealer ? '親' : '子'}・${waitText(r) || '和了'}`) +
+    selHead(state.win, `${tileLabel(state.win)}で${r.tsumo ? 'ツモ' : 'ロン'}アガリ`, `${r.dealer ? '親' : '子'}・${waitText(r) || 'アガリ'}`) +
     resultBlock(r) +
     paymentList(r, state.situation) +
     (shape ? `<div class="section-title">面子の分け方</div>${shape}` : '') +
     fuDetailsHTML(r)
   );
+}
+
+/** テンパイのとき、見出しの横に出すアガリ牌 */
+function waitTilesHTML(a) {
+  if (!a || !a.waits || !a.waits.length) return '';
+  return `<span class="s-waits"><small>アガリ牌</small>${tilesInline(a.waits.map((w) => w.tile), 'xs')}</span>`;
 }
 
 function summaryHTML(a) {
@@ -7309,9 +7724,13 @@ function summaryHTML(a) {
   if (a.phase === 'hand13') {
     const s = a.shanten.min;
     if (a.hiddenMelds) {
-      return `<div class="s-sum"><span class="eyebrow">${a.count}枚（鳴き${a.hiddenMelds}組は省略）</span><b class="s-big ok">テンパイ</b></div>`;
+      return `<div class="s-sum"><span class="eyebrow">${a.count}枚（鳴き${a.hiddenMelds}組は省略）</span><div class="s-head"><b class="s-big ok">テンパイ</b>${waitTilesHTML(a)}</div></div>`;
     }
-    return `<div class="s-sum"><span class="eyebrow">${13 - 3 * k}枚${k ? `＋鳴き${k}組` : ''}</span><b class="s-big${s === 0 ? ' ok' : ''}">${shantenText(s)}</b>${formsHTML(a.shanten)}</div>`;
+    return (
+      `<div class="s-sum"><span class="eyebrow">${13 - 3 * k}枚${k ? `＋鳴き${k}組` : ''}</span>` +
+      `<div class="s-head"><b class="s-big${s === 0 ? ' ok' : ''}">${shantenText(s)}</b>${waitTilesHTML(a)}</div>` +
+      `${formsHTML(a.shanten)}</div>`
+    );
   }
   if (a.agari) return '';
   return `<div class="s-sum"><span class="eyebrow">${14 - 3 * k}枚・切る前</span><b class="s-big${a.shanten.min === 0 ? ' ok' : ''}">${a.shanten.min === 0 ? '1枚切ればテンパイ' : shantenText(a.shanten.min)}</b></div>`;
@@ -7322,7 +7741,7 @@ function detailHTML(a) {
   if (a.phase === 'hand14' && a.agari) return agariDetail(a);
   if (!cam.sel) {
     if (a.phase === 'hand13' && a.shanten.min >= 2) {
-      return `<p class="muted">有効牌を引くとシャンテン数が1つ進みます。1シャンテンになると「何が来ればテンパイか」を表示します。</p>`;
+      return `<p class="muted">受け入れを引くとシャンテン数が1つ進みます。1シャンテンになると「何が来ればテンパイか」を表示します。</p>`;
     }
     return '';
   }
@@ -7354,6 +7773,24 @@ function notesHTML() {
 }
 
 // ---------- 表示: ポップアップ ----------
+/** 鳴きの種類（既定はポン） */
+function meldType() {
+  const t = cam.meldType || 'pon';
+  return state.rules.sanma && t === 'chi' ? 'pon' : t;
+}
+
+/** 鳴きに使えない牌（すでに4枚使っている・三人麻雀にない・赤5） */
+function meldKeyDisabled(id, type) {
+  if (isRed(id)) return true;
+  const b = tileBase(id);
+  if (state.rules.sanma && isSanmaMissing(b)) return true;
+  const used = countsOf(allInputTiles());
+  if (type === 'pon') return used[b] > 1;
+  if (type === 'minkan' || type === 'ankan') return used[b] !== 0;
+  if (type === 'chi') return !(b < 27 && b % 9 <= 6 && used[b] < 4 && used[b + 1] < 4 && used[b + 2] < 4);
+  return false;
+}
+
 function popShell(title, body, headExtra = '') {
   return `<div class="pop-head"><b>${title}</b>${headExtra}<button type="button" class="pop-x" data-action="cam-pop-close" aria-label="閉じる">×</button></div><div class="pop-body">${body}</div>`;
 }
@@ -7393,7 +7830,7 @@ function popHTML() {
           : '') +
         segRow('場風', 'roundWind', winds, s.roundWind) +
         segRow('自風', 'seatWind', seats, s.seatWind) +
-        segRow('和了', 'tsumo', [[0, 'ロン'], [1, 'ツモ']], s.tsumo ? 1 : 0) +
+        segRow('アガリ', 'tsumo', [[0, 'ロン'], [1, 'ツモ']], s.tsumo ? 1 : 0) +
         segRow('リーチ', 'riichi', [[0, 'なし'], [1, 'リーチ'], [2, 'ダブル']], s.riichi | 0, open) +
         `<div class="prow"><span class="plabel">付加役</span><div class="chips">` +
         `<button type="button" class="chip" data-action="cam-special" data-value="ippatsu" aria-pressed="${!!s.ippatsu}"${!s.riichi || open ? ' disabled' : ''}>一発</button>` +
@@ -7417,14 +7854,14 @@ function popHTML() {
     case 'add': {
       const ids = handIds();
       const n = need();
-      const title = ids.length < n ? `手牌を入力（${ids.length}/${n}）` : '和了牌を入力（14枚目）';
+      const title = ids.length < n ? `手牌を入力（${ids.length}/${n}）` : 'アガリ牌を入力（14枚目）';
       const extra =
         `<button type="button" class="key act" data-action="cam-undo">戻す</button>` +
         `<button type="button" class="key act wide" data-action="cam-clear">全消去</button>`;
       const preview = ids.length
         ? `<div class="pop-preview">${ids.map((id) => (id == null ? '<span class="tile t-xxs qm">？</span>' : tileHTML(id, { size: 'xxs' }))).join('')}</div>`
         : '';
-      return popShell(title, `${preview}<p class="muted">左から順にタップ。${n}枚のあとにタップした牌は和了牌になります。</p>` + paletteHTML('cam-key', (id) => !!limitMessage(id), extra));
+      return popShell(title, `${preview}<p class="muted">左から順にタップ。${n}枚のあとにタップした牌はアガリ牌になります。</p>` + paletteHTML('cam-key', (id) => !!limitMessage(id), extra));
     }
     case 'edit': {
       const cur = currentEditTile();
@@ -7446,9 +7883,32 @@ function popHTML() {
       if (!mm) return '';
       const body =
         `<div class="ind-line">${tilesInline(mm.tiles, 'sm')}</div>` +
-        `<p class="muted">鳴きの追加や種類の変更は「手入力」画面で行えます。</p>` +
-        `<button type="button" class="btn ghost" data-action="cam-meld-del">この${MELD_LABELS[mm.type]}を削除</button>`;
+        `<div class="btn-row" style="justify-content:flex-start">` +
+        `<button type="button" class="btn ghost" data-action="cam-pop" data-pop="addmeld">鳴きを足す</button>` +
+        `<button type="button" class="btn ghost" data-action="cam-meld-del">この${MELD_LABELS[mm.type]}を削除</button></div>`;
       return popShell(MELD_LABELS[mm.type], body);
+    }
+    case 'addmeld': {
+      const t = meldType();
+      const k = state.melds.length;
+      const rest = need() - handIds().filter((x) => x != null).length;
+      const lead =
+        rest < 0
+          ? `手牌が${-rest}枚多いので、鳴いた面子を入れると枚数が合います。`
+          : `鳴いた面子（チー・ポン・カン）を入れると、その分だけ手牌の枚数が減ります。`;
+      const types = (state.rules.sanma ? [['pon', 'ポン'], ['minkan', '明カン'], ['ankan', 'アンカン']] : [['chi', 'チー'], ['pon', 'ポン'], ['minkan', '明カン'], ['ankan', 'アンカン']])
+        .map(([v, l]) => `<button type="button" data-action="cam-meld-type" data-value="${v}" aria-pressed="${t === v}">${l}</button>`)
+        .join('');
+      const hint = t === 'chi' ? '順子の一番小さい牌をタップ（3萬 → 345萬）' : `${MELD_LABELS[t]}した牌をタップ`;
+      const now = k ? `<div class="ind-line"><span class="muted">今の鳴き</span>${state.melds.map((m) => tilesInline(m.tiles, 'xxs')).join('　')}</div>` : '';
+      const body =
+        `<p class="muted">${lead}</p>` +
+        `<div class="prow"><span class="plabel">種類</span><div class="seg">${types}</div></div>` +
+        now +
+        `<p class="muted">${hint}</p>` +
+        paletteHTML('cam-meld-add', (id) => meldKeyDisabled(id, t)) +
+        `<button type="button" class="btn ghost" data-action="cam-pop-close">鳴いていない</button>`;
+      return popShell(`鳴き${k + 1}組目を入れる`, body);
     }
     case 'demo': {
       const items = DEMOS.map(
@@ -7527,10 +7987,11 @@ function renderControls() {
   sh.querySelector('.sh-label').textContent = text;
   $('retake').hidden = !(!cam.busy && ((src === 'live' && cam.live === 'frozen') || (src === 'photo' && cam.photoSize)));
   $('retake').textContent = src === 'live' ? '撮り直す' : '別の写真';
+  $('cam-sort').hidden = handIds().length < 2 || cam.busy;
+  $('cam-sort').innerHTML = `${ICON.sort}並べ替え`;
   $('src-switch').innerHTML = [
     ['live', 'カメラ'],
     ['photo', '写真'],
-    ['demo', 'デモ'],
   ]
     .map(([key, label]) => `<button type="button" data-action="cam-src" data-src="${key}" aria-pressed="${src === key}"${cam.busy ? ' disabled' : ''}>${ICON[key]}<span>${label}</span></button>`)
     .join('');
@@ -7578,6 +8039,25 @@ function handleCamera(el) {
       cam.editIndex = +d.index;
       cam.pop = 'meld';
       return rerender();
+    case 'cam-meld-type':
+      cam.meldType = d.value;
+      return rerender();
+    case 'cam-meld-add': {
+      const type = meldType();
+      const meld = makeMeld(type, +d.id, false);
+      if (!meld) return toast('チーは順子の一番小さい牌をタップします（例: 3萬 → 345萬）');
+      if (state.melds.length >= 4) return toast('鳴きは4組までです');
+      const newNeed = need() - 3;
+      if (handIds().filter((x) => x != null).length > newNeed) {
+        return toast(`鳴き${state.melds.length + 1}組なら手牌は${newNeed}枚です。多い牌をタップして減らしてください`);
+      }
+      snapshot();
+      state.melds.push(meld);
+      if (type !== 'ankan' && state.situation.riichi) toast('鳴きがあるためリーチは計算に含めません');
+      cam.pop = null;
+      cam.sel = null;
+      return update();
+    }
     case 'cam-meld-del':
       snapshot();
       state.melds.splice(cam.editIndex, 1);
@@ -7692,6 +8172,7 @@ function initCamera() {
 
 
 
+
 function render(a) {
   const camera = state.mode === 'camera';
   $('app').dataset.mode = state.mode;
@@ -7702,6 +8183,7 @@ function render(a) {
   });
   if (camera) renderCamera(a);
   else renderManual(a);
+  renderGuide();
 }
 
 function setMode(mode) {
@@ -7716,6 +8198,7 @@ function onClick(e) {
   if (!el || el.disabled) return;
   const action = el.dataset.action;
   if (action === 'mode') setMode(el.dataset.mode);
+  else if (action.startsWith('guide-')) handleGuide(el);
   else if (action.startsWith('cam-')) handleCamera(el);
   else handleManual(el);
 }
