@@ -1430,7 +1430,7 @@ details.more[open] > summary::before {
   height: 100%;
   display: grid;
   grid-template-columns: minmax(0, 1fr);
-  grid-template-rows: minmax(0, 52%) minmax(0, 1fr);
+  grid-template-rows: minmax(0, 55%) minmax(0, 1fr);
   gap: 6px;
   padding-block: 2px 8px;
   padding-inline: max(16px, env(safe-area-inset-left, 0px)) max(16px, env(safe-area-inset-right, 0px));
@@ -1815,6 +1815,7 @@ details.more[open] > summary::before {
 }
 .cam-overlay > * {
   pointer-events: auto;
+  flex: none;
 }
 .band {
   display: grid;
@@ -1868,7 +1869,7 @@ details.more[open] > summary::before {
   min-width: 44px;
   border: 0;
   border-radius: 10px;
-  padding: 5px 5px 4px;
+  padding: 4px 5px 3px;
   background: rgb(8 14 12 / 0.66);
   color: #fff;
   -webkit-backdrop-filter: blur(6px);
@@ -2243,6 +2244,10 @@ details.more[open] > summary::before {
   display: flex;
   align-items: center;
   gap: 10px;
+  padding: 8px 10px;
+  border-radius: 12px;
+  background: var(--accent-soft);
+  box-shadow: inset 0 0 0 1px rgb(28 90 71 / 0.18);
 }
 .sel-head b {
   display: block;
@@ -2830,6 +2835,74 @@ details.more[open] > summary::before {
   }
 }
 
+
+/* ---------- ルールの帯: 状況の表記＋タップで切り替えるチップ ---------- */
+.sit-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 12.5px;
+  font-weight: 800;
+  white-space: nowrap;
+  color: var(--ink);
+}
+.sit-label em {
+  font-style: normal;
+  font-size: 10px;
+  line-height: 15px;
+  padding: 0 4px;
+  border-radius: 4px;
+  background: #e5ad52;
+  color: #1b1406;
+}
+.gchip em.oya {
+  background: var(--accent);
+  color: #fff;
+  margin-left: 1px;
+}
+/* 切り替えチップは幅を固定して、文字が変わっても押す場所が動かないようにする */
+.rules-bar .gchip.fixed {
+  justify-content: center;
+}
+.rules-bar .gchip.fixed[data-key='roundWind'] {
+  min-width: 3.9em;
+}
+.rules-bar .gchip.fixed[data-key='seatWind'] {
+  min-width: 5.6em;
+}
+.rules-bar .gchip.fixed[data-key='kyoku'] {
+  min-width: 3.5em;
+}
+.rules-bar .gchip.fixed[data-key='riichi'] {
+  min-width: 6.9em;
+}
+.rules-bar .gchip.fixed[data-key='tsumo'] {
+  min-width: 3.7em;
+}
+.rules-bar .gchip.fixed[data-key='tsumo'][aria-pressed='true'] {
+  background: var(--ink);
+  color: var(--surface);
+}
+.rules-bar .gchip.fixed[data-key='riichi'][data-riichi='0'] {
+  background: var(--surface-2);
+  color: var(--muted);
+}
+.rules-bar .gchip.fixed[data-key='riichi'][data-riichi='1'] {
+  background: var(--warn);
+  color: #fff;
+}
+.rules-bar .gchip.fixed[data-key='riichi'][data-riichi='2'] {
+  background: #c0392b;
+  color: #fff;
+}
+/* 待ち牌の並びのあとの「でアガリ」 */
+.tail-lbl {
+  align-self: center;
+  margin-left: 2px;
+  font-size: 12px;
+  color: var(--muted);
+}
+
 </style>
 <noscript>
   <div class="noscript-note">
@@ -2894,7 +2967,6 @@ details.more[open] > summary::before {
     <div class="side-body" id="side-body" aria-live="polite"></div>
   </aside>
   <div class="pop" id="pop" role="dialog" aria-label="設定" hidden></div>
-  <input type="file" id="file-capture" accept="image/*" capture="environment" hidden>
   <input type="file" id="file-pick" accept="image/*" hidden>
 </section>
 
@@ -6171,6 +6243,50 @@ const KEY_ROWS = [
 ];
 
 /** 牌キーボード（ポップアップ用）。isDisabled(id) で押せない牌を指定 */
+/** 上の「カメラ・写真・手入力」の選択を今の状態に合わせる（カメラ画面を描き直すたびに呼ぶ） */
+function syncViewTabs(mode, source) {
+  const now = mode === 'manual' ? 'manual' : source === 'live' ? 'live' : source === 'photo' ? 'photo' : '';
+  document.querySelectorAll('[data-action="view"]').forEach((b) => {
+    b.setAttribute('aria-selected', String(b.dataset.view === now));
+  });
+}
+
+const RIICHI_LABELS = ['リーチなし', 'リーチ', 'ダブリー'];
+
+/** 「南2局 1本場」のような状況の表記。南4局（三人麻雀は南3局）はオーラス */
+function kyokuLabel(s, sanma) {
+  const k = Math.max(1, s.kyoku | 0);
+  const last = s.roundWind === 28 && k === (sanma ? 3 : 4);
+  return `${last ? 'オーラス' : `${windLabel(s.roundWind)}${k}局`} ${s.honba | 0}本場`;
+}
+
+/**
+ * ルールの帯のチップ。場・家・局・リーチ・ロン/ツモはタップで切り替える（幅は固定＝押す場所が動かない）。
+ * ドラとルールは画面ごとに行き先が違うので link(kind) で属性をもらう
+ */
+function situationChipsHTML(state, link) {
+  const s = state.situation;
+  const r = state.rules;
+  const sanma = !!r.sanma;
+  const open = state.melds.some((m) => m.type !== 'ankan');
+  const fixed = (key, label, extra = '') =>
+    `<button type="button" class="gchip fixed" data-action="cycle" data-key="${key}"${extra}>${label}</button>`;
+  const doraTiles = state.dora.length ? tilesInline(state.dora.map(doraFromIndicator), 'xxs') : 'なし';
+  const fuLabel = { normal: '', fix30: '符 30固定', fix40: '符 40固定' }[r.fuMode || 'normal'];
+  return (
+    `<span class="sit-label">${kyokuLabel(s, sanma)}${state.situationTouched ? '' : '<em>仮</em>'}</span>` +
+    fixed('roundWind', `${windLabel(s.roundWind)}場`) +
+    fixed('seatWind', `${windLabel(s.seatWind)}家${s.seatWind === 27 ? '<em class="oya">親</em>' : ''}`) +
+    fixed('kyoku', `${Math.max(1, s.kyoku | 0)}局`) +
+    `<button type="button" class="gchip" ${link('dora')}>ドラ ${doraTiles}</button>` +
+    fixed('riichi', RIICHI_LABELS[s.riichi | 0] || RIICHI_LABELS[0], ` data-riichi="${open ? 0 : s.riichi | 0}"${open ? ' disabled' : ''}`) +
+    fixed('tsumo', s.tsumo ? 'ツモ' : 'ロン', ` aria-pressed="${!!s.tsumo}"`) +
+    (sanma ? `<button type="button" class="gchip" ${link('rules')}>三人麻雀${s.nuki ? `・抜き${s.nuki}` : ''}</button>` : '') +
+    (fuLabel ? `<button type="button" class="gchip" ${link('rules')}>${fuLabel}</button>` : '') +
+    (r.flowers ? `<button type="button" class="gchip" ${link('rules')}>花牌あり</button>` : '')
+  );
+}
+
 /** ルールの帯に出す積み棒（本場・供託・抜きドラ）。−[数字]＋ の小さいボタン */
 function barSteppersHTML(s, sanma) {
   const item = (key, label) =>
@@ -6255,7 +6371,7 @@ const MELD_TYPES = new Set(['chi', 'pon', 'minkan', 'ankan']);
 const TSUMO_ONLY = new Set(['rinshan', 'haitei', 'tenhou', 'chiihou']);
 const RON_ONLY = new Set(['houtei', 'chankan']);
 const DEFAULT_SITUATION = Object.freeze({
-  roundWind: 27, seatWind: 28, tsumo: false, riichi: 0, ippatsu: false, special: '', honba: 0, kyotaku: 0, nuki: 0,
+  roundWind: 27, seatWind: 28, kyoku: 1, tsumo: false, riichi: 0, ippatsu: false, special: '', honba: 0, kyotaku: 0, nuki: 0,
 });
 
 /** デモ場面（写真の代わりに使う手牌） */
@@ -6513,6 +6629,29 @@ function setSituation(key, value) {
   update();
 }
 
+/** ルールの帯のチップをタップしたときの切り替え（場 → 家 → 局 → リーチ → ロン/ツモ） */
+function cycleSituation(key) {
+  const s = state.situation;
+  const sanma = !!state.rules.sanma;
+  switch (key) {
+    case 'roundWind': // 東場 → 南場 → 西場 → 東場
+      return setSituation('roundWind', s.roundWind >= 29 ? 27 : s.roundWind + 1);
+    case 'seatWind': // 東家 → 南家 → 西家 → 北家 → 東家（三人麻雀は北家なし）
+      return setSituation('seatWind', s.seatWind >= (sanma ? 29 : 30) ? 27 : s.seatWind + 1);
+    case 'kyoku': {
+      const k = Math.max(1, s.kyoku | 0);
+      return setSituation('kyoku', k >= (sanma ? 3 : 4) ? 1 : k + 1);
+    }
+    case 'riichi': // なし → リーチ → ダブル → なし
+      if (hasOpenMeld()) return toast('鳴きがあるのでリーチは付けられません');
+      return setSituation('riichi', ((s.riichi | 0) + 1) % 3);
+    case 'tsumo':
+      return setSituation('tsumo', !s.tsumo);
+    default:
+      return undefined;
+  }
+}
+
 function toggleSpecial(sp) {
   const s = state.situation;
   state.situationTouched = true;
@@ -6615,7 +6754,7 @@ function startHTML() {
   return (
     '<div class="guide-card">' +
     '<div class="guide-hero"><b>何待ち？</b><span>手牌の写真から、シャンテン数・待ち・点数</span></div>' +
-    bigButton('photo', 'photo', '写真から読み取る', '撮る／アルバムから選ぶ') +
+    bigButton('photo', 'photo', '写真から読み取る', 'アルバムから選ぶ') +
     bigButton('manual', 'hand', '牌をタップで入力', '写真を使わずに手牌を入れる') +
     bigButton('help', 'help', '使い方を見る', '流れを絵で確認する') +
     '<p class="guide-note">計算も牌の読み取りも、すべて端末の中で行います（通信なし）。</p>' +
@@ -6664,12 +6803,20 @@ function handleGuide(el) {
   // guide-go
   state.seenStart = true;
   switch (d.to) {
-    case 'photo':
+    case 'photo': {
       state.overlay = null;
       state.mode = 'camera';
       state.cam.source = 'photo';
-      state.cam.pop = 'photo';
-      break;
+      state.cam.pop = null;
+      update();
+      // タップの中で開く必要があるので、描き直したあとすぐアルバムを開く
+      const pick = $('file-pick');
+      if (pick) {
+        pick.value = '';
+        pick.click();
+      }
+      return undefined;
+    }
     case 'manual':
       state.overlay = null;
       state.mode = 'manual';
@@ -6808,20 +6955,10 @@ function addTile(id) {
 // ---------- 描画 ----------
 /** 画面上部の「ルール」の帯（手入力画面版。押すと該当のカードへ移動する） */
 function renderRulesBar() {
-  const s = state.situation;
-  const r = state.rules;
-  const chip = (label, goto) => `<button type="button" class="gchip" data-action="goto" data-goto="${goto}">${label}</button>`;
-  const dora = state.dora.length ? tilesInline(state.dora.map(doraFromIndicator), 'xxs') : 'なし';
-  const fuLabel = { normal: '符 正規', fix30: '符 30固定', fix40: '符 40固定' }[r.fuMode || 'normal'];
-  $('set-chips').innerHTML =
-    chip(`${windLabel(s.roundWind)}場・${windLabel(s.seatWind)}家${s.seatWind === 27 ? '（親）' : ''}`, 'situation-card') +
-    chip(`ドラ ${dora}`, 'dora-card') +
-    chip(s.riichi ? (s.riichi === 2 ? 'Wリーチ' : 'リーチ') : 'リーチなし', 'situation-card') +
-    chip(s.tsumo ? 'ツモ' : 'ロン', 'situation-card') +
-    (r.sanma ? chip(`三人麻雀${s.nuki ? `・抜き${s.nuki}` : ''}`, 'rules-card') : '') +
-    chip(fuLabel, 'rules-card') +
-    (r.flowers ? chip('花牌あり', 'rules-card') : '');
-  $('bar-steppers').innerHTML = barSteppersHTML(s, !!r.sanma);
+  // ドラとルールのチップは、その設定カードへ移動する
+  const link = (kind) => `data-action="goto" data-goto="${kind === 'dora' ? 'dora-card' : 'rules-card'}"`;
+  $('set-chips').innerHTML = situationChipsHTML(state, link);
+  $('bar-steppers').innerHTML = barSteppersHTML(state.situation, !!state.rules.sanma);
 }
 
 function renderTable() {
@@ -7421,9 +7558,17 @@ function retake() {
     cam.live = 'on';
     renderCamera(view.analysis);
   } else if (cam.source === 'photo') {
-    cam.pop = 'photo';
     renderCamera(view.analysis);
+    openPicker();
   }
+}
+
+/** アルバムを開く（タップの中で呼ぶ。同じ写真をもう一度選べるように値は消す） */
+function openPicker() {
+  const el = $('file-pick');
+  if (!el) return;
+  el.value = '';
+  el.click();
 }
 
 // ---------- 写真 ----------
@@ -7984,27 +8129,23 @@ function setCameraSource(src) {
     startLive();
     return;
   }
+  const again = src === 'photo' && cam.source === 'photo';
   stopLive();
   cam.source = src;
-  cam.pop = src === 'demo' ? 'demo' : cam.photoUrl ? 'photo' : null;
+  cam.pop = src === 'demo' ? 'demo' : null;
   renderCamera(view.analysis);
+  // 写真はアルバムから選ぶ。まだ写真がないとき、または写真タブをもう一度押したときはすぐ開く
+  if (src === 'photo' && (!cam.photoUrl || again)) openPicker();
 }
 
 // ---------- 表示: 上部の設定 ----------
-const RIICHI_LABELS = ['リーチなし', 'リーチ', 'ダブリー'];
-
 function chipsHTML() {
-  const s = state.situation;
-  const tag = state.situationTouched ? '' : '<em>仮</em>';
-  const doraTiles = state.dora.length ? tilesInline(state.dora.map(doraFromIndicator), 'xxs') : 'なし';
-  const open = hasOpenMeld();
-  return (
-    `<button type="button" class="gchip" data-action="cam-pop" data-pop="settings" aria-pressed="${cam.pop === 'settings'}">${windLabel(s.roundWind)}場・${windLabel(s.seatWind)}家${s.seatWind === 27 ? '（親）' : ''}${tag}</button>` +
-    `<button type="button" class="gchip" data-action="cam-pop" data-pop="dora" aria-pressed="${cam.pop === 'dora'}">ドラ ${doraTiles}</button>` +
-    `<button type="button" class="gchip riichi" data-action="cam-riichi" data-riichi="${open ? 0 : s.riichi | 0}" aria-pressed="${!!s.riichi && !open}"${open ? ' disabled' : ''}>${RIICHI_LABELS[s.riichi | 0] || RIICHI_LABELS[0]}</button>` +
-    `<button type="button" class="gchip toggle" data-action="cam-tsumo" aria-pressed="${!!s.tsumo}">${s.tsumo ? 'ツモ' : 'ロン'}</button>` +
-    (state.rules.sanma ? `<button type="button" class="gchip" data-action="cam-pop" data-pop="settings">三人麻雀${s.nuki ? `・抜き${s.nuki}` : ''}</button>` : '')
-  );
+  // ドラは表示牌のポップアップ、ルールは計算条件のポップアップへ
+  const link = (kind) =>
+    kind === 'dora'
+      ? `data-action="cam-pop" data-pop="dora" aria-pressed="${cam.pop === 'dora'}"`
+      : `data-action="cam-pop" data-pop="settings" aria-pressed="${cam.pop === 'settings'}"`;
+  return situationChipsHTML(state, link);
 }
 
 // ---------- 表示: 手牌の上（待ち・テンパイになる牌） ----------
@@ -8262,8 +8403,8 @@ function drawDetail(a) {
     }
     const waits = o.waits.map((w) => `<span class="uke">${tileHTML(w.tile, { size: 'xs' })}</span>`).join('');
     return (
-      `<li class="opt"><div class="opt-top"><span class="cut-lbl">${tileHTML(o.discard, { size: 'xs' })}を切る</span><b>${o.kinds}種待ち</b></div>` +
-      `<div class="tiles-inline">${waits}</div>` +
+      `<li class="opt"><div class="opt-top"><span class="cut-lbl">${tileHTML(o.discard, { size: 'xs' })}を切るとテンパイ</span><b>${o.kinds}種待ち</b></div>` +
+      `<div class="tiles-inline">${waits}<span class="tail-lbl">でアガリ</span></div>` +
       `<small>${best ? `ロン最高 ${fmt(best)}点` : 'ロンは役なし（リーチかツモが必要）'}</small></li>`
     );
   });
@@ -8432,10 +8573,8 @@ function popHTML() {
   switch (cam.pop) {
     case 'settings': {
       const open = hasOpenMeld();
-      const winds = state.rules.sanma ? [[27, '東'], [28, '南'], [29, '西']] : [[27, '東'], [28, '南'], [29, '西'], [30, '北']];
       const specials = [['rinshan', '嶺上開花'], ['chankan', '槍槓'], ['haitei', '海底'], ['houtei', '河底']];
       const r = state.rules;
-      const seats = r.sanma ? [[27, '東（親）'], [28, '南'], [29, '西']] : [[27, '東（親）'], [28, '南'], [29, '西'], [30, '北']];
       const body =
         ruleRow('人数', 'sanma', [[0, '四人麻雀'], [1, '三人麻雀']], r.sanma ? 1 : 0) +
         (r.sanma ? ruleRow('ツモ損', 'tsumoLoss', [[1, 'あり'], [0, 'なし']], r.tsumoLoss === false ? 0 : 1) : '') +
@@ -8443,16 +8582,12 @@ function popHTML() {
         (r.fuMode && r.fuMode !== 'normal'
           ? ruleRow('符の例外', 'fuExceptions', [[1, '七対子25・平和ツモ20'], [0, 'なし']], r.fuExceptions === false ? 0 : 1, 'auto')
           : '') +
-        segRow('場風', 'roundWind', winds, s.roundWind) +
-        segRow('自風', 'seatWind', seats, s.seatWind) +
-        segRow('アガリ', 'tsumo', [[0, 'ロン'], [1, 'ツモ']], s.tsumo ? 1 : 0) +
-        segRow('リーチ', 'riichi', [[0, 'なし'], [1, 'リーチ'], [2, 'ダブル']], s.riichi | 0, open) +
         `<div class="prow"><span class="plabel">付加役</span><div class="chips">` +
         `<button type="button" class="chip" data-action="cam-special" data-value="ippatsu" aria-pressed="${!!s.ippatsu}"${!s.riichi || open ? ' disabled' : ''}>一発</button>` +
         specials.map(([v, l]) => `<button type="button" class="chip" data-action="cam-special" data-value="${v}" aria-pressed="${s.special === v}">${l}</button>`).join('') +
         `</div></div>` +
         ruleRow('花牌', 'flowers', [[0, '使わない'], [1, '使う']], r.flowers ? 1 : 0) +
-        `<p class="muted">本場・供託は上の「ルール」の帯で増やせます。裏ドラは「手入力」画面で設定できます。</p>`;
+        `<p class="muted">場・家・局・リーチ・ロン/ツモ・本場・供託は上の「ルール」の帯でタップして変えられます。裏ドラは「手入力」画面で設定できます。</p>`;
       return popShell('点数の計算条件', body);
     }
     case 'dora': {
@@ -8538,12 +8673,6 @@ function popHTML() {
       ).join('');
       return popShell('デモ画像で試す', `<div class="demo-list">${items}</div>`);
     }
-    case 'photo': {
-      const body =
-        `<p class="muted">スマホは縦のままで、手牌が横一列に写るように撮ってください。撮ったあとはドラッグと2本指で手牌を枠に合わせます。</p>` +
-        `<div class="btn-row"><label class="btn" for="file-capture">${ICON.live}写真を撮る</label><label class="btn ghost" for="file-pick">${ICON.photo}アルバムから選ぶ</label></div>`;
-      return popShell('写真から読み取る', body);
-    }
     default:
       return '';
   }
@@ -8553,7 +8682,7 @@ function popHTML() {
 function mediaMessage() {
   // 手牌を表示しているときは案内を短くする（画面の高さを手牌側に回す）
   const compact = handIds().length > 0;
-  const photoButtons = `<div class="btn-row"><label class="btn" for="file-capture">${ICON.live}写真を撮る</label><label class="btn ghost" for="file-pick">${ICON.photo}アルバムから選ぶ</label></div>`;
+  const photoButtons = `<div class="btn-row"><label class="btn" for="file-pick">${ICON.photo}アルバムから選ぶ</label></div>`;
   if (cam.source === 'live') {
     if (cam.live === 'starting') return '<p>カメラを起動しています…</p>';
     // カメラが使えないと分かっている画面では、起動を試す前に代わりの方法を出す
@@ -8638,6 +8767,7 @@ function renderCamera(analysis) {
   const a = cameraView(analysis);
   ensureSelection(a);
   $('cam-stage').dataset.source = cam.source;
+  syncViewTabs(state.mode, cam.source);
   renderMedia();
   renderControls();
   $('set-chips').innerHTML = chipsHTML();
@@ -8726,11 +8856,6 @@ function handleCamera(el) {
       return toggleSpecial(d.value);
     case 'cam-step':
       return step(d.key, +d.delta);
-    case 'cam-riichi':
-      // なし → リーチ → ダブル → なし
-      return setSituation('riichi', ((state.situation.riichi | 0) + 1) % 3);
-    case 'cam-tsumo':
-      return setSituation('tsumo', !state.situation.tsumo);
     case 'cam-dora-add':
       return addDora(+d.id);
     case 'cam-dora-del':
@@ -8788,13 +8913,11 @@ function leaveCamera() {
 }
 
 function initCamera() {
-  for (const id of ['file-capture', 'file-pick']) {
-    $(id).addEventListener('change', (e) => {
-      const f = e.target.files && e.target.files[0];
-      e.target.value = '';
-      if (f) loadPhoto(f);
-    });
-  }
+  $('file-pick').addEventListener('change', (e) => {
+    const f = e.target.files && e.target.files[0];
+    e.target.value = '';
+    if (f) loadPhoto(f);
+  });
   const stage = $('cam-stage');
   stage.addEventListener('pointerdown', onPointerDown);
   stage.addEventListener('pointermove', onPointerMove);
@@ -8828,19 +8951,10 @@ function render(a) {
   $('cam-view').hidden = !camera;
   $('manual-view').hidden = camera;
   if (!camera) $('pop').hidden = true;
-  const now = currentView();
-  document.querySelectorAll('[data-action="view"]').forEach((b) => {
-    b.setAttribute('aria-selected', String(b.dataset.view === now));
-  });
+  syncViewTabs(state.mode, state.cam.source);
   if (camera) renderCamera(a);
   else renderManual(a);
   renderGuide();
-}
-
-/** 上のタブの今の選択（カメラ／写真／手入力。デモ中はどれでもない） */
-function currentView() {
-  if (state.mode === 'manual') return 'manual';
-  return state.cam.source === 'live' ? 'live' : state.cam.source === 'photo' ? 'photo' : '';
 }
 
 function setMode(mode) {
@@ -8866,6 +8980,7 @@ function onClick(e) {
   const action = el.dataset.action;
   if (action === 'view') setView(el.dataset.view);
   else if (action === 'bar-step') step(el.dataset.key, +el.dataset.delta);
+  else if (action === 'cycle') cycleSituation(el.dataset.key);
   else if (action.startsWith('guide-')) handleGuide(el);
   else if (action.startsWith('cam-')) handleCamera(el);
   else handleManual(el);
