@@ -15,7 +15,7 @@
 <meta name="description" content="手牌を入力するとシャンテン数・待ち・点数をすぐに計算する麻雀アプリ">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Shippori+Mincho+B1:wght@700;800&family=Zen+Kaku+Gothic+New:wght@400;500;700&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Shippori+Mincho+B1:wght@700;800&family=Zen+Kaku+Gothic+New:wght@400;500;700&family=Zen+Maru+Gothic:wght@700;900&display=swap">
 <style>
 :root {
   --ground: #edf1ec;
@@ -43,6 +43,8 @@
   --shadow: 0 1px 2px rgb(21 32 27 / 0.07), 0 6px 18px rgb(21 32 27 / 0.06);
   --font-ui: 'Zen Kaku Gothic New', 'Hiragino Sans', 'Hiragino Kaku Gothic ProN', 'Noto Sans JP', 'Noto Sans CJK JP', system-ui, sans-serif;
   --font-display: 'Shippori Mincho B1', 'Hiragino Mincho ProN', 'Yu Mincho', 'Noto Serif JP', 'Noto Serif CJK JP', serif;
+  /* 見出し「何待ち？」だけは丸ゴシックで柔らかく */
+  --font-brand: 'Zen Maru Gothic', 'Hiragino Maru Gothic ProN', 'Rounded Mplus 1c', 'Kosugi Maru', 'Noto Sans JP', system-ui, sans-serif;
   color-scheme: light;
 }
 @media (prefers-color-scheme: dark) {
@@ -162,12 +164,32 @@ h2 {
 }
 .brand-mini {
   flex: none;
-  font-family: var(--font-display);
-  font-weight: 800;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-family: var(--font-brand);
+  font-weight: 900;
   font-size: 24px;
-  letter-spacing: 0.06em;
+  letter-spacing: 0.04em;
   line-height: 1;
   white-space: nowrap;
+}
+/* 見出しの横の牌（中）。少し傾けて遊びを出す */
+.brand-tile {
+  display: inline-flex;
+  align-items: center;
+  flex: none;
+}
+.brand-tile .tile.brand-mark {
+  --w: 18px;
+  --edge: 2px;
+  margin-bottom: 3px;
+  transform: rotate(-10deg);
+}
+.guide-hero .brand-tile .tile.brand-mark {
+  --w: 24px;
+  --edge: 3px;
+  margin-right: 3px;
 }
 .appbar .mode-switch {
   /* 見出しと「？」のあとに回して、狭い画面では下の行いっぱいに広げる */
@@ -201,37 +223,40 @@ h2 {
   flex: none;
 }
 
-/* ---------- 状況の帯（自分の状況／場の状況。画像の外に出して、枠で囲う） ---------- */
+/* ---------- 状況の帯（場の設定／アガリ想定。画像の外に出して、枠で囲う） ---------- */
 .rules-bar {
   flex: none;
   display: grid;
-  grid-template-columns: auto minmax(0, 1fr);
+  /* 見出しの列は2段で同じ幅（右のボタンの始まりが揃う） */
+  grid-template-columns: max-content minmax(0, 1fr);
   align-items: center;
-  gap: 5px 6px;
-  margin: 0 max(12px, env(safe-area-inset-left, 0px)) 4px;
-  padding: 6px 6px 6px 9px;
+  gap: 5px 7px;
+  margin: 0 max(10px, env(safe-area-inset-left, 0px)) 4px;
+  padding: 6px 6px 6px 8px;
   border: 2px solid var(--line);
   border-radius: 12px;
   background: var(--surface);
   min-width: 0;
 }
 .sit-head {
-  display: inline-flex;
+  justify-self: stretch;
+  align-self: stretch;
+  display: flex;
   align-items: center;
-  gap: 4px;
+  min-width: 4.4em;
+  padding: 2px 2px;
   font-size: 12px;
   font-weight: 800;
+  line-height: 1.2;
   white-space: nowrap;
   color: var(--ink);
 }
-.sit-head em {
-  font-style: normal;
-  font-size: 10px;
-  line-height: 15px;
-  padding: 0 4px;
-  border-radius: 4px;
-  background: #e5ad52;
-  color: #1b1406;
+/* 場の設定 と アガリ想定 の間の鎖線 */
+.sit-sep {
+  grid-column: 1 / -1;
+  height: 0;
+  margin: 1px 0;
+  border-top: 1.5px dashed var(--line);
 }
 .sit-chips {
   min-width: 0;
@@ -245,7 +270,7 @@ h2 {
   align-items: center;
   gap: 0;
   border-radius: 999px;
-  padding: 1px 1px 1px 6px;
+  padding: 1px 4px 1px 6px; /* ＋の右にも少し余白 */
   background: var(--surface-2);
   font-size: 10.5px;
   font-weight: 700;
@@ -254,6 +279,10 @@ h2 {
 .bstep[data-on='true'] {
   background: var(--warn-soft);
   color: var(--ink);
+}
+/* 裏ドラはリーチのときだけ数える（リーチなしのときは薄く） */
+.bstep[data-dim='true'] {
+  opacity: 0.55;
 }
 .bstep button {
   width: 20px;
@@ -269,7 +298,7 @@ h2 {
   background: rgb(0 0 0 / 0.1);
 }
 .bstep output {
-  min-width: 0.9em;
+  min-width: 1.25em; /* 2桁でも枠が動かない */
   text-align: center;
   font-variant-numeric: tabular-nums;
   font-size: 13px;
@@ -2519,10 +2548,13 @@ details.more[open] > summary::before {
   padding-bottom: 6px;
 }
 .guide-hero b {
-  font-family: var(--font-display);
-  font-weight: 800;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-family: var(--font-brand);
+  font-weight: 900;
   font-size: 30px;
-  letter-spacing: 0.08em;
+  letter-spacing: 0.05em;
 }
 .guide-hero span {
   font-size: 13px;
@@ -2859,6 +2891,8 @@ details.more[open] > summary::before {
 /* 切り替えチップは幅を固定して、文字が変わっても押す場所が動かないようにする */
 .rules-bar .gchip.fixed {
   justify-content: center;
+  height: 24px;
+  padding-block: 0;
 }
 .rules-bar .gchip.fixed[data-key='roundWind'] {
   min-width: 3.8em;
@@ -2869,12 +2903,58 @@ details.more[open] > summary::before {
 .rules-bar .gchip.fixed[data-key='riichi'] {
   min-width: 6.8em;
 }
-.rules-bar .gchip.fixed[data-key='tsumo'] {
+.rules-bar .gchip.fixed[data-key='tsumo'],
+.rules-bar .gchip.fixed[data-key='ippatsu'] {
   min-width: 3.6em;
 }
-.rules-bar .gchip.fixed[data-key='tsumo'][aria-pressed='true'] {
+.rules-bar .gchip.fixed[data-key='tsumo'][aria-pressed='true'],
+.rules-bar .gchip.fixed[data-key='ippatsu'][aria-pressed='true'] {
   background: var(--ink);
   color: var(--surface);
+}
+/* 一発はリーチ・ダブリーのときだけ切り替わる（それ以外は薄く） */
+.rules-bar .gchip.fixed[data-key='ippatsu'][data-off='true'] {
+  color: var(--muted);
+  opacity: 0.55;
+}
+/* ドラ表記: 「なし」でも牌1〜2枚でも同じ幅（3枚以上は伸びる） */
+.rules-bar .gchip.dora {
+  min-width: 6.6em;
+  height: 24px;
+  padding-block: 0;
+  gap: 3px;
+}
+.rules-bar .gchip.dora .none {
+  color: var(--muted);
+}
+/* その他（人数・符などの設定シート）は色を変えて区別 */
+.rules-bar .gchip.more {
+  position: relative;
+  min-width: 4.2em;
+  height: 24px;
+  padding-block: 0;
+  justify-content: center;
+  background: var(--accent);
+  color: #fff;
+}
+.rules-bar .gchip.more[data-changed='true']::after {
+  content: '';
+  position: absolute;
+  top: 1px;
+  right: 3px;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--warn);
+  box-shadow: 0 0 0 1.5px var(--surface);
+}
+:root[data-theme='dark'] .rules-bar .gchip.more {
+  color: #0c1310;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme='light']) .rules-bar .gchip.more {
+    color: #0c1310;
+  }
 }
 .rules-bar .gchip.fixed[data-key='riichi'][data-riichi='0'] {
   background: var(--surface-2);
@@ -2906,7 +2986,7 @@ details.more[open] > summary::before {
 </noscript>
 <div class="app" id="app" data-mode="camera">
 <header class="appbar">
-  <b class="brand-mini">何待ち？</b>
+  <b class="brand-mini"><span class="brand-tile" id="brand-tile" aria-hidden="true"></span>何待ち？</b>
   <div class="mode-switch" role="tablist" aria-label="入力の方法">
     <button type="button" role="tab" data-action="view" data-view="live" aria-selected="false">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 8h3l2-2.5h6L17 8h3v11H4z"/><circle cx="12" cy="13.5" r="3.6"/></svg>
@@ -3776,7 +3856,10 @@ function buildEnv(input) {
   let dora = 0;
   for (const ind of input.doraIndicators || []) dora += full[doraFromIndicator(ind)];
   let ura = 0;
-  if (riichi > 0) for (const ind of input.uraIndicators || []) ura += full[doraFromIndicator(ind)];
+  if (riichi > 0) {
+    for (const ind of input.uraIndicators || []) ura += full[doraFromIndicator(ind)];
+    ura += Math.max(0, input.uraCount | 0); // 枚数で直接入れた裏ドラ
+  }
   const aka = allTiles.filter(isRed).length;
   const nuki = Math.max(0, input.nuki | 0); // 抜きドラ（北・花）
 
@@ -4106,6 +4189,7 @@ function scoringContext(state) {
     seatWind: s.seatWind ?? EAST,
     doraIndicators: state.dora || [],
     uraIndicators: state.ura || [],
+    uraCount: s.uraDora | 0, // 帯の「裏ドラ」±で入れた枚数（表示牌とは別に足す）
     honba: s.honba | 0,
     kyotaku: s.kyotaku | 0,
     nuki: s.nuki | 0,
@@ -6449,6 +6533,11 @@ function tilesInline(ids, size = 'xs') {
   return ids.map((id) => tileHTML(id, { size })).join('');
 }
 
+/** 見出し「何待ち？」の横に付ける牌のアイコン（中を少し傾けて） */
+function brandTileHTML() {
+  return tileHTML(33, { size: 'xxs', extra: 'brand-mark' });
+}
+
 function blockTiles(b) {
   if (b.kind === 'shuntsu') return [b.tile, b.tile + 1, b.tile + 2];
   return new Array(b.kan ? 4 : 3).fill(b.tile);
@@ -6513,6 +6602,8 @@ function situationText(s) {
     `${windLabel(s.seatWind)}家（${dealer ? '親' : '子'}）`,
     s.riichi === 2 ? 'ダブルリーチ' : s.riichi ? 'リーチ' : 'リーチなし',
   ];
+  if (s.riichi && s.ippatsu) parts.push('一発');
+  if (s.riichi && s.uraDora) parts.push(`裏ドラ${s.uraDora}`);
   if (s.nuki) parts.push(`抜きドラ${s.nuki}`);
   if (s.honba) parts.push(`${s.honba}本場`);
   return parts.join('・');
@@ -6537,48 +6628,53 @@ function syncViewTabs(mode, source) {
 
 const RIICHI_LABELS = ['リーチなし', 'リーチ', 'ダブリー'];
 
-/** 積み棒（本場・供託・抜きドラ）の −[数字]＋ */
-function stepperHTML(s, key, label) {
+/** 数を −[数字]＋ で入れる（本場・供託・裏ドラ・抜きドラ）。dim=true は今は点数に入らない印 */
+function stepperHTML(s, key, label, dim = false) {
   return (
-    `<span class="bstep" data-on="${(s[key] | 0) > 0}"><b>${label}</b>` +
+    `<span class="bstep" data-key="${key}" data-on="${(s[key] | 0) > 0}"${dim ? ' data-dim="true"' : ''}><b>${label}</b>` +
     `<button type="button" data-action="bar-step" data-key="${key}" data-delta="-1" aria-label="${label}を減らす">−</button>` +
     `<output>${s[key] | 0}</output>` +
     `<button type="button" data-action="bar-step" data-key="${key}" data-delta="1" aria-label="${label}を増やす">＋</button></span>`
   );
 }
 
+/** 「その他」に、既定と違うルールがあるか（あれば点を付けて知らせる） */
+function rulesChanged(r) {
+  return !!(r.sanma || (r.fuMode && r.fuMode !== 'normal') || r.flowers || r.kiriage || r.doubleYakuman || r.kuitan === false);
+}
+
 /**
- * 状況の帯（カメラ・手入力で共通）。2行に分ける:
- *   自分の状況: 家・リーチ・ロン/ツモ（タップで切り替え。幅は固定＝押す場所が動かない）
- *   場の状況:   場・ドラ・本場・供託（・抜きドラ）
- * ドラとルールのチップは画面ごとに行き先が違うので link(kind) で属性をもらう
+ * 状況の帯（カメラ・手入力で共通）。鎖線で2段に分ける:
+ *   場の設定:   場風 → 家 → 本場 → 供託 → ドラ
+ *   アガリ想定: リーチ → ロン/ツモ → 一発 → 裏ドラ → 抜きドラ → その他（人数・符などの設定シート）
+ * タップで切り替えるチップは幅を固定して、文字が変わっても押す場所が動かないようにする。
+ * ドラと「その他」のチップは画面ごとに行き先が違うので link(kind) で属性をもらう
  */
 function situationBarHTML(state, link) {
   const s = state.situation;
   const r = state.rules;
-  const sanma = !!r.sanma;
   const open = state.melds.some((m) => m.type !== 'ankan');
+  const riichi = open ? 0 : s.riichi | 0;
   const fixed = (key, label, extra = '') =>
     `<button type="button" class="gchip fixed" data-action="cycle" data-key="${key}"${extra}>${label}</button>`;
-  const doraTiles = state.dora.length ? tilesInline(state.dora.map(doraFromIndicator), 'xxs') : 'なし';
-  const fuLabel = { normal: '', fix30: '符 30固定', fix40: '符 40固定' }[r.fuMode || 'normal'];
-  const mine =
-    fixed('seatWind', `${windLabel(s.seatWind)}家${s.seatWind === 27 ? '<em class="oya">親</em>' : ''}`) +
-    fixed('riichi', RIICHI_LABELS[s.riichi | 0] || RIICHI_LABELS[0], ` data-riichi="${open ? 0 : s.riichi | 0}"${open ? ' disabled' : ''}`) +
-    fixed('tsumo', s.tsumo ? 'ツモ' : 'ロン', ` aria-pressed="${!!s.tsumo}"`);
+  const doraTiles = state.dora.length ? tilesInline(state.dora.map(doraFromIndicator), 'xxs') : '<span class="none">なし</span>';
   const table =
     fixed('roundWind', `${windLabel(s.roundWind)}場`) +
-    `<button type="button" class="gchip" ${link('dora')}>ドラ ${doraTiles}</button>` +
+    fixed('seatWind', `${windLabel(s.seatWind)}家${s.seatWind === 27 ? '<em class="oya">親</em>' : ''}`) +
     stepperHTML(s, 'honba', '本場') +
     stepperHTML(s, 'kyotaku', '供託') +
-    (sanma ? stepperHTML(s, 'nuki', '抜き') : '') +
-    (sanma ? `<button type="button" class="gchip" ${link('rules')}>三人麻雀</button>` : '') +
-    (fuLabel ? `<button type="button" class="gchip" ${link('rules')}>${fuLabel}</button>` : '') +
-    (r.flowers ? `<button type="button" class="gchip" ${link('rules')}>花牌あり</button>` : '');
-  const tag = state.situationTouched ? '' : '<em>仮</em>';
+    `<button type="button" class="gchip dora" ${link('dora')}><span>ドラ</span>${doraTiles}</button>`;
+  const agari =
+    fixed('riichi', RIICHI_LABELS[riichi] || RIICHI_LABELS[0], ` data-riichi="${riichi}"${open ? ' disabled' : ''}`) +
+    fixed('tsumo', s.tsumo ? 'ツモ' : 'ロン', ` aria-pressed="${!!s.tsumo}"`) +
+    fixed('ippatsu', '一発', ` aria-pressed="${!!(riichi && s.ippatsu)}"${riichi ? '' : ' data-off="true"'}`) +
+    stepperHTML(s, 'uraDora', '裏ドラ', !riichi) +
+    stepperHTML(s, 'nuki', '抜き') +
+    `<button type="button" class="gchip more" ${link('rules')}${rulesChanged(r) ? ' data-changed="true"' : ''}>その他</button>`;
   return (
-    `<b class="sit-head">自分の状況${tag}</b><div class="sit-chips">${mine}</div>` +
-    `<b class="sit-head">場の状況</b><div class="sit-chips">${table}</div>`
+    `<b class="sit-head">場の設定</b><div class="sit-chips">${table}</div>` +
+    `<div class="sit-sep" role="separator"></div>` +
+    `<b class="sit-head">アガリ想定</b><div class="sit-chips">${agari}</div>`
   );
 }
 
@@ -6657,6 +6753,7 @@ const TSUMO_ONLY = new Set(['rinshan', 'haitei', 'tenhou', 'chiihou']);
 const RON_ONLY = new Set(['houtei', 'chankan']);
 const DEFAULT_SITUATION = Object.freeze({
   roundWind: 27, seatWind: 28, tsumo: false, riichi: 0, ippatsu: false, special: '', honba: 0, kyotaku: 0, nuki: 0,
+  uraDora: 0, // 帯の「裏ドラ」±で入れる枚数（リーチ時だけ点数に入る）
 });
 
 /** デモ場面（写真の代わりに使う手牌） */
@@ -6890,7 +6987,7 @@ function clearHand() {
   state.cam.draft = null;
   state.cam.sel = null;
   // 1局ごとの条件は初期化（場風・自風・積み棒は残す）
-  Object.assign(state.situation, { tsumo: false, riichi: 0, ippatsu: false, special: '' });
+  Object.assign(state.situation, { tsumo: false, riichi: 0, ippatsu: false, special: '', uraDora: 0, nuki: 0 });
   update();
   toast('全消去しました（「戻す」で元に戻せます）');
 }
@@ -6928,6 +7025,8 @@ function cycleSituation(key) {
       return setSituation('riichi', ((s.riichi | 0) + 1) % 3);
     case 'tsumo':
       return setSituation('tsumo', !s.tsumo);
+    case 'ippatsu': // リーチ・ダブリーのときだけ
+      return toggleSpecial('ippatsu');
     default:
       return undefined;
   }
@@ -6969,10 +7068,13 @@ function toggleSpecial(sp) {
   update();
 }
 
+const STEP_MAX = { honba: 20, kyotaku: 10, nuki: 8, uraDora: 12 };
 function step(key, delta) {
+  if (!(key in STEP_MAX)) return;
   const s = state.situation;
-  s[key] = Math.max(0, Math.min(key === 'honba' ? 20 : 10, (s[key] | 0) + delta));
+  s[key] = Math.max(0, Math.min(STEP_MAX[key], (s[key] | 0) + delta));
   state.situationTouched = true;
+  if (key === 'uraDora' && delta > 0 && !s.riichi) toast('裏ドラはリーチしているときだけ数えます');
   update();
 }
 
@@ -7021,7 +7123,7 @@ const STEPS = [
   ['read', '「認識する」を押す', '牌の判別は端末の中だけで行います（通信なし・2秒ほど）'],
   ['fix', '違う牌はタップで直す', '読み違えた牌をタップすると、候補から選び直せます'],
   ['wait', '待ち牌が手牌の上に出る', '待ち牌をタップすると、役と点数が出ます'],
-  ['gear', '設定を合わせる', '三人麻雀・ツモ損・符の数え方・花牌のあり／なしを切り替えられます'],
+  ['gear', '設定を合わせる', '上の「場の設定」「アガリ想定」はタップで切り替え。人数・符の数え方・花牌は「その他」から'],
 ];
 
 function bigButton(kind, icon, label, note) {
@@ -7034,7 +7136,7 @@ function bigButton(kind, icon, label, note) {
 function startHTML() {
   return (
     '<div class="guide-card">' +
-    '<div class="guide-hero"><b>何待ち？</b><span>手牌の写真から、シャンテン数・待ち・点数</span></div>' +
+    `<div class="guide-hero"><b><span class="brand-tile" aria-hidden="true">${brandTileHTML()}</span>何待ち？</b><span>手牌の写真から、シャンテン数・待ち・点数</span></div>` +
     bigButton('photo', 'photo', '写真から読み取る', 'アルバムから選ぶ') +
     bigButton('manual', 'hand', '牌をタップで入力', '写真を使わずに手牌を入れる') +
     bigButton('help', 'help', '使い方を見る', '流れを絵で確認する') +
@@ -7554,7 +7656,9 @@ function renderDora() {
   $('ura-ind').innerHTML = ind('ura');
   const derived = (list) => (list.length ? `ドラ ${list.map((id) => tileHTML(doraFromIndicator(id), { size: 'xs' })).join('')}` : '');
   $('dora-derived').innerHTML = derived(state.dora);
-  $('ura-derived').innerHTML = state.ura.length ? derived(state.ura) : '<span>リーチ時のみ計算します</span>';
+  const uraN = state.situation.uraDora | 0;
+  const uraNote = uraN ? `<span>＋上の「裏ドラ」${uraN}枚</span>` : '';
+  $('ura-derived').innerHTML = state.ura.length ? derived(state.ura) + uraNote : uraNote || '<span>リーチ時のみ計算します（枚数は上の「裏ドラ」±でも入れられます）</span>';
   $('ura-row').classList.toggle('dim', !state.situation.riichi);
 }
 
@@ -8891,7 +8995,6 @@ function popHTML() {
   const s = state.situation;
   switch (cam.pop) {
     case 'settings': {
-      const open = hasOpenMeld();
       const specials = [['rinshan', '嶺上開花'], ['chankan', '槍槓'], ['haitei', '海底'], ['houtei', '河底']];
       const r = state.rules;
       const body =
@@ -8902,12 +9005,11 @@ function popHTML() {
           ? ruleRow('符の例外', 'fuExceptions', [[1, '七対子25・平和ツモ20'], [0, 'なし']], r.fuExceptions === false ? 0 : 1, 'auto')
           : '') +
         `<div class="prow"><span class="plabel">付加役</span><div class="chips">` +
-        `<button type="button" class="chip" data-action="cam-special" data-value="ippatsu" aria-pressed="${!!s.ippatsu}"${!s.riichi || open ? ' disabled' : ''}>一発</button>` +
         specials.map(([v, l]) => `<button type="button" class="chip" data-action="cam-special" data-value="${v}" aria-pressed="${s.special === v}">${l}</button>`).join('') +
         `</div></div>` +
         ruleRow('花牌', 'flowers', [[0, '使わない'], [1, '使う']], r.flowers ? 1 : 0) +
-        `<p class="muted">場・家・リーチ・ロン/ツモ・本場・供託は上の「自分の状況」「場の状況」でタップして変えられます。裏ドラは「手入力」画面で設定できます。</p>`;
-      return popShell('点数の計算条件', body);
+        `<p class="muted">場風・家・本場・供託・ドラは上の「場の設定」、リーチ・ロン/ツモ・一発・裏ドラ・抜きドラは「アガリ想定」でタップして変えられます。裏ドラを表示牌で入れたいときは「手入力」画面へ。</p>`;
+      return popShell('その他の設定', body);
     }
     case 'dora': {
       const inds = state.dora
@@ -9306,6 +9408,8 @@ function onClick(e) {
 
 function init() {
   document.body.insertAdjacentHTML('afterbegin', tileSprite());
+  const brandTile = $('brand-tile');
+  if (brandTile) brandTile.innerHTML = brandTileHTML();
   load();
   setRenderer(render);
   document.addEventListener('click', onClick);
