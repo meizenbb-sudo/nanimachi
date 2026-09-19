@@ -227,8 +227,8 @@ h2 {
 .rules-bar {
   flex: none;
   display: grid;
-  /* 見出しの列は2段で同じ幅（右のボタンの始まりが揃う） */
-  grid-template-columns: max-content minmax(0, 1fr);
+  /* 見出しの列は2段で同じ幅（右のボタンの始まりが揃う）。3列目は その他・リセット・OK の縦の列 */
+  grid-template-columns: max-content minmax(0, 1fr) auto;
   align-items: center;
   gap: 5px 7px;
   margin: 0 max(10px, env(safe-area-inset-left, 0px)) 4px;
@@ -247,7 +247,7 @@ h2 {
   justify-content: center;
   gap: 3px;
   min-width: 4.4em;
-  padding: 2px 2px;
+  padding: 2px 1px;
   font-size: 12px;
   font-weight: 800;
   line-height: 1.2;
@@ -273,28 +273,16 @@ h2 {
   background: var(--accent-soft);
   color: var(--accent);
 }
-/* 右下の「リセット」「OK」 */
-.sit-foot {
-  grid-column: 1 / -1;
-  display: flex;
-  align-items: center;
-  justify-content: flex-end;
-  gap: 6px;
-  margin-top: 1px;
-}
-.sit-foot .sit-note {
-  margin-right: auto;
-  font-size: 10.5px;
-  color: var(--muted);
-}
+/* 「リセット」「OK」 */
 .sbtn {
-  height: 28px;
-  padding: 0 14px;
+  height: 24px;
+  padding: 0 10px;
   border: 0;
   border-radius: 999px;
-  font-size: 12px;
+  font-size: 11px;
   font-weight: 800;
   letter-spacing: 0.02em;
+  white-space: nowrap;
 }
 .sbtn.reset {
   background: var(--surface-2);
@@ -302,7 +290,6 @@ h2 {
   box-shadow: inset 0 0 0 1.5px var(--line);
 }
 .sbtn.ok {
-  min-width: 4.6em;
   background: var(--accent);
   color: #fff;
 }
@@ -383,10 +370,10 @@ h2 {
 }
 .players-seg button {
   display: inline-flex;
-  align-items: baseline;
+  align-items: center; /* 高さの中央にそろえる（baseline だと上に寄る） */
   gap: 1px;
-  height: 26px;
-  padding: 0 9px;
+  height: 30px;
+  padding: 0 10px;
   border: 0;
   border-radius: 999px;
   background: none;
@@ -395,22 +382,65 @@ h2 {
   line-height: 1;
 }
 .players-seg button b {
-  font-size: 14px; /* 「四人」「三人」を大きく */
+  font-size: 17px; /* 「四人」「三人」を大きく */
+  line-height: 1;
 }
 .players-seg button small {
-  font-size: 9.5px; /* 「麻雀」は小さく */
+  align-self: flex-end;
+  margin-bottom: 7px; /* 大きい文字の下端にそろえる */
+  font-size: 10px; /* 「麻雀」は小さく */
   font-weight: 700;
+  line-height: 1;
 }
 .players-seg button[aria-pressed='true'] {
-  background: var(--ink);
-  color: var(--surface);
+  background: var(--accent);
+  color: #fff;
 }
-/* 場の設定 と アガリ想定 の間の鎖線 */
+:root[data-theme='dark'] .players-seg button[aria-pressed='true'] {
+  color: #0c1310;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme='light']) .players-seg button[aria-pressed='true'] {
+    color: #0c1310;
+  }
+}
+/* 場の設定 と アガリ想定 の間の鎖線（右の縦の列にはかからない） */
 .sit-sep {
-  grid-column: 1 / -1;
+  grid-column: 1 / 3;
   height: 0;
   margin: 1px 0;
   border-top: 1.5px dashed var(--line);
+}
+/* 右の縦の列: その他・リセット・OK。2段の高さの中央に置き、左の縦線で「両方の段に対応」を示す */
+.sit-side {
+  grid-column: 3;
+  grid-row: 1 / 4;
+  align-self: center;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  margin-left: -2px;
+  padding-left: 6px;
+  border-left: 1.5px solid var(--line);
+}
+.sit-side .sbtn,
+.sit-side .gchip.more {
+  width: 100%;
+  min-width: 4.2em;
+  height: 24px;
+  padding: 0 5px;
+  font-size: 11px;
+}
+/* その他はOK（緑）と見分けるため黒 */
+.rules-bar .sit-side .gchip.more {
+  min-width: 0;
+  border-radius: 999px;
+  background: var(--ink);
+  color: var(--surface);
+}
+.rules-bar .sit-side .gchip.more[data-changed='true']::after {
+  top: 0;
+  right: 1px;
 }
 .sit-chips {
   min-width: 0;
@@ -424,9 +454,9 @@ h2 {
   align-items: center;
   gap: 0;
   border-radius: 999px;
-  padding: 1px 4px 1px 6px; /* ＋の右にも少し余白 */
+  padding: 1px 3px 1px 5px; /* ＋の右にも少し余白 */
   background: var(--surface-2);
-  font-size: 10.5px;
+  font-size: 10px;
   font-weight: 700;
   color: var(--muted);
 }
@@ -439,7 +469,7 @@ h2 {
   opacity: 0.55;
 }
 .bstep button {
-  width: 20px;
+  width: 18px;
   height: 22px;
   border: 0;
   border-radius: 50%;
@@ -452,7 +482,7 @@ h2 {
   background: rgb(0 0 0 / 0.1);
 }
 .bstep output {
-  min-width: 1.25em; /* 2桁でも枠が動かない */
+  min-width: 1.15em; /* 2桁でも枠が動かない */
   text-align: center;
   font-variant-numeric: tabular-nums;
   font-size: 13px;
@@ -3172,7 +3202,8 @@ details.more[open] > summary::before {
   min-width: 5.4em;
 }
 .rules-bar .gchip.fixed[data-key='riichi'] {
-  min-width: 6.8em;
+  min-width: 6.3em;
+  padding-inline: 5px;
 }
 .rules-bar .gchip.fixed[data-key='ippatsu'] {
   min-width: 3.6em;
@@ -3197,7 +3228,7 @@ details.more[open] > summary::before {
   display: inline-flex;
   align-items: center;
   height: 20px;
-  padding: 0 7px;
+  padding: 0 6px;
   border-radius: 999px;
 }
 .rules-bar .gchip.seg2[aria-pressed='false'] .seg-a,
@@ -6983,10 +7014,11 @@ function pendingScoreHTML(compact = false) {
 /**
  * 状況の帯（カメラ・手入力で共通）。鎖線で2段に分ける:
  *   場の設定:   場風 → 家 → 本場 → 供託 → ドラ
- *   アガリ想定: リーチ → ロン/ツモ → 一発 → 裏ドラ → 抜きドラ → その他（人数・符などの設定シート）
+ *   アガリ想定: リーチ → ロン/ツモ → 一発 → 裏ドラ → 抜きドラ
+ *   右の縦の列: その他（人数・符などの設定シート）・リセット・OK（両方の段にかかる）
  * タップで切り替えるチップは幅を固定して、文字が変わっても押す場所が動かないようにする。
  * ドラと「その他」のチップは画面ごとに行き先が違うので link(kind) で属性をもらう。
- * status = { table, agari: 'none'|'edit'|'ok', ready } は見出し下の札と右下の「リセット」「OK」に使う
+ * status = { table, agari: 'none'|'edit'|'ok', ready } は見出し下の札と右の「リセット」「OK」に使う
  */
 function situationBarHTML(state, link, status = { table: 'none', agari: 'none', ready: false }) {
   const s = state.situation;
@@ -7011,20 +7043,20 @@ function situationBarHTML(state, link, status = { table: 'none', agari: 'none', 
     fixed('riichi', RIICHI_LABELS[riichi] || RIICHI_LABELS[0], ` data-riichi="${riichi}"${open ? ' disabled' : ''}`) +
     tsumo +
     fixed('ippatsu', '一発', ` aria-pressed="${!!(riichi && s.ippatsu)}"${riichi ? '' : ' data-off="true"'}`) +
-    `<span class="sit-br" aria-hidden="true"></span>` + // 縦向きでは ここで2行目（裏ドラ・抜きドラ・その他）
+    `<span class="sit-br" aria-hidden="true"></span>` + // 縦向きでは ここで2行目（裏ドラ・抜きドラ）
     stepperHTML(s, 'uraDora', '裏ドラ', !riichi) +
-    stepperHTML(s, 'nuki', '抜きドラ') +
-    `<button type="button" class="gchip more" ${link('rules')}${rulesChanged(r) ? ' data-changed="true"' : ''}>その他</button>`;
-  const note = status.ready ? '点数を表示中' : '「OK」を押すと点数が出ます';
-  const foot =
-    `<div class="sit-foot"><span class="sit-note">${note}</span>` +
+    stepperHTML(s, 'nuki', '抜きドラ');
+  // 右の縦の列: その他（設定シート）・リセット・OK。2段の右に縦線で区切って置き、両方の段にかかることを示す
+  const side =
+    `<div class="sit-side">` +
+    `<button type="button" class="gchip more" ${link('rules')}${rulesChanged(r) ? ' data-changed="true"' : ''}>その他</button>` +
     `<button type="button" class="sbtn reset" data-action="setup-reset">リセット</button>` +
-    `<button type="button" class="sbtn ok" data-action="setup-ok" data-done="${!!status.ready}">${status.ready ? '✓ OK' : 'OK'}</button></div>`;
+    `<button type="button" class="sbtn ok" data-action="setup-ok" data-done="${!!status.ready}" aria-label="条件をOKして点数を表示">${status.ready ? '✓ OK' : 'OK'}</button></div>`;
   return (
     `<b class="sit-head"><span>場の設定</span>${statusHTML(status.table)}</b><div class="sit-chips">${table}</div>` +
+    side +
     `<div class="sit-sep" role="separator"></div>` +
-    `<b class="sit-head"><span>アガリ想定</span>${statusHTML(status.agari)}</b><div class="sit-chips">${agari}</div>` +
-    foot
+    `<b class="sit-head"><span>アガリ想定</span>${statusHTML(status.agari)}</b><div class="sit-chips">${agari}</div>`
   );
 }
 
