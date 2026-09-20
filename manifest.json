@@ -1,0 +1,31 @@
+{
+ "name": "何待ち？",
+ "short_name": "何待ち？",
+ "description": "麻雀の手牌を写真で撮るだけ。シャンテン数・待ち・点数を端末の中だけで計算します（通信なし・オフラインでも動作）。",
+ "lang": "ja",
+ "start_url": ".",
+ "scope": ".",
+ "display": "standalone",
+ "orientation": "portrait",
+ "background_color": "#edf1ec",
+ "theme_color": "#edf1ec",
+ "icons": [
+  {
+   "src": "icon-180.png",
+   "sizes": "180x180",
+   "type": "image/png"
+  },
+  {
+   "src": "icon-512.png",
+   "sizes": "512x512",
+   "type": "image/png",
+   "purpose": "any"
+  },
+  {
+   "src": "icon-maskable.png",
+   "sizes": "512x512",
+   "type": "image/png",
+   "purpose": "maskable"
+  }
+ ]
+}
