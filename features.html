@@ -1,0 +1,292 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>できること | 何待ち？</title>
+<meta name="description" content="受け入れ表示・配牌整理・オフライン動作・鳴きの入力・点数計算まで。写真で待ちを出すだけではない「何待ち？」の機能をまとめて紹介します。">
+<meta name="theme-color" content="#edf1ec" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0c1310" media="(prefers-color-scheme: dark)">
+<link rel="canonical" href="https://meizenbb-sudo.github.io/nanimachi/features.html">
+<link rel="apple-touch-icon" href="icon-180.png">
+<link rel="icon" href="icon-180.png" sizes="180x180" type="image/png">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="何待ち？">
+<meta property="og:title" content="できること | 何待ち？">
+<meta property="og:description" content="受け入れ表示・配牌整理・オフライン動作・鳴きの入力・点数計算まで。写真で待ちを出すだけではない「何待ち？」の機能をまとめて紹介します。">
+<meta property="og:url" content="https://meizenbb-sudo.github.io/nanimachi/features.html">
+<meta property="og:image" content="https://meizenbb-sudo.github.io/nanimachi/ogp.png">
+<meta property="og:locale" content="ja_JP">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Shippori+Mincho+B1:wght@700;800&family=Zen+Kaku+Gothic+New:wght@400;500;700&family=Zen+Maru+Gothic:wght@700;900&display=swap">
+<style>
+/* 解説ページ（使い方・プライバシーポリシーなど）の見た目。アプリと同じ配色 */
+:root {
+  --ground: #edf1ec;
+  --surface: #fafbf8;
+  --surface-2: #e5eae4;
+  --ink: #15201b;
+  --muted: #56655e;
+  --line: #cfd8d0;
+  --accent: #1c5a47;
+  --accent-soft: #d5e8df;
+  --warn: #a8660f;
+  --warn-soft: #f7ead2;
+  --font-ui: 'Zen Kaku Gothic New', 'Hiragino Sans', 'Hiragino Kaku Gothic ProN', 'Noto Sans JP', system-ui, sans-serif;
+  --font-brand: 'Zen Maru Gothic', 'Hiragino Maru Gothic ProN', 'Kosugi Maru', system-ui, sans-serif;
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --ground: #0c1310;
+    --surface: #141d19;
+    --surface-2: #1c2823;
+    --ink: #e2ebe6;
+    --muted: #93a49c;
+    --line: #2b3a33;
+    --accent: #8fe3bd;
+    --accent-soft: #16302708;
+    --warn: #e8b567;
+    --warn-soft: #2a2115;
+    color-scheme: dark;
+  }
+}
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  background: var(--ground);
+  color: var(--ink);
+  font-family: var(--font-ui);
+  font-size: 15px;
+  line-height: 1.85;
+  -webkit-text-size-adjust: 100%;
+}
+a { color: var(--accent); }
+
+/* ヘッダー */
+.ph {
+  position: sticky;
+  top: 0;
+  z-index: 5;
+  background: var(--surface);
+  border-bottom: 1px solid var(--line);
+  padding: 8px max(12px, env(safe-area-inset-left, 0px));
+}
+.ph-in { max-width: 720px; margin: 0 auto; display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+.ph-brand { display: flex; align-items: center; gap: 8px; text-decoration: none; color: var(--ink); }
+.ph-brand img { width: 30px; height: 30px; border-radius: 8px; }
+.ph-brand b { font-family: var(--font-brand); font-size: 17px; font-weight: 900; letter-spacing: 0.02em; }
+.ph nav { margin-left: auto; display: flex; gap: 6px; flex-wrap: wrap; }
+.ph nav a {
+  text-decoration: none; font-size: 12.5px; font-weight: 700; color: var(--ink);
+  padding: 5px 10px; border-radius: 999px; background: var(--surface-2);
+}
+.ph nav a[aria-current='page'] { background: var(--accent); color: var(--surface); }
+.ph nav a.go { background: var(--accent); color: var(--surface); }
+
+/* 本文 */
+.pg { max-width: 720px; margin: 0 auto; padding: 18px max(14px, env(safe-area-inset-left, 0px)) 40px; }
+.pg h1 {
+  font-family: var(--font-brand); font-size: 25px; font-weight: 900; line-height: 1.4;
+  margin: 6px 0 4px; color: var(--accent);
+}
+.lead { color: var(--muted); font-size: 13.5px; margin: 0 0 22px; }
+.pg h2 {
+  font-family: var(--font-brand); font-size: 19px; font-weight: 900; line-height: 1.5;
+  margin: 34px 0 10px; padding-left: 11px; border-left: 4px solid var(--accent);
+}
+.pg h3 { font-size: 15.5px; margin: 22px 0 6px; }
+.pg p { margin: 0 0 14px; }
+.pg ul, .pg ol { margin: 0 0 16px; padding-left: 1.4em; }
+.pg li { margin-bottom: 7px; }
+.pg small { color: var(--muted); }
+hr { border: 0; border-top: 1px solid var(--line); margin: 30px 0; }
+
+/* 手順 */
+.step { background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 14px 16px; margin: 0 0 14px; }
+.step > h3 { display: flex; align-items: center; gap: 9px; margin: 0 0 8px; font-size: 16px; }
+.step .num {
+  flex: none; display: grid; place-items: center; width: 27px; height: 27px; border-radius: 50%;
+  background: #C4302B; color: #fff; font-size: 14px; font-weight: 800; line-height: 1;
+}
+.step p:last-child, .step ul:last-child { margin-bottom: 0; }
+figure { margin: 12px 0 14px; }
+figure img {
+  display: block; width: 100%; height: auto; border-radius: 10px;
+  border: 1px solid var(--line); background: var(--surface-2);
+}
+figcaption { margin-top: 6px; font-size: 12.5px; color: var(--muted); }
+.mark { display: inline-grid; place-items: center; width: 19px; height: 19px; border-radius: 50%;
+  background: #C4302B; color: #fff; font-size: 11px; font-weight: 800; line-height: 1; vertical-align: -3px; }
+
+/* 注意書き */
+.note { background: var(--warn-soft); border-radius: 12px; padding: 12px 15px; margin: 0 0 16px; font-size: 14px; }
+.note b { color: var(--warn); }
+.ok-note { background: var(--accent-soft); border-radius: 12px; padding: 12px 15px; margin: 0 0 16px; font-size: 14px; }
+@media (prefers-color-scheme: dark) { .ok-note { background: #17302a; } }
+
+/* 表 */
+table { width: 100%; border-collapse: collapse; margin: 0 0 18px; font-size: 14px; }
+th, td { border-bottom: 1px solid var(--line); padding: 9px 6px; text-align: left; vertical-align: top; }
+th { color: var(--muted); font-size: 12.5px; font-weight: 700; white-space: nowrap; }
+td:first-child { width: 34%; font-weight: 700; }
+
+/* アプリへ戻る大きいボタン */
+.cta { display: block; text-align: center; text-decoration: none; margin: 26px 0 8px;
+  padding: 14px; border-radius: 14px; background: var(--accent); color: var(--surface); font-weight: 800; font-size: 16px; }
+@media (prefers-color-scheme: dark) { .cta { color: #0c1310; } }
+
+/* フッター */
+.pf { border-top: 1px solid var(--line); background: var(--surface); padding: 18px max(14px, env(safe-area-inset-left, 0px)) calc(20px + env(safe-area-inset-bottom, 0px)); }
+.pf-in { max-width: 720px; margin: 0 auto; }
+.pf nav { display: flex; gap: 14px; flex-wrap: wrap; margin-bottom: 8px; }
+.pf nav a { font-size: 13px; }
+.pf small { color: var(--muted); font-size: 12px; }
+
+/* できること: 見出しのアイコン、2枚ならべ */
+.feat { background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 15px 16px; margin: 0 0 14px; }
+.feat > h3 { display: flex; align-items: baseline; gap: 9px; margin: 0 0 8px; font-size: 16.5px; }
+.feat > h3 .num {
+  flex: none; display: inline-grid; place-items: center; min-width: 24px; height: 24px; padding: 0 6px;
+  border-radius: 999px; background: var(--accent); color: var(--surface); font-size: 12px; font-weight: 800;
+}
+.feat p:last-child, .feat ul:last-child, .feat figure:last-child { margin-bottom: 0; }
+.pair { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 12px 0 14px; }
+.pair figure { margin: 0; }
+.pair figcaption { margin-top: 5px; font-size: 12px; }
+@media (max-width: 460px) { .pair { grid-template-columns: 1fr; } }
+
+.tiles { display: inline-flex; gap: 2px; vertical-align: -7px; margin: 0 3px; }
+.ti { width: 25px; height: auto; filter: drop-shadow(0 1px 1px rgb(21 32 27 / .22)); }
+.hand { font-size: 14px; }
+</style>
+</head>
+<body>
+<header class="ph"><div class="ph-in">
+<a class="ph-brand" href="./"><img src="icon-180.png" width="30" height="30" alt=""><b>何待ち？</b></a>
+<nav><a href="features.html" aria-current="page">できること</a><a href="help.html">使い方</a><a href="waits.html">待ちの読み方</a><a class="go" href="./">アプリ</a></nav>
+</div></header>
+<main class="pg">
+<h1>このアプリでできること</h1>
+<p class="lead">写真から待ちを出すだけのアプリではありません。「実戦で手が止まる場面」をひと通り拾えるように作っています。</p>
+
+<div class="ok-note">
+  <b>全部、端末の中だけで動きます。</b>写真も手牌も外に出ません。登録もログインも不要で、無料です。
+</div>
+
+<div class="feat">
+  <h3><span class="num">1</span>テンパイしていなくても、受け入れが分かる</h3>
+  <p>13枚そろえば、テンパイでなくても<b>シャンテン数</b>と「<b>この牌が来ればテンパイ</b>」が出ます。牌ごとに「その牌を引いたあと何種待ちになるか」まで付くので、同じテンパイでも広い方を選べます。</p>
+  <figure>
+    <img src="feat2.png" alt="1シャンテンと表示され、テンパイになる牌が11種類並び、それぞれに2種待ち・3種待ちと付いている">
+    <figcaption>1シャンテンの例。11種のうち、どれを引くと三面待ちになるかが一目で分かります。</figcaption>
+  </figure>
+  <p><small>2シャンテン以上のときは種類数だけを出します（牌が多くなりすぎて、かえって読みにくいためです）。</small></p>
+</div>
+
+<div class="feat">
+  <h3><span class="num">2</span>「配牌整理」で並べ替え、押し戻しもできる</h3>
+  <p>写真から読んだ牌は<b>写真に写っていた順のまま</b>並びます。配牌整理を ON にすると種類順に並べ替わり、もう一度押すと<b>元の並びに戻ります</b>。配牌のようにバラバラの手ほど効きます。</p>
+  <div class="pair">
+    <figure>
+      <img src="feat1a.png" alt="配牌整理がOFFで、牌が写真に写っていた順のまま並んでいる">
+      <figcaption>OFF：写真のままの並び（配牌の直後）</figcaption>
+    </figure>
+    <figure>
+      <img src="feat1b.png" alt="配牌整理がONで、牌が種類順に並べ替わっている">
+      <figcaption>ON：萬子・筒子・索子・字牌の順に整理</figcaption>
+    </figure>
+  </div>
+  <p>読み取りが合っているかを確かめるときは OFF（写真と見比べられます）、手を考えるときは ON、と使い分けられます。<b>どちらに切り替えても、待ちとシャンテン数の答えは変わりません。</b></p>
+</div>
+
+<div class="feat">
+  <h3><span class="num">3</span>牌が逆さまでも、そのまま読める</h3>
+  <p>手牌には、<b>上下が逆さまのまま置かれた牌</b>がよく混ざります。「何待ち？」は牌を1枚ずつ見分けているので、<b>向きをそろえ直さなくても、そのまま読めます</b>。</p>
+  <div class="pair">
+    <figure>
+      <img src="feat6a.png" alt="写真の手牌の1〜5枚目。1枚目の1索は逆さま、5枚目の1索はふつうの向き">
+      <figcaption>写真。左の1索は逆さま、右の1索はふつうの向き（2枚目の九萬も逆さま）</figcaption>
+    </figure>
+    <figure>
+      <img src="feat6b.png" alt="アプリが読んだ同じ5枚。両方とも1索として正しく読めている">
+      <figcaption>アプリの読み取り。どちらも1索として出ます</figcaption>
+    </figure>
+  </div>
+  <p><small>この写真は14枚のうち5枚が逆さまでしたが、14枚とも正しく読めました。手元で確かめた範囲では、<b>逆さまの牌でも向きをそろえた牌と同じ正解率</b>でした。</small></p>
+</div>
+
+<div class="feat">
+  <h3><span class="num">4</span>電波がなくても、そのまま動く</h3>
+  <p>読み取りも計算も端末の中で完結します。ホーム画面に一度追加しておけば、<b>機内モードでも、電波の届かない雀荘でも、同じ速さで動きます</b>。</p>
+  <ul>
+    <li>サーバーに問い合わせないので、待ち時間がありません（読み取りは1〜2秒）。</li>
+    <li>通信量もかかりません。</li>
+    <li>写真が外に出ないので、人の手牌を撮っても安心です。</li>
+  </ul>
+  <p>追加のしかたは<a href="help.html">使い方</a>の「ホーム画面に置いて使う」をご覧ください。</p>
+</div>
+
+<div class="feat">
+  <h3><span class="num">5</span>入れ方は3通り。その場でも、あとからでも</h3>
+  <figure>
+    <img src="feat3.png" alt="カメラ・写真・手入力の3つのタブ">
+    <figcaption>上のタブでいつでも切り替えられます。</figcaption>
+  </figure>
+  <ul>
+    <li><b>カメラ</b> … その場で手牌にかざして読み取る。</li>
+    <li><b>写真</b> … アルバムにある写真から読み取る。<b>あとで見返すとき</b>や、友だちに送ってもらった画像にも使えます。</li>
+    <li><b>手入力</b> … 写真がなくても、牌を選んで並べられます。本で見た問題を解くときに。</li>
+  </ul>
+</div>
+
+<div class="feat">
+  <h3><span class="num">6</span>鳴いていても判断できる</h3>
+  <p>手牌が10枚・7枚・4枚で読み取れたときは、<b>鳴いているものとして扱います</b>。待ちとシャンテン数はその場で出ますし、鳴いた面子を入れれば点数まで出せます。</p>
+  <figure>
+    <img src="feat4a.png" alt="7枚の手牌からテンパイと表示され、鳴き2組は省略として計算と出ている">
+    <figcaption>7枚＝2組鳴いている手。面子を入れる前でも、待ちはすぐ出ます。</figcaption>
+  </figure>
+  <figure>
+    <img src="feat4b.png" alt="鳴き1組目を入れる画面。チー・ポン・明カン・アンカンを選んで牌をタップする">
+    <figcaption>チー・ポン・明カン・アンカンを選んで、鳴いた牌をタップするだけ。点数を出すときに使います。</figcaption>
+  </figure>
+</div>
+
+<div class="feat">
+  <h3><span class="num">7</span>点数まで、迷わずたどり着く</h3>
+  <p>点数は<b>「条件/ルール 設定」で OK を押すまで出しません</b>。場風やドラを入れ忘れたまま、まちがった点数を信じてしまわないようにするためです。何が足りないかは画面がそのつど案内します。</p>
+  <div class="pair">
+    <figure>
+      <img src="feat5a.png" alt="点数は条件設定のOK後に表示しますという案内が出ている">
+      <figcaption>OKの前：何をすればいいか案内が出ます</figcaption>
+    </figure>
+    <figure>
+      <img src="feat5b.png" alt="ロン1600・ツモ2700と点数が表示されている">
+      <figcaption>OKのあと：ロンとツモの両方が出ます</figcaption>
+    </figure>
+  </div>
+  <p>待ちが何種類もあるときは<b>牌ごとに点数が出る</b>ので、どれでアガるのが得かを見比べられます。翻数・符・役の内訳・面子の分け方まで出るうえ、<b>役がなくてアガれないときは、その理由とどうすればアガれるか</b>（リーチをかければ／ツモれば）まで出ます。</p>
+</div>
+
+<h2>そのほか</h2>
+<ul>
+  <li><b>三人麻雀に対応</b>。2〜8萬と赤5萬を抜いた牌姿で計算し、抜きドラ（北）も入れられます。</li>
+  <li><b>ルールを場に合わせられる</b>。喰いタン・切り上げ満貫・数え役満・ツモ損の有無などを切り替えられます。</li>
+  <li><b>本場と供託</b>を入れると、受け取る合計点まで出ます。</li>
+  <li><b>読み間違いはタップで直せます</b>。候補が出るので、選び直すだけです。</li>
+</ul>
+
+<div class="note">
+  <b>できないこと。</b>フリテン、流し満貫、ローカル役、包（パオ）、ダブロンには対応していません。残り枚数も、自分の手牌からしか数えられないため表示していません。くわしくは<a href="terms.html">免責事項</a>をご覧ください。
+</div>
+
+<a class="cta" href="./">アプリを開いて試す</a>
+<p style="text-align:center"><small><a href="help.html">使い方を見る</a>　<a href="waits.html">待ちの読み方</a></small></p>
+
+</main>
+<footer class="pf"><div class="pf-in"><nav><a href="features.html">できること</a><a href="help.html">使い方</a><a href="waits.html">待ちの読み方</a><a href="privacy.html">プライバシーポリシー</a><a href="terms.html">免責事項・利用規約</a><a href="./">アプリ</a></nav><small>© 2026 Sakura-ya（桜屋）・何待ち？</small></div></footer>
+</body>
+</html>

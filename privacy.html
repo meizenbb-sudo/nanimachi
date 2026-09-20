@@ -145,6 +145,19 @@ td:first-child { width: 34%; font-weight: 700; }
 .pf nav a { font-size: 13px; }
 .pf small { color: var(--muted); font-size: 12px; }
 
+/* できること: 見出しのアイコン、2枚ならべ */
+.feat { background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 15px 16px; margin: 0 0 14px; }
+.feat > h3 { display: flex; align-items: baseline; gap: 9px; margin: 0 0 8px; font-size: 16.5px; }
+.feat > h3 .num {
+  flex: none; display: inline-grid; place-items: center; min-width: 24px; height: 24px; padding: 0 6px;
+  border-radius: 999px; background: var(--accent); color: var(--surface); font-size: 12px; font-weight: 800;
+}
+.feat p:last-child, .feat ul:last-child, .feat figure:last-child { margin-bottom: 0; }
+.pair { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 12px 0 14px; }
+.pair figure { margin: 0; }
+.pair figcaption { margin-top: 5px; font-size: 12px; }
+@media (max-width: 460px) { .pair { grid-template-columns: 1fr; } }
+
 .tiles { display: inline-flex; gap: 2px; vertical-align: -7px; margin: 0 3px; }
 .ti { width: 25px; height: auto; filter: drop-shadow(0 1px 1px rgb(21 32 27 / .22)); }
 .hand { font-size: 14px; }
@@ -153,7 +166,7 @@ td:first-child { width: 34%; font-weight: 700; }
 <body>
 <header class="ph"><div class="ph-in">
 <a class="ph-brand" href="./"><img src="icon-180.png" width="30" height="30" alt=""><b>何待ち？</b></a>
-<nav><a href="help.html">使い方</a><a href="waits.html">待ちの読み方</a><a href="privacy.html" aria-current="page">プライバシーポリシー</a><a class="go" href="./">アプリ</a></nav>
+<nav><a href="features.html">できること</a><a href="help.html">使い方</a><a href="waits.html">待ちの読み方</a><a class="go" href="./">アプリ</a></nav>
 </div></header>
 <main class="pg">
 <h1>プライバシーポリシー</h1>
@@ -167,7 +180,7 @@ td:first-child { width: 34%; font-weight: 700; }
 <table>
   <tr><th>運営者</th><td>Sakura-ya（桜屋）</td></tr>
   <tr><th>サービス名</th><td>何待ち？</td></tr>
-  <tr><th>お問い合わせ</th><td><a href="https://github.com/meizenbb-sudo/nanimachi/issues" rel="noopener">お問い合わせフォーム</a></td></tr>
+  <tr><th>お問い合わせ</th><td><a href="https://forms.gle/5y9Kvq8soxoHFJtE6" rel="noopener">お問い合わせフォーム</a></td></tr>
 </table>
 
 <h2>2. 写真と手牌の取り扱い</h2>
@@ -198,16 +211,25 @@ td:first-child { width: 34%; font-weight: 700; }
 </ul>
 <p>Google が広告事業においてデータをどのように使用するかについては、<a href="https://policies.google.com/technologies/ads?hl=ja" rel="noopener nofollow" target="_blank">広告 – ポリシーと規約 – Google</a> をご覧ください。</p>
 
-<h2>5. アクセス解析について</h2>
+<h2>5. お問い合わせフォームについて</h2>
+<p>お問い合わせには Google フォームを利用しています。</p>
+<ul>
+  <li>フォームに入力された内容は Google のサーバーに保存され、運営者が閲覧します。</li>
+  <li>いただいた内容は、お返事と本サービスの改善のためにのみ使用します。第三者に提供することはありません。</li>
+  <li>返信先のメールアドレスは<b>任意</b>です。返信が不要な場合は入力しないでください。</li>
+  <li>アプリ内の写真や手牌が、フォームを通じて自動的に送信されることはありません。</li>
+</ul>
+
+<h2>6. アクセス解析について</h2>
 <p>本サービスは、現時点でアクセス解析ツールを使用していません。今後導入する場合は、本ポリシーを改定したうえで、取得する情報と利用目的を明記します。</p>
 
-<h2>6. 外部へのリンク</h2>
+<h2>7. 外部へのリンク</h2>
 <p>本サービスから他のウェブサイトへ移動した場合、移動先のサイトで提供される情報やサービスについては責任を負いません。</p>
 
-<h2>7. 免責事項</h2>
+<h2>8. 免責事項</h2>
 <p>本サービスは、麻雀の手牌の読み取りと計算を補助するものです。読み取り結果および計算結果の正確性を保証するものではありません。くわしくは<a href="terms.html">免責事項・利用規約</a>をご覧ください。</p>
 
-<h2>8. 本ポリシーの変更</h2>
+<h2>9. 本ポリシーの変更</h2>
 <p>本ポリシーの内容は、必要に応じて予告なく変更することがあります。変更後の内容は、本ページに掲載した時点から適用されます。</p>
 
 <hr>
@@ -216,6 +238,6 @@ td:first-child { width: 34%; font-weight: 700; }
 <a class="cta" href="./">アプリを開く</a>
 
 </main>
-<footer class="pf"><div class="pf-in"><nav><a href="help.html">使い方</a><a href="waits.html">待ちの読み方</a><a href="privacy.html">プライバシーポリシー</a><a href="terms.html">免責事項・利用規約</a><a href="./">アプリ</a></nav><small>© 2026 Sakura-ya（桜屋）・何待ち？</small></div></footer>
+<footer class="pf"><div class="pf-in"><nav><a href="features.html">できること</a><a href="help.html">使い方</a><a href="waits.html">待ちの読み方</a><a href="privacy.html">プライバシーポリシー</a><a href="terms.html">免責事項・利用規約</a><a href="./">アプリ</a></nav><small>© 2026 Sakura-ya（桜屋）・何待ち？</small></div></footer>
 </body>
 </html>

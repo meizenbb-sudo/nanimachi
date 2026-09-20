@@ -145,6 +145,19 @@ td:first-child { width: 34%; font-weight: 700; }
 .pf nav a { font-size: 13px; }
 .pf small { color: var(--muted); font-size: 12px; }
 
+/* できること: 見出しのアイコン、2枚ならべ */
+.feat { background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 15px 16px; margin: 0 0 14px; }
+.feat > h3 { display: flex; align-items: baseline; gap: 9px; margin: 0 0 8px; font-size: 16.5px; }
+.feat > h3 .num {
+  flex: none; display: inline-grid; place-items: center; min-width: 24px; height: 24px; padding: 0 6px;
+  border-radius: 999px; background: var(--accent); color: var(--surface); font-size: 12px; font-weight: 800;
+}
+.feat p:last-child, .feat ul:last-child, .feat figure:last-child { margin-bottom: 0; }
+.pair { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 12px 0 14px; }
+.pair figure { margin: 0; }
+.pair figcaption { margin-top: 5px; font-size: 12px; }
+@media (max-width: 460px) { .pair { grid-template-columns: 1fr; } }
+
 .tiles { display: inline-flex; gap: 2px; vertical-align: -7px; margin: 0 3px; }
 .ti { width: 25px; height: auto; filter: drop-shadow(0 1px 1px rgb(21 32 27 / .22)); }
 .hand { font-size: 14px; }
@@ -153,7 +166,7 @@ td:first-child { width: 34%; font-weight: 700; }
 <body>
 <header class="ph"><div class="ph-in">
 <a class="ph-brand" href="./"><img src="icon-180.png" width="30" height="30" alt=""><b>何待ち？</b></a>
-<nav><a href="help.html">使い方</a><a href="waits.html">待ちの読み方</a><a href="privacy.html">プライバシーポリシー</a><a class="go" href="./">アプリ</a></nav>
+<nav><a href="features.html">できること</a><a href="help.html">使い方</a><a href="waits.html">待ちの読み方</a><a class="go" href="./">アプリ</a></nav>
 </div></header>
 <main class="pg">
 <h1>免責事項・利用規約</h1>
@@ -204,7 +217,7 @@ td:first-child { width: 34%; font-weight: 700; }
 <p>本サービスは無料で利用できます。運営費にあてるため、広告を表示する場合があります。広告については<a href="privacy.html">プライバシーポリシー</a>をご覧ください。</p>
 
 <h2>8. お問い合わせ</h2>
-<p>本サービスについてのご連絡は、<a href="https://github.com/meizenbb-sudo/nanimachi/issues" rel="noopener">お問い合わせフォーム</a>からお願いします。</p>
+<p>本サービスについてのご連絡は、<a href="https://forms.gle/5y9Kvq8soxoHFJtE6" rel="noopener">お問い合わせフォーム</a>からお願いします。</p>
 
 <hr>
 <p><small>制定日: 2026年9月20日 ／ 運営者: Sakura-ya（桜屋）</small></p>
@@ -212,6 +225,6 @@ td:first-child { width: 34%; font-weight: 700; }
 <a class="cta" href="./">アプリを開く</a>
 
 </main>
-<footer class="pf"><div class="pf-in"><nav><a href="help.html">使い方</a><a href="waits.html">待ちの読み方</a><a href="privacy.html">プライバシーポリシー</a><a href="terms.html">免責事項・利用規約</a><a href="./">アプリ</a></nav><small>© 2026 Sakura-ya（桜屋）・何待ち？</small></div></footer>
+<footer class="pf"><div class="pf-in"><nav><a href="features.html">できること</a><a href="help.html">使い方</a><a href="waits.html">待ちの読み方</a><a href="privacy.html">プライバシーポリシー</a><a href="terms.html">免責事項・利用規約</a><a href="./">アプリ</a></nav><small>© 2026 Sakura-ya（桜屋）・何待ち？</small></div></footer>
 </body>
 </html>

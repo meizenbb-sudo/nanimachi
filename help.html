@@ -145,6 +145,19 @@ td:first-child { width: 34%; font-weight: 700; }
 .pf nav a { font-size: 13px; }
 .pf small { color: var(--muted); font-size: 12px; }
 
+/* できること: 見出しのアイコン、2枚ならべ */
+.feat { background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 15px 16px; margin: 0 0 14px; }
+.feat > h3 { display: flex; align-items: baseline; gap: 9px; margin: 0 0 8px; font-size: 16.5px; }
+.feat > h3 .num {
+  flex: none; display: inline-grid; place-items: center; min-width: 24px; height: 24px; padding: 0 6px;
+  border-radius: 999px; background: var(--accent); color: var(--surface); font-size: 12px; font-weight: 800;
+}
+.feat p:last-child, .feat ul:last-child, .feat figure:last-child { margin-bottom: 0; }
+.pair { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 12px 0 14px; }
+.pair figure { margin: 0; }
+.pair figcaption { margin-top: 5px; font-size: 12px; }
+@media (max-width: 460px) { .pair { grid-template-columns: 1fr; } }
+
 .tiles { display: inline-flex; gap: 2px; vertical-align: -7px; margin: 0 3px; }
 .ti { width: 25px; height: auto; filter: drop-shadow(0 1px 1px rgb(21 32 27 / .22)); }
 .hand { font-size: 14px; }
@@ -153,7 +166,7 @@ td:first-child { width: 34%; font-weight: 700; }
 <body>
 <header class="ph"><div class="ph-in">
 <a class="ph-brand" href="./"><img src="icon-180.png" width="30" height="30" alt=""><b>何待ち？</b></a>
-<nav><a href="help.html" aria-current="page">使い方</a><a href="waits.html">待ちの読み方</a><a href="privacy.html">プライバシーポリシー</a><a class="go" href="./">アプリ</a></nav>
+<nav><a href="features.html">できること</a><a href="help.html" aria-current="page">使い方</a><a href="waits.html">待ちの読み方</a><a class="go" href="./">アプリ</a></nav>
 </div></header>
 <main class="pg">
 <h1>使い方</h1>
@@ -169,8 +182,8 @@ td:first-child { width: 34%; font-weight: 700; }
   <h3><span class="num">1</span>アルバムから写真を選ぶ</h3>
   <p>上のタブで「写真」を選ぶと、アルバムが開きます。手牌が横一列に写っている写真を選んでください。</p>
   <figure>
-    <img src="help1.png" width="393" height="324" loading="lazy" decoding="async" alt="アプリの写真タブ。中央に「アルバムから選ぶ」ボタンがある">
-    <figcaption><span class="mark">1</span> ここを押すとアルバムが開きます。その場で撮った写真でも、あとから撮った写真でも使えます。</figcaption>
+    <img src="help1.png" width="393" height="128" loading="lazy" decoding="async" alt="アプリの写真タブ。中央に「アルバムから選ぶ」ボタンがある">
+    <figcaption><span class="mark">1</span> ここを押すとアルバムが開きます。「カメラ」タブを選べば、その場で手牌にかざして読み取ることもできます。</figcaption>
   </figure>
 </div>
 
@@ -178,7 +191,7 @@ td:first-child { width: 34%; font-weight: 700; }
   <h3><span class="num">2</span>手牌を枠の中に入れる</h3>
   <p>写真を指でドラッグして動かし、2本指で広げると拡大できます。<b>手牌の列が枠いっぱいに入る</b>ように合わせてください。</p>
   <figure>
-    <img src="help2.png" width="373" height="117" loading="lazy" decoding="async" alt="読み取り枠に手牌を合わせたところ。右上に90°回転ボタンがある">
+    <img src="help2.png" width="373" height="122" loading="lazy" decoding="async" alt="読み取り枠に手牌を合わせたところ。右上に90°回転ボタンがある">
     <figcaption><span class="mark">2</span> この枠の中だけを読み取ります。&nbsp; <span class="mark">3</span> 縦向きで撮った写真は、ここを押すと90°回ります。</figcaption>
   </figure>
   <p><small>牌が小さく写っていると読み間違えます。手牌が枠の横幅いっぱいになるくらいが目安です。</small></p>
@@ -188,7 +201,7 @@ td:first-child { width: 34%; font-weight: 700; }
   <h3><span class="num">3</span>「認識する」を押す</h3>
   <p>1〜2秒で読み取りが終わります。通信はしません。機内モードでも動きます。</p>
   <figure>
-    <img src="help3.png" width="181" height="72" loading="lazy" decoding="async" alt="認識するボタン">
+    <img src="help3.png" width="189" height="80" loading="lazy" decoding="async" alt="認識するボタン。左に別の写真と配牌整理のボタンがある">
     <figcaption><span class="mark">4</span> 読み取りが終わると、このボタンは緑の「認識済み」に変わります。</figcaption>
   </figure>
 </div>
@@ -198,17 +211,18 @@ td:first-child { width: 34%; font-weight: 700; }
   <p>読み取った牌が並びます。違う牌があれば<b>その牌をタップ</b>すると選び直せます。読み取れなかった牌は「？」になります。</p>
   <figure>
     <img src="help4.png" width="369" height="62" loading="lazy" decoding="async" alt="読み取った13枚の牌が並んでいる">
-    <figcaption><span class="mark">5</span> 牌をタップすると、候補から選んで直せます。並び順は写真のままです（「配牌整理」を押すと種類順に並べ替えできます）。</figcaption>
+    <figcaption><span class="mark">5</span> 牌をタップすると、候補から選んで直せます。並び順は写真のままです（左の「配牌整理」を押すと種類順に並べ替えできます）。<b>逆さまに置かれた牌もそのまま読めます。</b></figcaption>
   </figure>
 </div>
 
 <div class="step">
   <h3><span class="num">5</span>待ち牌を見る</h3>
-  <p>13枚そろうと、テンパイかどうかと待ち牌が出ます。テンパイでなければシャンテン数と「何を引けばテンパイか」が出ます。</p>
+  <p>13枚そろうと、左上に<b>テンパイかどうか</b>が出て、その下に<b>待ち牌</b>が牌の絵で並びます。ここまでは設定なしで見られます。</p>
   <figure>
-    <img src="help5.png" width="365" height="199" loading="lazy" decoding="async" alt="テンパイと表示され、待ち牌が牌の絵で並んでいる">
-    <figcaption><span class="mark">6</span> ここが待ち牌です。タップすると、その待ちに関係する手牌が浮き上がり、関係ない牌は薄くなります。</figcaption>
+    <img src="help5.png" width="365" height="152" loading="lazy" decoding="async" alt="左上にテンパイと大きく表示され、下に待ち牌の6筒と中が並んでいる">
+    <figcaption><span class="mark">6</span> この手は6筒と中の2種待ちです。待ち牌をタップすると、その待ちに関係する牌が浮き上がり、関係ない牌は薄くなります。</figcaption>
   </figure>
+  <p><small>テンパイでないときは「1シャンテン」「2シャンテン」のように、あと何回の入れ替えが要るかが出ます。1シャンテンなら、テンパイになる牌も1枚ずつ絵で並びます。</small></p>
 </div>
 
 <div class="step">
@@ -222,14 +236,15 @@ td:first-child { width: 34%; font-weight: 700; }
 
 <div class="step">
   <h3><span class="num">7</span>点数が出る</h3>
-  <p>待ち牌の下に点数が出ます。牌をタップすると、役・符・面子の分け方まで下の枠に出ます。</p>
+  <p>待ち牌の下に点数が出ます。<b>待ちが何種類かあるときは、牌ごとに出る</b>ので、どれでアガるのが得かを見比べられます。</p>
   <figure>
-    <img src="help7.png" width="365" height="213" loading="lazy" decoding="async" alt="待ち牌の下に1,300点と表示されている">
-    <figcaption><span class="mark">8</span> 待ちが何種類かあるときは、牌ごとに点数が出るので見比べられます。</figcaption>
+    <img src="help7.png" width="377" height="107" loading="lazy" decoding="async" alt="待ち牌の6筒には「ツモのみ」、中には1,300と表示されている">
+    <figcaption><span class="mark">8</span> この手は、中でアガれば1,300点。6筒は役がつかないので「ツモのみ」と出ています。</figcaption>
   </figure>
+  <p>牌をタップすると、下の枠に中身が出ます。</p>
   <figure>
-    <img src="help8.png" width="381" height="330" loading="lazy" decoding="async" alt="下の枠にロン1300・ツモ2700、1翻40符、役牌 中 と表示されている">
-    <figcaption>ロンとツモの両方の点数、翻数と符、役の内訳が出ます。本場や供託を入れていれば、受け取る合計点も出ます。</figcaption>
+    <img src="help8.png" width="381" height="470" loading="lazy" decoding="async" alt="下の枠に「6筒でアガリ・シャンポン待ち」「ロン 役なし／ツモ 1,100」と、役がないためロンではアガれないという説明、面子の分け方が出ている">
+    <figcaption>ロンとツモの両方の点数、翻数と符、面子の分け方まで出ます。<b>役がなくてアガれないときは、その理由とどうすればアガれるかも出ます。</b>本場や供託を入れていれば、受け取る合計点も出ます。</figcaption>
   </figure>
 </div>
 
@@ -264,8 +279,9 @@ td:first-child { width: 34%; font-weight: 700; }
 <p>読み取りは<b>すべて端末の中</b>で行います。写真も手牌も、外部のサーバーに送られることはありません。通信していないので、電波が悪い雀荘でも同じ速さで動きます。くわしくは<a href="privacy.html">プライバシーポリシー</a>をご覧ください。</p>
 
 <a class="cta" href="./">アプリを開く</a>
+<p style="text-align:center"><small><a href="features.html">このアプリでできること</a>　<a href="waits.html">待ちの読み方</a></small></p>
 
 </main>
-<footer class="pf"><div class="pf-in"><nav><a href="help.html">使い方</a><a href="waits.html">待ちの読み方</a><a href="privacy.html">プライバシーポリシー</a><a href="terms.html">免責事項・利用規約</a><a href="./">アプリ</a></nav><small>© 2026 Sakura-ya（桜屋）・何待ち？</small></div></footer>
+<footer class="pf"><div class="pf-in"><nav><a href="features.html">できること</a><a href="help.html">使い方</a><a href="waits.html">待ちの読み方</a><a href="privacy.html">プライバシーポリシー</a><a href="terms.html">免責事項・利用規約</a><a href="./">アプリ</a></nav><small>© 2026 Sakura-ya（桜屋）・何待ち？</small></div></footer>
 </body>
 </html>

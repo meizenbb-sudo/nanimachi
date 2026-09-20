@@ -5,11 +5,11 @@
  * 本体が変わるとビルドが下の VERSION を書き換えるので、新しい版が入ったら画面に「更新」の帯を出す。
  * 書体（Google Fonts）は使ったときに保存する。取れなくても端末の丸ゴシックで代替できるので必須にはしない。
  */
-const VERSION = 'a914e276626a';
+const VERSION = 'd1aee8586bd6';
 const CACHE = `haiyomi-${VERSION}`;
 const FONTS = 'haiyomi-fonts';
 const SHELL = new URL('./', self.registration.scope).href;
-const PAGES = ['./help.html', './waits.html', './privacy.html', './terms.html'];
+const PAGES = ['./features.html', './help.html', './waits.html', './privacy.html', './terms.html'];
 const CORE = ['./', './manifest.json', './icon-180.png', './icon-512.png', './icon-maskable.png', ...PAGES];
 const FONT_HOSTS = new Set(['fonts.googleapis.com', 'fonts.gstatic.com']);
 
