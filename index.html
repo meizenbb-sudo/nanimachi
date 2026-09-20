@@ -317,6 +317,51 @@ h2 {
   background: var(--accent-soft);
   box-shadow: inset 4px 0 0 var(--accent);
 }
+/* ヘッダーをタップで、中の設定枠を開いたり閉じたりする */
+.area-toggle {
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  border: 0;
+  padding: 2px 0;
+  background: none;
+  color: inherit;
+  text-align: left;
+}
+.area-toggle .chev {
+  width: 0;
+  height: 0;
+  border-left: 5px solid transparent;
+  border-right: 5px solid transparent;
+  border-top: 6px solid var(--accent);
+  transition: transform 0.15s ease;
+}
+.setup-head[data-open='false'] .area-toggle .chev {
+  transform: rotate(-90deg);
+}
+/* たたんでいても状態が分かるように、見出しの横に札を出す */
+.head-st {
+  font-style: normal;
+  font-size: 10px;
+  font-weight: 800;
+  line-height: 16px;
+  padding: 0 7px;
+  border-radius: 999px;
+  background: var(--surface);
+  color: var(--muted);
+  box-shadow: inset 0 0 0 1.5px var(--line);
+}
+.head-st[data-st='edit'] {
+  background: var(--warn-soft);
+  color: var(--warn);
+  box-shadow: inset 0 0 0 1.5px var(--warn);
+}
+.head-st[data-st='ok'] {
+  background: var(--accent);
+  color: #fff;
+  box-shadow: none;
+}
 .area-head b {
   flex: none;
   font-family: var(--font-brand);
@@ -1972,32 +2017,33 @@ details.more[open] > summary::before {
   color: rgb(255 255 255 / 0.8);
 }
 /* 写真を90度回すボタン（読み取り枠の右上） */
+/* 90°回転。手牌を枠に合わせるとき、いちばん右の牌と重なるのでうすくする */
 .rot-btn {
   position: absolute;
   z-index: 2;
   right: calc(var(--roi-inset) + 5px);
-  bottom: calc(var(--roi-inset) + var(--roi-h) - 5px - 36px);
-  display: grid;
-  justify-items: center;
-  gap: 0;
-  width: 44px;
-  height: 36px;
+  bottom: calc(var(--roi-inset) + var(--roi-h) - 4px - 28px);
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  height: 28px;
   border: 0;
-  border-radius: 10px;
-  padding: 3px 0 2px;
-  background: rgb(0 0 0 / 0.62);
-  color: #fff;
-  font-size: 9px;
+  border-radius: 999px;
+  padding: 0 10px 0 8px;
+  background: rgb(0 0 0 / 0.38);
+  color: rgb(255 255 255 / 0.9);
+  font-size: 11px;
   font-weight: 700;
   line-height: 1;
-  box-shadow: inset 0 0 0 1px rgb(255 255 255 / 0.35);
+  box-shadow: inset 0 0 0 1px rgb(255 255 255 / 0.28);
 }
 .rot-btn svg {
-  width: 17px;
-  height: 17px;
+  width: 15px;
+  height: 15px;
 }
 .rot-btn:active {
-  background: rgb(255 255 255 / 0.3);
+  background: rgb(0 0 0 / 0.7);
+  color: #fff;
 }
 .roi.scan::after {
   content: '';
@@ -2080,6 +2126,18 @@ details.more[open] > summary::before {
   gap: 8px;
   min-height: 0;
 }
+/* 「別の写真」「配牌整理」は縦に並べて、認識ボタンの左に置く（枠幅はそろえる） */
+.cam-side-btns {
+  flex: none;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 6px;
+  min-width: 96px;
+}
+.cam-side-btns > button {
+  width: 100%;
+}
 /* 認識ボタン。丸だと iPhone の画面内アクセシビリティボタンと紛らわしいので四角にする */
 .shutter {
   flex: none;
@@ -2087,8 +2145,8 @@ details.more[open] > summary::before {
   justify-items: center;
   align-content: center;
   gap: 1px;
-  width: 64px;
-  height: 64px;
+  width: 72px;
+  height: 72px;
   border: 0;
   border-radius: 16px;
   padding: 0;
@@ -2134,7 +2192,7 @@ details.more[open] > summary::before {
   flex: none;
   border: 0;
   border-radius: 999px;
-  padding: 6px 12px;
+  padding: 7px 10px;
   background: rgb(0 0 0 / 0.55);
   color: #fff;
   font-size: 12px;
@@ -3072,10 +3130,11 @@ details.more[open] > summary::before {
   flex: none;
   display: inline-flex;
   align-items: center;
+  justify-content: space-between;
   gap: 6px;
   border: 0;
   border-radius: 999px;
-  padding: 6px 6px 6px 12px;
+  padding: 5px 5px 5px 10px;
   background: rgb(255 255 255 / 0.16);
   color: #fff;
   font-size: 12px;
@@ -3100,6 +3159,10 @@ details.more[open] > summary::before {
 #cam-sort[aria-pressed='true'] .st-state {
   background: #10352a;
   color: #8fe3bd;
+}
+/* まだ認識していないときは「押しても効かない」ことが分かるように薄く */
+#cam-sort[data-ready='false'] {
+  opacity: 0.55;
 }
 .s-waits small {
   font-size: 11px;
@@ -3201,14 +3264,14 @@ details.more[open] > summary::before {
 /* 画面が低いとき（横向きのスマホ）は、認識ボタンまわりを詰める */
 @media (max-height: 560px) {
   .shutter {
-    width: 54px;
-    height: 54px;
+    width: 60px;
+    height: 60px;
     border-radius: 14px;
     font-size: 10px;
   }
   .shutter svg {
-    width: 22px;
-    height: 22px;
+    width: 24px;
+    height: 24px;
   }
   .retake,
   #cam-sort {
@@ -3352,6 +3415,87 @@ details.more[open] > summary::before {
   font-size: 12px;
   color: var(--muted);
 }
+/* 本場・供託をふくめた「動く点数」（基本の点数と分けて出す） */
+.move-line {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 2px 4px;
+  margin: 6px 0 2px;
+  padding: 6px 10px;
+  border-radius: 10px;
+  background: var(--surface-2);
+}
+.move-line i {
+  font-style: normal;
+  font-size: 11px;
+  color: var(--muted);
+}
+.move-line .mv {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 3px;
+  font-variant-numeric: tabular-nums;
+}
+.move-line .mv small {
+  font-size: 10px;
+  color: var(--muted);
+}
+.move-line .mv b {
+  font-size: 13px;
+  font-weight: 800;
+}
+.move-line .mv.add b {
+  color: var(--warn);
+}
+.move-line .mv.total {
+  margin-left: auto;
+}
+.move-line .mv.total b {
+  font-size: 16px;
+  color: var(--accent);
+}
+.move-line .mv.total b em {
+  font-style: normal;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+/* バナー広告のスペース（iPhoneアプリ・Webアプリで中身を差し替える） */
+.ad-slot {
+  flex: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 54px;
+  padding: 2px max(10px, env(safe-area-inset-left, 0px)) max(2px, env(safe-area-inset-bottom, 0px));
+  background: var(--surface-2);
+  border-top: 1px solid var(--line);
+}
+.ad-inner {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: min(320px, 100%);
+  height: 50px;
+  border-radius: 6px;
+  border: 1px dashed var(--line);
+  color: var(--muted);
+  font-size: 11px;
+  letter-spacing: 0.08em;
+}
+.ad-inner small {
+  font-size: 10px;
+  opacity: 0.7;
+}
+/* 横向きの画面は高さが足りないので、広告の枠は出さない（縦向き前提のアプリ） */
+@media (max-height: 560px) {
+  .ad-slot {
+    display: none;
+  }
+}
+
 /* テンパイになる切り方の待ち牌（横並び。点数はOK後に牌の下） */
 .wait-chips {
   flex-wrap: wrap;
@@ -3422,8 +3566,12 @@ details.more[open] > summary::before {
   </div>
   <button type="button" class="help-btn light" data-action="guide-open" data-kind="help" aria-label="使い方">？</button>
 </header>
-<div class="area-head setup-head">
-  <b>条件/ルール 設定</b>
+<div class="area-head setup-head" id="setup-head" data-open="true">
+  <button type="button" class="area-toggle" data-action="setup-toggle" aria-expanded="true" aria-controls="rules-bar">
+    <b>条件/ルール 設定</b>
+    <em class="head-st" id="setup-st" data-st="none">未設定</em>
+    <span class="chev" aria-hidden="true"></span>
+  </button>
   <small><em class="st-mini">未設定</em>でも <span class="ref-head">何待ち 判断</span>は使用可能<br>点数は<span class="ok-mini">OK</span>を押すと算出</small>
 </div>
 <section class="rules-bar" id="rules-bar" aria-label="条件の設定"></section>
@@ -3445,13 +3593,15 @@ details.more[open] > summary::before {
     </div>
     <button type="button" class="rot-btn" id="cam-rotate" data-action="cam-rotate" hidden aria-label="写真を90度回転">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 12a8 8 0 1 1-2.6-5.9"/><path d="M20 4v5h-5"/></svg>
-      <span>回転</span>
+      <span>90°回転</span>
     </button>
     <div class="cam-actions">
-      <button type="button" class="retake" id="retake" data-action="cam-retake" hidden>撮り直す</button>
-      <button type="button" class="sort-toggle" id="cam-sort" data-action="cam-sort" hidden aria-pressed="false">
-        <span class="st-label">配牌整理</span><span class="st-state">OFF</span>
-      </button>
+      <div class="cam-side-btns" id="cam-side-btns">
+        <button type="button" class="retake" id="retake" data-action="cam-retake" hidden>撮り直す</button>
+        <button type="button" class="sort-toggle" id="cam-sort" data-action="cam-sort" hidden aria-pressed="false">
+          <span class="st-label">配牌整理</span><span class="st-state">OFF</span>
+        </button>
+      </div>
       <button type="button" class="shutter" id="shutter" data-action="cam-read" hidden>
         <span class="sh-ic"></span>
         <span class="sh-label">認識する</span>
@@ -3626,7 +3776,7 @@ details.more[open] > summary::before {
         </div>
       </details>
 
-      <p class="footnote">計算はすべてこの端末内で行います。フリテン・流し満貫・ローカル役には未対応です。赤5は各色1枚まで。カメラ画面の自動読み取りは現在クラウドAI（β）で、端末内AIは学習データを集めてから搭載します。</p>
+      <p class="footnote">計算はすべてこの端末内で行います。フリテン・流し満貫・ローカル役には未対応です。赤5は同じ色で何枚でも入れられます（ノーマルの5と合わせて4枚まで）。カメラ画面の自動読み取りは現在クラウドAI（β）で、端末内AIは学習データを集めてから搭載します。</p>
     </main>
 
     <footer class="keyboard" id="keyboard">
@@ -3637,6 +3787,12 @@ details.more[open] > summary::before {
   </div>
 </div>
 <div class="toast" id="toast" role="status" hidden></div>
+<!-- バナー広告のスペース（320×50相当）。
+     中身を AdMob（アプリ）や AdSense（Web）のタグに差し替えて使う。
+     window.haiyomi.setAds(false) で消せる（高さぶんの余白もなくなる） -->
+<div class="ad-slot" id="ad-slot" role="complementary" aria-label="広告">
+  <div class="ad-inner" id="ad-inner"><span>広告スペース</span><small>320×50</small></div>
+</div>
 </div>
 <div class="guide" id="guide" role="dialog" aria-label="使い方" hidden></div>
 
@@ -4352,10 +4508,10 @@ function regularResult(yaku, fuInfo, env, detail) {
   }
   const { dora, aka, ura, nuki } = env.dora;
   const doraList = [];
-  if (dora) doraList.push({ name: 'ドラ', han: dora });
-  if (aka) doraList.push({ name: '赤ドラ', han: aka });
-  if (nuki) doraList.push({ name: '抜きドラ', han: nuki });
-  if (ura) doraList.push({ name: '裏ドラ', han: ura });
+  if (dora) doraList.push({ name: `ドラ${dora}枚`, han: dora });
+  if (aka) doraList.push({ name: `赤ドラ${aka}枚`, han: aka });
+  if (nuki) doraList.push({ name: `抜きドラ${nuki}枚`, han: nuki });
+  if (ura) doraList.push({ name: `裏ドラ${ura}枚`, han: ura });
   const han = yakuHan + dora + aka + ura + nuki;
   const { base, limit } = basePoints(han, fuInfo.fu, env.rules);
   return {
@@ -4846,10 +5002,6 @@ function analyze(state) {
   const cAll = countsOf(everything);
   for (let i = 0; i < 34; i++) {
     if (cAll[i] > 4) base.errors.push(`${tileLabel(i)}が${cAll[i]}枚あります（同じ牌は4枚まで）`);
-  }
-  for (const r of [34, 35, 36]) {
-    const n = everything.filter((id) => id === r).length;
-    if (n > 1) base.errors.push(`${tileLabel(r)}が${n}枚あります（赤5は各1枚まで）`);
   }
   if (concealed.length > need) {
     base.errors.push(`鳴きが${k}組のとき、手牌は${need}枚＋和了牌です（いま${concealed.length}枚）`);
@@ -6506,19 +6658,15 @@ function checkHand(r, opts = {}) {
   if (r.source === 'fallback' && r.gap < (opts.minGap != null ? opts.minGap : 0)) return { ok: false, reason: 'noRow' };
   // 2) 手牌として少なすぎる（鳴きを入れても足りない）
   if (n < 7 - 3 * melds) return { ok: false, reason: 'tooFew' };
-  // 3) 同じ牌が5枚以上、または同じ赤5が2枚以上（麻雀の牌としてありえない）
+  // 3) 同じ牌が5枚以上（麻雀の牌としてありえない）。
+  //    赤5は卓によって各色2枚・3枚・全部赤もあるので、同じ赤5が何枚あっても止めない（5枚以上だけ見る）
   const counts = new Map();
   for (const t of tiles) {
     if (t.p < minP || t.id == null || t.id === FLOWER) continue;
     const base = t.id >= 34 && t.id <= 36 ? [4, 13, 22][t.id - 34] : t.id;
     counts.set(base, (counts.get(base) || 0) + 1);
-    if (t.id >= 34 && t.id <= 36) {
-      const key = 'red' + t.id;
-      counts.set(key, (counts.get(key) || 0) + 1);
-      if (counts.get(key) >= 2) return { ok: false, reason: 'impossible' };
-    }
   }
-  for (const [k, v] of counts) if (typeof k === 'number' && v >= 5) return { ok: false, reason: 'impossible' };
+  for (const [, v] of counts) if (v >= 5) return { ok: false, reason: 'impossible' };
   // 4) 自信のない牌が半分以上
   if (n && tiles.filter((t) => t.p < minP).length >= n / 2) return { ok: false, reason: 'unsure' };
   return { ok: true };
@@ -7183,6 +7331,26 @@ function formsHTML(sh) {
     .join('')}</div>`;
 }
 
+/**
+ * 本場・供託をふくめた「実際に動く点数」。基本の点数と分けて出す
+ *   例: 基本 8,000 ＋ 2本場 600 ＝ 8,600点
+ * 本場のぶんは r.total から逆算する（ツモは1人100点ずつ・三人麻雀では人数が違うため）
+ */
+function moveLineHTML(r, situation) {
+  const honba = situation.honba | 0;
+  const kyotaku = situation.kyotaku | 0;
+  if (!r || !r.ok || (!honba && !kyotaku)) return '';
+  const kyotakuPt = 1000 * kyotaku;
+  const honbaPt = Math.max(0, (r.total | 0) - (r.points | 0) - kyotakuPt);
+  const parts = [`<span class="mv"><small>基本</small><b>${fmt(r.points)}</b></span>`];
+  if (honbaPt) parts.push(`<span class="mv add"><small>${honba}本場</small><b>+${fmt(honbaPt)}</b></span>`);
+  if (kyotakuPt) parts.push(`<span class="mv add"><small>供託${kyotaku}本</small><b>+${fmt(kyotakuPt)}</b></span>`);
+  return (
+    `<p class="move-line">${parts.join('<i>＋</i>')}<i>＝</i>` +
+    `<span class="mv total"><small>受け取り</small><b>${fmt(r.total)}<em>点</em></b></span></p>`
+  );
+}
+
 /** アガリ時の支払い内訳 */
 function paymentList(r, situation) {
   const p = r.payment;
@@ -7265,6 +7433,7 @@ const state = {
   setup: { ...DEFAULT_SETUP },
   rules: { ...DEFAULT_RULES },
   sample: false,
+  setupOpen: true, // 「条件/ルール 設定」の枠を開いているか（ヘッダーはいつも出す）
   seenStart: false, // スタート画面を見たか（初回だけ出す）
   overlay: null, // 重ねて出す画面: 'start' | 'help' | null
   // 手入力画面
@@ -7319,6 +7488,7 @@ function persisted() {
     setup: state.setup,
     rules: state.rules,
     sample: state.sample,
+    setupOpen: state.setupOpen,
     seenStart: state.seenStart,
     cam: { source: state.cam.source === 'live' ? 'live' : state.cam.source, demo: state.cam.demo, sorted: !!state.cam.sorted },
   };
@@ -7369,6 +7539,7 @@ function load() {
     setup: { ...DEFAULT_SETUP, ...(s.setup || {}) },
     rules: { ...DEFAULT_RULES, ...(s.rules || {}) },
     sample: !!s.sample,
+    setupOpen: s.setupOpen !== false,
     seenStart: !!s.seenStart,
   });
   if (!state.seenStart) state.overlay = 'start';
@@ -7447,12 +7618,11 @@ function allInputTiles() {
     ...state.ura,
   ];
 }
-/** 同じ牌4枚・赤5各1枚の制限に引っかからないか。問題があればメッセージを返す */
+/** 同じ牌4枚までの制限に引っかからないか。問題があればメッセージを返す
+ *  （赤5は卓によって各色2枚・3枚・全部赤もあるので、赤どうしの枚数は制限しない） */
 function tileLimitMessage(id, extraUsed = []) {
-  const all = allInputTiles().concat(extraUsed);
-  const used = countsOf(all);
-  if (used[tileBase(id)] >= 4) return `${tileLabel(tileBase(id))}はすでに4枚使われています`;
-  if (isRed(id) && all.includes(id)) return `${tileLabel(id)}はすでに使われています`;
+  const used = countsOf(allInputTiles().concat(extraUsed));
+  if (used[tileBase(id)] >= 4) return `${tileLabel(tileBase(id))}はすでに4枚使われています（赤5をふくめて4枚まで）`;
   return '';
 }
 
@@ -7472,6 +7642,8 @@ function setHand({ concealed = [], win = null, melds = [] } = {}, { sample = fal
   });
   state.cam.draft = null;
   state.cam.sel = null;
+  // 外から手牌を渡されたときは「読み取り済み」として扱う（牌チップと配牌整理の表示条件をそろえる）
+  state.cam.read = concealed.length > 0 || win != null || state.melds.length > 0;
   update();
 }
 
@@ -7818,10 +7990,8 @@ function keyAvailable(id, used, redsUsed) {
   const b = tileBase(id);
   const t = state.target;
   if (state.rules.sanma && (isSanmaMissing(b) || id === 34)) return false; // 三人麻雀にない牌
-  if (isRed(id)) {
-    if (MELD_TYPES.has(t)) return false;
-    if (redsUsed.has(id)) return false;
-  }
+  // 赤5は卓によって各色2枚・3枚・全部赤もあるので、ノーマルの5と合わせて4枚までだけ見る
+  if (isRed(id) && MELD_TYPES.has(t)) return false;
   switch (t) {
     case 'pon': return used[b] <= 1;
     case 'minkan':
@@ -7840,7 +8010,7 @@ function addTile(id) {
   if (MELD_TYPES.has(t)) {
     if (state.melds.length >= 4) return toast('鳴きは4組までです');
     const redBase = b < 27 ? Math.floor(b / 9) * 9 + 4 : -1;
-    const redAvailable = !all.some((x) => isRed(x) && tileBase(x) === redBase);
+    const redAvailable = countsOf(all)[redBase] < 4;
     const meld = makeMeld(t, id, state.meldRed && redAvailable);
     if (!meld) return toast('チーは順子の一番小さい牌をタップします（例: 3萬 → 345萬）');
     const add = countsOf(meld.tiles);
@@ -7857,8 +8027,7 @@ function addTile(id) {
     state.lastAdded = { where: 'meld', index: state.melds.length - 1 };
   } else {
     const what = INDICATOR_TARGETS.has(t) ? '表示牌として' : '';
-    if (used[b] >= 4) return toast(`${tileLabel(b)}は${what}すでに4枚使われています`);
-    if (isRed(id) && all.includes(id)) return toast(`${tileLabel(id)}はすでに使われています`);
+    if (used[b] >= 4) return toast(`${tileLabel(b)}は${what}すでに4枚使われています（赤5をふくめて4枚まで）`);
     if (t === 'hand') {
       // 左から順に入れる。赤い枠の位置に入り、入れたら1つ右へ進む
       const c = cursorIndex();
@@ -8122,6 +8291,7 @@ function verdict14(a) {
         `<div class="eyebrow">アガリ・${who}</div>` +
         `<div class="big"><span class="num">${fmt(r.points)}</span><span class="unit">点</span>${r.limit ? `<span class="limit">${r.limit}</span>` : ''}</div>` +
         `<p class="sub">${r.yakuman ? '' : `<b>${r.han}翻${r.fu}符</b>・`}${r.tsumo ? `<b>${paymentShort(r)}</b>・` : ''}${waitText(r)}</p>` +
+        moveLineHTML(r, state.situation) +
         paymentList(r, state.situation) +
         `<div class="section-title">役</div>${yakuRows(r)}` +
         (shape ? `<details class="more"><summary>面子の分け方</summary>${shape}</details>` : '') +
@@ -8546,7 +8716,9 @@ function loadPhoto(file) {
   reader.onerror = () => toast('この画像は読み込めませんでした');
   reader.onload = () => {
     Object.assign(cam, { source: 'photo', photoUrl: String(reader.result), photoSize: null, zoom: 1, panX: 0, panY: 0, pop: null, note: '', read: false });
-    if (state.sample && clearForNewCapture()) update();
+    // 別の写真を選んだら前の手牌は消す（「認識済み」でないのに牌のチップだけ残っていると紛らわしい）
+    clearForNewCapture();
+    update();
     const img = $('cam-photo');
     img.onload = () => {
       cam.photoSize = { w: img.naturalWidth, h: img.naturalHeight };
@@ -9033,6 +9205,9 @@ function unsortNow() {
 }
 
 function toggleSort() {
+  if (!cam.read || handIds().length < 2) {
+    return toast('先に「認識する」を押して、手牌を読み取ってください');
+  }
   snapshot();
   if (cam.sorted) {
     unsortNow();
@@ -9068,7 +9243,6 @@ function limitMessage(id, replacing = null) {
   }
   const used = countsOf(all);
   if (used[tileBase(id)] >= 4) return `${tileLabel(tileBase(id))}はすでに4枚使われています`;
-  if (isRed(id) && all.includes(id)) return `${tileLabel(id)}はすでに使われています`;
   return '';
 }
 
@@ -9079,8 +9253,8 @@ function limitMessage(id, replacing = null) {
 function doraLimitMessage(id) {
   if (state.rules.sanma && (isSanmaMissing(tileBase(id)) || id === 34)) return '三人麻雀では使わない牌です';
   const inds = state.dora.concat(state.ura);
-  if (countsOf(inds)[tileBase(id)] >= 4) return `${tileLabel(tileBase(id))}は表示牌としてすでに4枚です`;
-  if (isRed(id) && inds.includes(id)) return `${tileLabel(id)}はすでに表示牌になっています`;
+  // ノーマルの5と赤5は同じ牌なので、合わせて4枚まで
+  if (countsOf(inds)[tileBase(id)] >= 4) return `${tileLabel(tileBase(id))}は表示牌としてすでに4枚です（赤5をふくめて4枚まで）`;
   return '';
 }
 
@@ -9304,7 +9478,12 @@ function bandHTML(a) {
   if (a.agari) {
     const r = a.agari;
     if (!scoreReady()) return bandHead('アガリ形', '点数と役は条件のOK後に表示します', 'win');
-    if (r.ok) return bandHead('アガリ', `${fmt(r.points)}点${r.limit ? '・' + r.limit : ''}（${r.dealer ? '親' : '子'}の${r.tsumo ? 'ツモ' : 'ロン'}）`, 'win');
+    if (r.ok) {
+      // 本場・供託があるときは「実際に動く点数」も帯に出す（基本の点数と区別できるように）
+      const extra = (r.total | 0) - (r.points | 0);
+      const move = extra > 0 ? `・受け取り ${fmt(r.total)}点` : '';
+      return bandHead('アガリ', `${fmt(r.points)}点${r.limit ? '・' + r.limit : ''}（${r.dealer ? '親' : '子'}の${r.tsumo ? 'ツモ' : 'ロン'}）${move}`, 'win');
+    }
     return bandHead('アガリ形・役なし', 'ドラだけではアガれません', 'warn');
   }
   const s = a.shanten.min;
@@ -9411,6 +9590,7 @@ function resultBlock(r) {
   return (
     `<div class="pt-big"><span class="num">${fmt(r.points)}</span><span class="unit">点</span>${r.limit ? `<span class="limit">${r.limit}</span>` : ''}</div>` +
     `<p class="sub">${r.yakuman ? '役満' : `${r.han}翻${r.fu}符`}${r.tsumo ? `・${paymentShort(r)}` : ''}${waitText(r) ? '・' + waitText(r) : ''}</p>` +
+    moveLineHTML(r, state.situation) +
     yakuRows(r)
   );
 }
@@ -9852,9 +10032,11 @@ function renderControls() {
   $('retake').hidden = !(!cam.busy && ((src === 'live' && cam.live === 'frozen') || (src === 'photo' && cam.photoSize)));
   $('retake').textContent = src === 'live' ? '撮り直す' : '別の写真';
   const sort = $('cam-sort');
-  sort.hidden = handIds().length < 2 || cam.busy;
-  sort.setAttribute('aria-pressed', String(!!cam.sorted));
-  sort.querySelector('.st-state').textContent = cam.sorted ? 'ON' : 'OFF';
+  const sortReady = cam.read && handIds().length >= 2;
+  sort.hidden = cam.busy || !(canRead || sortReady);
+  sort.dataset.ready = String(sortReady);
+  sort.setAttribute('aria-pressed', String(sortReady && !!cam.sorted));
+  sort.querySelector('.st-state').textContent = !sortReady ? '—' : cam.sorted ? 'ON' : 'OFF';
 }
 
 /** 鳴きを省いた10枚・7枚の「何待ち問題」の形は、テンパイの画面として見せる（点数は出さない） */
@@ -10058,6 +10240,29 @@ function syncPlayers() {
   });
 }
 
+/**
+ * 「条件/ルール 設定」のヘッダー。枠をたたんでも、今の状態（未設定・未確定・設定済）は見えるようにする
+ */
+function syncSetupHead() {
+  const table = setupStatus('table');
+  const agari = setupStatus('agari');
+  // 2段のうち「いちばん進んでいない状態」をヘッダーに出す
+  //   両方 設定済 → 設定済 ／ どちらかが 未設定 → 未設定 ／ それ以外（触ったあと）→ 未確定
+  const st = table === 'ok' && agari === 'ok' ? 'ok' : table === 'none' || agari === 'none' ? 'none' : 'edit';
+  const badge = $('setup-st');
+  if (badge) {
+    badge.dataset.st = st;
+    badge.textContent = SETUP_LABELS[st];
+  }
+  const open = state.setupOpen !== false;
+  const head = $('setup-head');
+  if (head) head.dataset.open = String(open);
+  const btn = head && head.querySelector('.area-toggle');
+  if (btn) btn.setAttribute('aria-expanded', String(open));
+  const bar = $('rules-bar');
+  if (bar) bar.hidden = !open;
+}
+
 function render(a) {
   const camera = state.mode === 'camera';
   $('app').dataset.mode = state.mode;
@@ -10066,6 +10271,7 @@ function render(a) {
   if (!camera) $('pop').hidden = true;
   syncViewTabs(state.mode, state.cam.source);
   syncPlayers();
+  syncSetupHead();
   if (camera) renderCamera(a);
   else renderManual(a);
   renderGuide();
@@ -10102,6 +10308,10 @@ function onClick(e) {
       toast('条件をOKしました。点数を表示します');
     }
   } else if (action === 'setup-reset') resetSetup();
+  else if (action === 'setup-toggle') {
+    state.setupOpen = state.setupOpen === false;
+    update();
+  }
   else if (action === 'players') setRule('sanma', el.dataset.value === '1');
   else if (action.startsWith('guide-')) handleGuide(el);
   else if (action.startsWith('cam-')) handleCamera(el);
@@ -10131,6 +10341,15 @@ function init() {
     setHand: (hand) => setHand(hand),
     setHandFromString: (str, winStr) => setHand({ concealed: parseTiles(str), win: winStr ? parseTiles(winStr)[0] : null }),
     getAnalysis: () => view.analysis,
+    // バナー広告のスペース: 差し替え用。setAds(false) で枠ごと消える
+    setAds: (on) => {
+      const el = $('ad-slot');
+      if (el) el.hidden = !on;
+    },
+    setAdHTML: (html) => {
+      const el = $('ad-inner');
+      if (el) el.innerHTML = html;
+    },
   };
 }
 
