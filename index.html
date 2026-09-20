@@ -310,37 +310,56 @@ h2 {
 .area-head {
   display: flex;
   align-items: center;
-  gap: 10px;
-  margin: 2px max(10px, env(safe-area-inset-left, 0px)) 4px;
-  padding: 4px 12px;
+  gap: 7px;
+  margin: 2px max(8px, env(safe-area-inset-left, 0px)) 4px;
+  padding: 4px 9px;
   border-radius: 10px;
   background: var(--accent-soft);
   box-shadow: inset 4px 0 0 var(--accent);
 }
-/* ヘッダーをタップで、中の設定枠を開いたり閉じたりする */
+/* ヘッダー左端の ＋／− で、中の設定枠を開いたり閉じたりする */
 .area-toggle {
   flex: none;
-  display: inline-flex;
-  align-items: center;
-  gap: 7px;
+  position: relative;
+  width: 22px;
+  height: 22px;
   border: 0;
-  padding: 2px 0;
-  background: none;
-  color: inherit;
-  text-align: left;
+  padding: 0;
+  border-radius: 7px;
+  background: var(--surface);
+  color: var(--accent);
+  box-shadow: inset 0 0 0 1.5px var(--accent);
 }
-.area-toggle .chev {
-  width: 0;
-  height: 0;
-  border-left: 5px solid transparent;
-  border-right: 5px solid transparent;
-  border-top: 6px solid var(--accent);
-  transition: transform 0.15s ease;
+.area-toggle .pm::before,
+.area-toggle .pm::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 12px;
+  height: 2.5px;
+  border-radius: 2px;
+  background: currentColor;
+  transform: translate(-50%, -50%);
 }
-.setup-head[data-open='false'] .area-toggle .chev {
-  transform: rotate(-90deg);
+/* 開いているときは「−」、たたんでいるときは「＋」 */
+.area-toggle .pm::after {
+  transform: translate(-50%, -50%) rotate(90deg);
+  opacity: 0;
+  transition: opacity 0.15s ease;
 }
-/* たたんでいても状態が分かるように、見出しの横に札を出す */
+.setup-head[data-open='false'] .area-toggle .pm::after {
+  opacity: 1;
+}
+/* 見出しと、その下のステータス札（たたんでいても状態が分かるように） */
+.head-title {
+  flex: none;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 1px;
+  min-width: 0;
+}
 .head-st {
   font-style: normal;
   font-size: 10px;
@@ -365,27 +384,28 @@ h2 {
 .area-head b {
   flex: none;
   font-family: var(--font-brand);
-  font-size: 15.5px;
+  font-size: 14.5px;
   font-weight: 900;
-  letter-spacing: 0.04em;
+  letter-spacing: 0.02em;
   color: var(--accent);
   white-space: nowrap;
 }
+/* 画面の幅に合わせて少しずつ縮め、どの端末でも2行に収まるようにする */
 .area-head small {
   flex: 1 1 auto;
   min-width: 0;
-  font-size: 10.5px;
-  line-height: 1.45;
+  font-size: clamp(9px, 2.65vw, 11px);
+  line-height: 1.5;
   color: var(--ink);
 }
 /* 補足の中の「未設定」（帯の札と同じ見た目）・見出しの名前（見出しと同じ書体・色）・「OK」（ボタンと同じ色） */
 .area-head small .st-mini {
   display: inline-block;
   font-style: normal;
-  font-size: 9.5px;
+  font-size: 0.9em;
   font-weight: 800;
   line-height: 15px;
-  padding: 0 5px;
+  padding: 0 4px;
   border-radius: 999px;
   background: var(--surface);
   color: var(--muted);
@@ -394,9 +414,9 @@ h2 {
 }
 .area-head small .ref-head {
   font-family: var(--font-brand);
-  font-size: 11.5px;
+  font-size: 1.04em;
   font-weight: 900;
-  letter-spacing: 0.02em;
+  letter-spacing: 0;
   color: var(--accent);
   white-space: nowrap;
 }
@@ -1750,7 +1770,12 @@ details.more[open] > summary::before {
   padding-block: 2px 8px;
   padding-inline: max(16px, env(safe-area-inset-left, 0px)) max(16px, env(safe-area-inset-right, 0px));
 }
+/* 写真を枠に合わせている間（とカメラ・写真なし）は写真を見る場所を確保し、読み取った後は中身の高さだけにする */
 .cam-stage {
+  min-height: 0;
+}
+.cam-stage[data-framing],
+.cam-stage[data-empty] {
   min-height: min(46vh, 380px);
 }
 .cam-side {
@@ -1809,7 +1834,7 @@ details.more[open] > summary::before {
   display: flex;
   flex-direction: column;
   gap: 6px;
-  padding: 6px 8px calc(var(--roi-inset) + var(--roi-h) + 2px);
+  padding: 6px 6px calc(var(--roi-inset) + var(--roi-h) + 2px);
 }
 .cam-stage[data-source='photo'] {
   touch-action: none;
@@ -2061,15 +2086,6 @@ details.more[open] > summary::before {
   }
 }
 
-.cam-top {
-  flex: none;
-  z-index: 3;
-  display: flex;
-  align-items: center;
-  flex-wrap: wrap;
-  gap: 6px;
-  padding-right: 112px;
-}
 .set-chips {
   display: flex;
   flex-wrap: wrap;
@@ -2116,14 +2132,31 @@ details.more[open] > summary::before {
   margin-bottom: 1px;
 }
 
+/* 状態の見出し（テンパイ・アガリなど）と操作ボタンを同じ行に置いて、上の空きをなくす */
+.cam-top {
+  flex: none;
+  z-index: 3;
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  min-width: 0;
+}
+.band-head-slot {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+.band-head-slot:empty {
+  display: none;
+}
 .cam-actions {
   position: relative;
   z-index: 3;
   flex: none;
+  margin-left: auto; /* 見出しがないときも右に寄せる */
   display: flex;
   align-items: center;
   justify-content: flex-end;
-  gap: 8px;
+  gap: 5px;
   min-height: 0;
 }
 /* 「別の写真」「配牌整理」は縦に並べて、認識ボタンの左に置く（枠幅はそろえる） */
@@ -2132,8 +2165,8 @@ details.more[open] > summary::before {
   display: flex;
   flex-direction: column;
   align-items: stretch;
-  gap: 6px;
-  min-width: 96px;
+  gap: 5px;
+  min-width: 88px;
 }
 .cam-side-btns > button {
   width: 100%;
@@ -2145,8 +2178,8 @@ details.more[open] > summary::before {
   justify-items: center;
   align-content: center;
   gap: 1px;
-  width: 72px;
-  height: 72px;
+  width: 68px;
+  height: 68px;
   border: 0;
   border-radius: 16px;
   padding: 0;
@@ -2192,7 +2225,7 @@ details.more[open] > summary::before {
   flex: none;
   border: 0;
   border-radius: 999px;
-  padding: 7px 10px;
+  padding: 6px 10px;
   background: rgb(0 0 0 / 0.55);
   color: #fff;
   font-size: 12px;
@@ -2208,7 +2241,7 @@ details.more[open] > summary::before {
   scrollbar-width: none;
   margin-top: auto;
   z-index: 2;
-  padding-inline: 2px;
+  padding-inline: 0;
   display: flex;
   flex-direction: column;
   gap: 4px;
@@ -2218,6 +2251,9 @@ details.more[open] > summary::before {
   pointer-events: auto;
   flex: none;
 }
+.cam-stage[data-framing] .cam-overlay {
+  margin-top: 0;
+}
 .band {
   display: grid;
   gap: 4px;
@@ -2225,18 +2261,28 @@ details.more[open] > summary::before {
 }
 .band-head {
   display: flex;
-  align-items: baseline;
-  flex-wrap: wrap;
-  column-gap: 8px;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 2px;
   text-shadow: 0 1px 3px rgb(0 0 0 / 0.75);
 }
+/* 状態の言葉（テンパイ・1シャンテン・アガリ）だけ大きく。補足は元の大きさのまま下の行 */
 .band-head b {
   font-family: var(--font-display);
-  font-size: 21px;
+  font-size: clamp(21px, 6.8cqw, 26px);
   font-weight: 800;
   letter-spacing: 0.04em;
   color: #fff;
-  line-height: 1.2;
+  line-height: 1.15;
+}
+.band-head b em {
+  display: inline-block;
+  font-style: normal;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0;
+  margin-left: 2px;
+  vertical-align: 2px;
 }
 .band-head.ok b {
   color: #8fe3bd;
@@ -2251,9 +2297,14 @@ details.more[open] > summary::before {
 .band-head.err b {
   color: #ff9a8f;
 }
-.band-head span {
-  font-size: 12px;
+.band-head span,
+.band-sub {
+  font-size: 11.5px;
   color: rgb(255 255 255 / 0.88);
+  text-shadow: 0 1px 3px rgb(0 0 0 / 0.75);
+}
+.band-sub {
+  line-height: 1.35;
 }
 .chip-row {
   display: flex;
@@ -2318,10 +2369,10 @@ details.more[open] > summary::before {
 .twin {
   display: flex;
   align-items: flex-end;
-  gap: 8px;
+  gap: 6px;
   overflow-x: auto;
   scrollbar-width: none;
-  padding: 4px 3px 0;
+  padding: 4px 1px 0;
 }
 .twin-hand,
 .twin-melds {
@@ -2350,9 +2401,10 @@ details.more[open] > summary::before {
   align-items: flex-end;
   gap: 1px;
 }
+/* 牌の大きさは横幅いっぱいまで広げる（--tw-w は並ぶ枚数から JS が決める） */
 .tw .tile,
 .tw-meld .tile {
-  --w: clamp(18px, 5.4cqw, 32px);
+  --w: clamp(16px, var(--tw-w, 5.4cqw), 36px);
   --edge: 2px;
 }
 .tw.hl {
@@ -2383,7 +2435,8 @@ details.more[open] > summary::before {
   white-space: nowrap;
 }
 .tw small {
-  font-size: 9px;
+  font-size: 8.5px;
+  letter-spacing: -0.02em;
   line-height: 1.3;
   color: rgb(255 255 255 / 0.85);
 }
@@ -3134,7 +3187,7 @@ details.more[open] > summary::before {
   gap: 6px;
   border: 0;
   border-radius: 999px;
-  padding: 5px 5px 5px 10px;
+  padding: 5px 4px 5px 8px;
   background: rgb(255 255 255 / 0.16);
   color: #fff;
   font-size: 12px;
@@ -3145,7 +3198,7 @@ details.more[open] > summary::before {
 }
 #cam-sort .st-state {
   border-radius: 999px;
-  padding: 2px 8px;
+  padding: 2px 6px;
   background: rgb(0 0 0 / 0.4);
   font-size: 11px;
   font-weight: 800;
@@ -3567,12 +3620,9 @@ details.more[open] > summary::before {
   <button type="button" class="help-btn light" data-action="guide-open" data-kind="help" aria-label="使い方">？</button>
 </header>
 <div class="area-head setup-head" id="setup-head" data-open="true">
-  <button type="button" class="area-toggle" data-action="setup-toggle" aria-expanded="true" aria-controls="rules-bar">
-    <b>条件/ルール 設定</b>
-    <em class="head-st" id="setup-st" data-st="none">未設定</em>
-    <span class="chev" aria-hidden="true"></span>
-  </button>
-  <small><em class="st-mini">未設定</em>でも <span class="ref-head">何待ち 判断</span>は使用可能<br>点数は<span class="ok-mini">OK</span>を押すと算出</small>
+  <button type="button" class="area-toggle" data-action="setup-toggle" aria-expanded="true" aria-controls="rules-bar" aria-label="条件/ルール 設定の開閉"><span class="pm" aria-hidden="true"></span></button>
+  <span class="head-title"><b>条件/ルール 設定</b><em class="head-st" id="setup-st" data-st="none">未設定</em></span>
+  <small><em class="st-mini">未設定</em>でも<span class="ref-head">何待ち 判断</span>は使用可能<br>点数は<span class="ok-mini">OK</span>を押すと算出</small>
 </div>
 <section class="rules-bar" id="rules-bar" aria-label="条件の設定"></section>
 <div class="area-head judge-head">
@@ -3595,20 +3645,23 @@ details.more[open] > summary::before {
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 12a8 8 0 1 1-2.6-5.9"/><path d="M20 4v5h-5"/></svg>
       <span>90°回転</span>
     </button>
-    <div class="cam-actions">
-      <div class="cam-side-btns" id="cam-side-btns">
-        <button type="button" class="retake" id="retake" data-action="cam-retake" hidden>撮り直す</button>
-        <button type="button" class="sort-toggle" id="cam-sort" data-action="cam-sort" hidden aria-pressed="false">
-          <span class="st-label">配牌整理</span><span class="st-state">OFF</span>
-        </button>
-      </div>
-      <button type="button" class="shutter" id="shutter" data-action="cam-read" hidden>
-        <span class="sh-ic"></span>
-        <span class="sh-label">認識する</span>
-      </button>
-    </div>
     <div class="cam-empty" id="cam-empty" hidden></div>
     <div class="cam-overlay" id="cam-overlay">
+      <div class="cam-top">
+        <div class="band-head-slot" id="band-head"></div>
+        <div class="cam-actions">
+          <div class="cam-side-btns" id="cam-side-btns">
+            <button type="button" class="retake" id="retake" data-action="cam-retake" hidden>撮り直す</button>
+            <button type="button" class="sort-toggle" id="cam-sort" data-action="cam-sort" hidden aria-pressed="false">
+              <span class="st-label">配牌整理</span><span class="st-state">OFF</span>
+            </button>
+          </div>
+          <button type="button" class="shutter" id="shutter" data-action="cam-read" hidden>
+            <span class="sh-ic"></span>
+            <span class="sh-label">認識する</span>
+          </button>
+        </div>
+      </div>
       <div class="band" id="band" aria-live="polite"></div>
       <div class="twin" id="twin"></div>
     </div>
@@ -9489,7 +9542,7 @@ function bandHTML(a) {
   const s = a.shanten.min;
   if (s >= 2) return bandHead(`${s}シャンテン`, '切る牌の候補は「手入力」画面で見られます');
   return (
-    bandHead(s === 0 ? 'テンパイ（1枚切れば）' : `${s}シャンテン`, s === 0 ? '切る牌をタップすると待ちを表示' : '切る牌の候補（受け入れの種類が多い順）', s === 0 ? 'ok' : '') +
+    bandHead(s === 0 ? 'テンパイ<em>（1枚切れば）</em>' : `${s}シャンテン`, s === 0 ? '切る牌をタップすると待ちを表示' : '切る牌の候補（受け入れの種類が多い順）', s === 0 ? 'ok' : '') +
     chipRow(
       'discard',
       // 枚数は手牌からしか数えられない（河や自分の捨て牌は見えない）ので、種類の数だけ出す
@@ -9499,6 +9552,32 @@ function bandHTML(a) {
 }
 
 // ---------- 表示: 認識した手牌 ----------
+/**
+ * 並んだ牌を横幅いっぱいまで大きくする。
+ * すき間・「＋」ボタン・「来た牌」などの札は牌の大きさで変わらないので、その合計を引いてから枚数で割る
+ */
+function fitTwin() {
+  const tw = $('twin');
+  if (!tw) return;
+  const cells = tw.querySelectorAll('.tw, .tw-meld');
+  const first = tw.querySelector('.twin-hand .tw') || cells[0];
+  if (!cells.length || !first) {
+    tw.style.removeProperty('--tw-w');
+    return;
+  }
+  const w0 = first.getBoundingClientRect().width;
+  const box = tw.clientWidth;
+  if (!w0 || !box) return;
+  const cs = getComputedStyle(tw);
+  const gap = parseFloat(cs.columnGap) || 0;
+  const pad = (parseFloat(cs.paddingLeft) || 0) + (parseFloat(cs.paddingRight) || 0);
+  const kids = [...tw.children];
+  const content = kids.reduce((sum, e) => sum + e.getBoundingClientRect().width, 0) + gap * Math.max(0, kids.length - 1) + pad;
+  const fixed = content - cells.length * w0; // 牌以外に使っている幅
+  const want = (box - fixed - 3) / cells.length;
+  tw.style.setProperty('--tw-w', `${Math.min(36, Math.max(16, Math.floor(want * 10) / 10))}px`);
+}
+
 function twinMarks(a) {
   const marks = { hl: new Set(), cut: null };
   const sel = cam.sel;
@@ -9991,6 +10070,8 @@ function renderMedia() {
   $('demo-scene').hidden = src !== 'demo';
   if (src === 'demo') renderDemoScene();
   $('cam-stage').toggleAttribute('data-read', !!cam.read && src === 'photo' && !!cam.photoSize);
+  // 写真を枠に合わせている間（とライブカメラ）は枠の高さを確保する
+  $('cam-stage').toggleAttribute('data-framing', (src === 'photo' && !!cam.photoSize && !cam.read) || src === 'live');
   const msg = mediaMessage();
   const empty = $('cam-empty');
   empty.hidden = !msg;
@@ -10057,8 +10138,25 @@ function renderCamera(analysis) {
   renderMedia();
   renderControls();
   $('rules-bar').innerHTML = chipsHTML();
-  $('band').innerHTML = bandHTML(a);
-  $('twin').innerHTML = twinHTML(a);
+  // 状態の言葉（テンパイ・アガリなど）は操作ボタンと同じ行の左上へ。補足はその下の行に横幅いっぱいで出す
+  const band = $('band');
+  band.innerHTML = bandHTML(a);
+  const headSlot = $('band-head');
+  const head = band.querySelector('.band-head');
+  headSlot.replaceChildren();
+  if (head) {
+    const sub = head.querySelector(':scope > span');
+    if (sub && sub.textContent.trim()) {
+      const line = document.createElement('div');
+      line.className = 'band-sub';
+      line.appendChild(sub);
+      band.prepend(line);
+    } else if (sub) sub.remove();
+    headSlot.appendChild(head);
+  }
+  const twin = $('twin');
+  twin.innerHTML = twinHTML(a);
+  fitTwin();
   $('side-body').innerHTML = summaryHTML(a) + detailHTML(a) + notesHTML();
   const pop = $('pop');
   const html = cam.pop ? popHTML() : '';
