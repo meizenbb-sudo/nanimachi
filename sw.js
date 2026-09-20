@@ -5,11 +5,12 @@
  * 本体が変わるとビルドが下の VERSION を書き換えるので、新しい版が入ったら画面に「更新」の帯を出す。
  * 書体（Google Fonts）は使ったときに保存する。取れなくても端末の丸ゴシックで代替できるので必須にはしない。
  */
-const VERSION = '9cad1314ca9c';
+const VERSION = 'a914e276626a';
 const CACHE = `haiyomi-${VERSION}`;
 const FONTS = 'haiyomi-fonts';
 const SHELL = new URL('./', self.registration.scope).href;
-const CORE = ['./', './manifest.json', './icon-180.png', './icon-512.png', './icon-maskable.png'];
+const PAGES = ['./help.html', './waits.html', './privacy.html', './terms.html'];
+const CORE = ['./', './manifest.json', './icon-180.png', './icon-512.png', './icon-maskable.png', ...PAGES];
 const FONT_HOSTS = new Set(['fonts.googleapis.com', 'fonts.gstatic.com']);
 
 self.addEventListener('install', (e) => {
@@ -77,7 +78,10 @@ self.addEventListener('fetch', (e) => {
   }
   if (url.origin !== self.location.origin) return;
   if (req.mode === 'navigate') {
-    e.respondWith(shell());
+    // アプリ本体（/ か /index.html）だけシェルを返す。使い方などのページはそのページを返す
+    const root = new URL(SHELL).pathname;
+    const isApp = url.pathname === root || url.pathname === `${root}index.html`;
+    e.respondWith(isApp ? shell() : cacheFirst(req, CACHE).catch(() => caches.match(req).then((r) => r || shell())));
     return;
   }
   e.respondWith(cacheFirst(req, CACHE).catch(() => caches.match(req)));

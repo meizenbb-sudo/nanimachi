@@ -1,0 +1,221 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>プライバシーポリシー | 何待ち？</title>
+<meta name="description" content="写真と手牌の取り扱い、端末内への保存、広告（Google AdSense）とCookieについて。">
+<meta name="theme-color" content="#edf1ec" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0c1310" media="(prefers-color-scheme: dark)">
+<link rel="canonical" href="https://meizenbb-sudo.github.io/nanimachi/privacy.html">
+<link rel="apple-touch-icon" href="icon-180.png">
+<link rel="icon" href="icon-180.png" sizes="180x180" type="image/png">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="何待ち？">
+<meta property="og:title" content="プライバシーポリシー | 何待ち？">
+<meta property="og:description" content="写真と手牌の取り扱い、端末内への保存、広告（Google AdSense）とCookieについて。">
+<meta property="og:url" content="https://meizenbb-sudo.github.io/nanimachi/privacy.html">
+<meta property="og:image" content="https://meizenbb-sudo.github.io/nanimachi/ogp.png">
+<meta property="og:locale" content="ja_JP">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Shippori+Mincho+B1:wght@700;800&family=Zen+Kaku+Gothic+New:wght@400;500;700&family=Zen+Maru+Gothic:wght@700;900&display=swap">
+<style>
+/* 解説ページ（使い方・プライバシーポリシーなど）の見た目。アプリと同じ配色 */
+:root {
+  --ground: #edf1ec;
+  --surface: #fafbf8;
+  --surface-2: #e5eae4;
+  --ink: #15201b;
+  --muted: #56655e;
+  --line: #cfd8d0;
+  --accent: #1c5a47;
+  --accent-soft: #d5e8df;
+  --warn: #a8660f;
+  --warn-soft: #f7ead2;
+  --font-ui: 'Zen Kaku Gothic New', 'Hiragino Sans', 'Hiragino Kaku Gothic ProN', 'Noto Sans JP', system-ui, sans-serif;
+  --font-brand: 'Zen Maru Gothic', 'Hiragino Maru Gothic ProN', 'Kosugi Maru', system-ui, sans-serif;
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --ground: #0c1310;
+    --surface: #141d19;
+    --surface-2: #1c2823;
+    --ink: #e2ebe6;
+    --muted: #93a49c;
+    --line: #2b3a33;
+    --accent: #8fe3bd;
+    --accent-soft: #16302708;
+    --warn: #e8b567;
+    --warn-soft: #2a2115;
+    color-scheme: dark;
+  }
+}
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  background: var(--ground);
+  color: var(--ink);
+  font-family: var(--font-ui);
+  font-size: 15px;
+  line-height: 1.85;
+  -webkit-text-size-adjust: 100%;
+}
+a { color: var(--accent); }
+
+/* ヘッダー */
+.ph {
+  position: sticky;
+  top: 0;
+  z-index: 5;
+  background: var(--surface);
+  border-bottom: 1px solid var(--line);
+  padding: 8px max(12px, env(safe-area-inset-left, 0px));
+}
+.ph-in { max-width: 720px; margin: 0 auto; display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+.ph-brand { display: flex; align-items: center; gap: 8px; text-decoration: none; color: var(--ink); }
+.ph-brand img { width: 30px; height: 30px; border-radius: 8px; }
+.ph-brand b { font-family: var(--font-brand); font-size: 17px; font-weight: 900; letter-spacing: 0.02em; }
+.ph nav { margin-left: auto; display: flex; gap: 6px; flex-wrap: wrap; }
+.ph nav a {
+  text-decoration: none; font-size: 12.5px; font-weight: 700; color: var(--ink);
+  padding: 5px 10px; border-radius: 999px; background: var(--surface-2);
+}
+.ph nav a[aria-current='page'] { background: var(--accent); color: var(--surface); }
+.ph nav a.go { background: var(--accent); color: var(--surface); }
+
+/* 本文 */
+.pg { max-width: 720px; margin: 0 auto; padding: 18px max(14px, env(safe-area-inset-left, 0px)) 40px; }
+.pg h1 {
+  font-family: var(--font-brand); font-size: 25px; font-weight: 900; line-height: 1.4;
+  margin: 6px 0 4px; color: var(--accent);
+}
+.lead { color: var(--muted); font-size: 13.5px; margin: 0 0 22px; }
+.pg h2 {
+  font-family: var(--font-brand); font-size: 19px; font-weight: 900; line-height: 1.5;
+  margin: 34px 0 10px; padding-left: 11px; border-left: 4px solid var(--accent);
+}
+.pg h3 { font-size: 15.5px; margin: 22px 0 6px; }
+.pg p { margin: 0 0 14px; }
+.pg ul, .pg ol { margin: 0 0 16px; padding-left: 1.4em; }
+.pg li { margin-bottom: 7px; }
+.pg small { color: var(--muted); }
+hr { border: 0; border-top: 1px solid var(--line); margin: 30px 0; }
+
+/* 手順 */
+.step { background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 14px 16px; margin: 0 0 14px; }
+.step > h3 { display: flex; align-items: center; gap: 9px; margin: 0 0 8px; font-size: 16px; }
+.step .num {
+  flex: none; display: grid; place-items: center; width: 27px; height: 27px; border-radius: 50%;
+  background: #C4302B; color: #fff; font-size: 14px; font-weight: 800; line-height: 1;
+}
+.step p:last-child, .step ul:last-child { margin-bottom: 0; }
+figure { margin: 12px 0 14px; }
+figure img {
+  display: block; width: 100%; height: auto; border-radius: 10px;
+  border: 1px solid var(--line); background: var(--surface-2);
+}
+figcaption { margin-top: 6px; font-size: 12.5px; color: var(--muted); }
+.mark { display: inline-grid; place-items: center; width: 19px; height: 19px; border-radius: 50%;
+  background: #C4302B; color: #fff; font-size: 11px; font-weight: 800; line-height: 1; vertical-align: -3px; }
+
+/* 注意書き */
+.note { background: var(--warn-soft); border-radius: 12px; padding: 12px 15px; margin: 0 0 16px; font-size: 14px; }
+.note b { color: var(--warn); }
+.ok-note { background: var(--accent-soft); border-radius: 12px; padding: 12px 15px; margin: 0 0 16px; font-size: 14px; }
+@media (prefers-color-scheme: dark) { .ok-note { background: #17302a; } }
+
+/* 表 */
+table { width: 100%; border-collapse: collapse; margin: 0 0 18px; font-size: 14px; }
+th, td { border-bottom: 1px solid var(--line); padding: 9px 6px; text-align: left; vertical-align: top; }
+th { color: var(--muted); font-size: 12.5px; font-weight: 700; white-space: nowrap; }
+td:first-child { width: 34%; font-weight: 700; }
+
+/* アプリへ戻る大きいボタン */
+.cta { display: block; text-align: center; text-decoration: none; margin: 26px 0 8px;
+  padding: 14px; border-radius: 14px; background: var(--accent); color: var(--surface); font-weight: 800; font-size: 16px; }
+@media (prefers-color-scheme: dark) { .cta { color: #0c1310; } }
+
+/* フッター */
+.pf { border-top: 1px solid var(--line); background: var(--surface); padding: 18px max(14px, env(safe-area-inset-left, 0px)) calc(20px + env(safe-area-inset-bottom, 0px)); }
+.pf-in { max-width: 720px; margin: 0 auto; }
+.pf nav { display: flex; gap: 14px; flex-wrap: wrap; margin-bottom: 8px; }
+.pf nav a { font-size: 13px; }
+.pf small { color: var(--muted); font-size: 12px; }
+
+.tiles { display: inline-flex; gap: 2px; vertical-align: -7px; margin: 0 3px; }
+.ti { width: 25px; height: auto; filter: drop-shadow(0 1px 1px rgb(21 32 27 / .22)); }
+.hand { font-size: 14px; }
+</style>
+</head>
+<body>
+<header class="ph"><div class="ph-in">
+<a class="ph-brand" href="./"><img src="icon-180.png" width="30" height="30" alt=""><b>何待ち？</b></a>
+<nav><a href="help.html">使い方</a><a href="waits.html">待ちの読み方</a><a href="privacy.html" aria-current="page">プライバシーポリシー</a><a class="go" href="./">アプリ</a></nav>
+</div></header>
+<main class="pg">
+<h1>プライバシーポリシー</h1>
+<p class="lead">「何待ち？」（以下「本サービス」）における、利用者の情報の取り扱いについて定めます。</p>
+
+<div class="ok-note">
+  <b>要点。</b>本サービスは、撮影した写真や読み取った手牌を<b>外部に送信しません</b>。すべて利用者の端末の中だけで処理します。
+</div>
+
+<h2>1. 運営者</h2>
+<table>
+  <tr><th>運営者</th><td>Sakura-ya（桜屋）</td></tr>
+  <tr><th>サービス名</th><td>何待ち？</td></tr>
+  <tr><th>お問い合わせ</th><td><a href="https://github.com/meizenbb-sudo/nanimachi/issues" rel="noopener">お問い合わせフォーム</a></td></tr>
+</table>
+
+<h2>2. 写真と手牌の取り扱い</h2>
+<p>本サービスの読み取り機能は、利用者の端末内で完結します。</p>
+<ul>
+  <li>選択した写真は、端末内の処理にのみ使用します。<b>外部のサーバーに送信しません。</b></li>
+  <li>読み取った手牌や計算結果も、外部に送信しません。</li>
+  <li>写真を運営者が保存・閲覧することはありません。</li>
+</ul>
+<p>読み取りに使う判定用のデータ（学習済みのモデル）は、あらかじめアプリの中に含まれています。読み取りのたびに通信することはありません。</p>
+
+<h2>3. 端末内への保存</h2>
+<p>本サービスは、使い勝手のために次の情報を利用者の端末内（ブラウザの保存領域）に保存します。これらが外部に送信されることはありません。</p>
+<ul>
+  <li>入力中の手牌、場風・自風・ドラなどの条件、ルールの設定</li>
+  <li>四人麻雀／三人麻雀の別、画面の表示状態</li>
+  <li>オフラインで動かすために保存したアプリ本体のデータ</li>
+</ul>
+<p>これらはブラウザの設定から削除できます（Safari の場合は「設定 → Safari → 履歴とWebサイトデータを消去」など）。</p>
+
+<h2>4. 広告について</h2>
+<p>本サービスでは、第三者配信の広告サービス「Google AdSense」を利用します（導入の準備中である場合を含みます）。</p>
+<ul>
+  <li>Google などの第三者配信事業者は、Cookie を使用して、利用者が本サービスや他のウェブサイトに過去にアクセスした際の情報に基づいて広告を配信することがあります。</li>
+  <li>Google が広告 Cookie を使用することにより、利用者に適した広告が表示されます。</li>
+  <li>利用者は、<a href="https://www.google.com/settings/ads" rel="noopener nofollow" target="_blank">広告設定</a>でパーソナライズ広告を無効にできます。</li>
+  <li>第三者配信事業者による Cookie の使用は、<a href="http://www.aboutads.info/choices/" rel="noopener nofollow" target="_blank">www.aboutads.info</a> から無効にできます。</li>
+</ul>
+<p>Google が広告事業においてデータをどのように使用するかについては、<a href="https://policies.google.com/technologies/ads?hl=ja" rel="noopener nofollow" target="_blank">広告 – ポリシーと規約 – Google</a> をご覧ください。</p>
+
+<h2>5. アクセス解析について</h2>
+<p>本サービスは、現時点でアクセス解析ツールを使用していません。今後導入する場合は、本ポリシーを改定したうえで、取得する情報と利用目的を明記します。</p>
+
+<h2>6. 外部へのリンク</h2>
+<p>本サービスから他のウェブサイトへ移動した場合、移動先のサイトで提供される情報やサービスについては責任を負いません。</p>
+
+<h2>7. 免責事項</h2>
+<p>本サービスは、麻雀の手牌の読み取りと計算を補助するものです。読み取り結果および計算結果の正確性を保証するものではありません。くわしくは<a href="terms.html">免責事項・利用規約</a>をご覧ください。</p>
+
+<h2>8. 本ポリシーの変更</h2>
+<p>本ポリシーの内容は、必要に応じて予告なく変更することがあります。変更後の内容は、本ページに掲載した時点から適用されます。</p>
+
+<hr>
+<p><small>制定日: 2026年9月20日</small></p>
+
+<a class="cta" href="./">アプリを開く</a>
+
+</main>
+<footer class="pf"><div class="pf-in"><nav><a href="help.html">使い方</a><a href="waits.html">待ちの読み方</a><a href="privacy.html">プライバシーポリシー</a><a href="terms.html">免責事項・利用規約</a><a href="./">アプリ</a></nav><small>© 2026 Sakura-ya（桜屋）・何待ち？</small></div></footer>
+</body>
+</html>
