@@ -330,9 +330,50 @@ h2 {
   flex: 1 1 auto;
   min-width: 0;
   font-size: 10.5px;
-  line-height: 1.3;
+  line-height: 1.45;
   color: var(--ink);
-  opacity: 0.85;
+}
+/* 補足の中の「未設定」（帯の札と同じ見た目）・見出しの名前（見出しと同じ書体・色）・「OK」（ボタンと同じ色） */
+.area-head small .st-mini {
+  display: inline-block;
+  font-style: normal;
+  font-size: 9.5px;
+  font-weight: 800;
+  line-height: 15px;
+  padding: 0 5px;
+  border-radius: 999px;
+  background: var(--surface);
+  color: var(--muted);
+  box-shadow: inset 0 0 0 1px var(--line);
+  vertical-align: 1px;
+}
+.area-head small .ref-head {
+  font-family: var(--font-brand);
+  font-size: 11.5px;
+  font-weight: 900;
+  letter-spacing: 0.02em;
+  color: var(--accent);
+  white-space: nowrap;
+}
+.area-head small .ok-mini {
+  display: inline-block;
+  margin: 0 2px;
+  font-size: 9.5px;
+  font-weight: 800;
+  line-height: 15px;
+  padding: 0 6px;
+  border-radius: 999px;
+  background: var(--accent);
+  color: #fff;
+  vertical-align: 1px;
+}
+:root[data-theme='dark'] .area-head small .ok-mini {
+  color: #0c1310;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme='light']) .area-head small .ok-mini {
+    color: #0c1310;
+  }
 }
 .judge-head {
   margin-top: 4px;
@@ -3304,12 +3345,29 @@ details.more[open] > summary::before {
   background: #c0392b;
   color: #fff;
 }
-/* 待ち牌の並びのあとの「でアガリ」 */
+/* 待ち牌の並びのあとの「でアガリ」「が来るとテンパイ」 */
 .tail-lbl {
   align-self: center;
   margin-left: 2px;
   font-size: 12px;
   color: var(--muted);
+}
+/* 「○を切ると…」の見出しと受け入れ牌を → でつなぐ */
+.next-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin: 6px 0 2px 6px;
+}
+.next-row .arrow {
+  flex: none;
+  font-size: 16px;
+  font-weight: 800;
+  line-height: 1;
+  color: var(--accent);
+}
+.next-row .tiles-inline {
+  min-width: 0;
 }
 
 </style>
@@ -3345,12 +3403,12 @@ details.more[open] > summary::before {
 </header>
 <div class="area-head setup-head">
   <b>条件/ルール 設定</b>
-  <small>未設定でも待ちの判定は使えます<br>点数は「OK」を押すと出ます</small>
+  <small><em class="st-mini">未設定</em>でも <span class="ref-head">何待ち 判断</span>は使用可能<br>点数は<span class="ok-mini">OK</span>を押すと算出</small>
 </div>
 <section class="rules-bar" id="rules-bar" aria-label="条件の設定"></section>
 <div class="area-head judge-head">
   <b>何待ち 判断</b>
-  <small>手牌を認識し、待ち牌をサポートします</small>
+  <small>手牌を認識し、待ち牌をサポート<br><span class="ref-head">条件/ルール 設定</span>が<em class="st-mini">未設定</em>でも使用可能</small>
 </div>
 <p class="rotate-hint">縦向きにすると使いやすくなります</p>
 <section class="cam" id="cam-view" aria-label="カメラで読み取る">
@@ -7826,7 +7884,8 @@ function renderTable() {
       );
     }
   }
-  const winLabel = state.situation.tsumo ? 'ツモ' : 'ロン';
+  // アガリ形のときだけ ロン/ツモ。それ以外（1シャンテンなど）は「来た牌」
+  const winLabel = view.analysis && view.analysis.agari ? (state.situation.tsumo ? 'ツモ' : 'ロン') : '来た牌';
   const winOn = cur >= n ? ' active' : '';
   const winTile =
     state.win != null
@@ -8041,9 +8100,10 @@ function verdict14(a) {
         `<p>待ち <b>${d.kinds}種</b>${bestText}</p>` +
         `<div class="tiles-inline">${d.waits.map((w) => `<span class="uke">${tileHTML(w.tile, { size: 'xs' })}</span>`).join('')}</div>`;
     } else {
+      const next = d.shanten - 1 <= 0 ? 'テンパイ' : `${d.shanten - 1}シャンテン`;
       info =
         `<p>受け入れ <b>${d.kinds}種</b></p>` +
-        `<div class="tiles-inline">${d.ukeire.map((u) => `<span class="uke">${tileHTML(u.tile, { size: 'xs' })}</span>`).join('')}</div>`;
+        `<div class="tiles-inline">${d.ukeire.map((u) => `<span class="uke">${tileHTML(u.tile, { size: 'xs' })}</span>`).join('')}<span class="tail-lbl">が来ると${next}</span></div>`;
     }
     return `<li class="discard"><span class="cut">${tileHTML(d.discard, { size: 'sm' })}打</span><div class="info">${info}</div></li>`;
   });
@@ -9262,7 +9322,9 @@ function twinHTML(a) {
     const cls = ['tw', 'win'];
     if (m.cut === 'win') cls.push('cut');
     if (fade) cls.push('fade');
-    tail = `<button type="button" class="${cls.join(' ')}" data-action="cam-edit" data-index="win" aria-label="アガリ牌 ${tileLabel(state.win)}（タップで修正）">${tileHTML(state.win, { size: 'twin' })}<small>${state.situation.tsumo ? 'ツモ' : 'ロン'}</small></button>`;
+    // アガリ形のときだけ ロン/ツモ。1シャンテンなどで「ロン」とは言わないので、それ以外は「来た牌」
+    const tailLabel = a && a.agari ? (state.situation.tsumo ? 'ツモ' : 'ロン') : '来た牌';
+    tail = `<button type="button" class="${cls.join(' ')}" data-action="cam-edit" data-index="win" aria-label="${tailLabel} ${tileLabel(state.win)}（タップで修正）">${tileHTML(state.win, { size: 'twin' })}<small>${tailLabel}</small></button>`;
   } else if (cam.sel && (cam.sel.kind === 'wait' || cam.sel.kind === 'draw')) {
     tail = `<span class="tw ghost" aria-hidden="true">${tileHTML(cam.sel.tile, { size: 'twin' })}<small>${cam.sel.kind === 'wait' ? 'アガリ' : 'ツモ'}</small></span>`;
   }
@@ -9404,14 +9466,16 @@ function discardDetail(a) {
       .join('');
     return (
       selHead(d.discard, `${tileLabel(d.discard)}を切るとテンパイ`, `待ち ${d.kinds}種`) +
+      `<div class="next-row"><span class="arrow" aria-hidden="true">→</span><span class="tail-lbl">この牌が来るとアガリ</span></div>` +
       `<ul class="mini-waits">${rows}</ul>` +
       (ready ? '' : pendingScoreHTML(true))
     );
   }
   const uke = d.ukeire.map((u) => `<span class="uke">${tileHTML(u.tile, { size: 'xs' })}</span>`).join('');
+  const next = d.shanten - 1 <= 0 ? 'テンパイ' : `${d.shanten - 1}シャンテン`;
   return (
     selHead(d.discard, `${tileLabel(d.discard)}を切ると${d.shanten}シャンテン`, `受け入れ ${d.kinds}種`) +
-    `<div class="tiles-inline">${uke}</div>`
+    `<div class="next-row"><span class="arrow" aria-hidden="true">→</span><div class="tiles-inline">${uke}<span class="tail-lbl">が来ると${next}</span></div></div>`
   );
 }
 
