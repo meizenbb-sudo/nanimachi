@@ -7,17 +7,32 @@
 <meta name="description" content="写真から手牌を読み取って、待ちと点数を出すまでの手順を画像つきで説明します。ホーム画面への追加やうまく読めないときの対処も。">
 <meta name="theme-color" content="#edf1ec" media="(prefers-color-scheme: light)">
 <meta name="theme-color" content="#0c1310" media="(prefers-color-scheme: dark)">
-<link rel="canonical" href="https://meizenbb-sudo.github.io/nanimachi/help.html">
+<link rel="canonical" href="https://nanimachi.net/help.html">
+<link rel="icon" href="favicon.ico" sizes="16x16 32x32 48x48">
+<link rel="icon" href="icon-192.png" sizes="192x192" type="image/png">
 <link rel="apple-touch-icon" href="icon-180.png">
-<link rel="icon" href="icon-180.png" sizes="180x180" type="image/png">
 <meta property="og:type" content="article">
 <meta property="og:site_name" content="何待ち？">
 <meta property="og:title" content="使い方 | 何待ち？">
 <meta property="og:description" content="写真から手牌を読み取って、待ちと点数を出すまでの手順を画像つきで説明します。ホーム画面への追加やうまく読めないときの対処も。">
-<meta property="og:url" content="https://meizenbb-sudo.github.io/nanimachi/help.html">
-<meta property="og:image" content="https://meizenbb-sudo.github.io/nanimachi/ogp.png">
+<meta property="og:url" content="https://nanimachi.net/help.html">
+<meta property="og:image" content="https://nanimachi.net/ogp.png">
 <meta property="og:locale" content="ja_JP">
 <meta name="twitter:card" content="summary_large_image">
+<script>
+(function(){var k='nm-ga-off',s=location.search,m=/[?&]ga=(off|on)(?=&|$)/.exec(s),off=false;
+try{if(m){if(m[1]==='off')localStorage.setItem(k,'1');else localStorage.removeItem(k);}off=localStorage.getItem(k)==='1';}catch(e){}
+window['ga-disable-G-SQBR6QXW86']=off;window.nmGa={off:off,mark:m?m[1]:''};
+if(off)document.documentElement.setAttribute('data-ga','off');
+if(m)try{history.replaceState(history.state,'',location.pathname+s.replace(/([?&])ga=(?:off|on)(&|$)/,function(x,a,b){return b?a:''}).replace(/^\?$/,'')+location.hash);}catch(e){}})();
+window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}
+gtag('consent','default',{ad_storage:'denied',ad_user_data:'denied',ad_personalization:'denied',analytics_storage:'denied',region:["AT","BE","BG","HR","CY","CZ","DK","EE","FI","FR","DE","GR","HU","IE","IT","LV","LT","LU","MT","NL","PL","PT","RO","SK","SI","ES","SE","IS","LI","NO","GB","CH"],wait_for_update:500});
+gtag('js',new Date());
+gtag('config','G-SQBR6QXW86');
+</script>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-SQBR6QXW86"></script>
+<meta name="google-adsense-account" content="ca-pub-5521107706403454">
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5521107706403454" crossorigin="anonymous"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Shippori+Mincho+B1:wght@700;800&family=Zen+Kaku+Gothic+New:wght@400;500;700&family=Zen+Maru+Gothic:wght@700;900&display=swap">
@@ -158,6 +173,85 @@ td:first-child { width: 34%; font-weight: 700; }
 .pair figcaption { margin-top: 5px; font-size: 12px; }
 @media (max-width: 460px) { .pair { grid-template-columns: 1fr; } }
 
+/* ---- v0.38: 解説ページを増やしたときの部品 ---- */
+/* 式（基本点 = 符 × 2^(翻+2) など） */
+.formula { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 12px 14px; text-align: center; font-weight: 800; font-size: 16px; }
+/* 役の早見表（役・門前・鳴き）と、刻子・槓子の符の表: 数字の列は狭く・真ん中に */
+table.yk td:first-child, table.fu td:first-child, table.cmp td:first-child { width: auto; }
+table.yk td:not(:first-child), table.yk th:not(:first-child),
+table.fu td:not(:first-child), table.fu th:not(:first-child) { width: 4.6em; text-align: center; font-weight: 700; }
+table.cmp td, table.cmp th { text-align: center; white-space: nowrap; padding: 8px 3px; font-size: 13px; font-variant-numeric: tabular-nums; }
+table.cmp td:first-child { font-weight: 700; white-space: nowrap; }
+/* 点数の早見表（横にはみ出すときは表だけ横に動かせる） */
+.tbl-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; margin: 0 0 16px; }
+table.pts { font-size: 13px; font-variant-numeric: tabular-nums; margin: 0; min-width: 330px; }
+table.pts th, table.pts td { text-align: center; padding: 7px 4px; white-space: nowrap; }
+table.pts td:first-child { width: auto; }
+table.pts tr > th:first-child { color: var(--ink); }
+table.pts td.mg { background: var(--accent-soft); color: var(--accent); font-weight: 800; }
+table.pts td.na { color: var(--muted); opacity: .55; }
+table.pts .t2 { display: inline-block; line-height: 1.35; }
+.mg-key { background: var(--accent-soft); color: var(--accent); font-weight: 800; padding: 1px 6px; border-radius: 6px; }
+@media (prefers-color-scheme: dark) { table.pts td.mg, .mg-key { background: #17302a; } }
+/* 解説の一覧のカード */
+.cards { display: grid; gap: 10px; margin: 0 0 18px; }
+.card { display: block; text-decoration: none; color: var(--ink); background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 12px 15px; }
+.card b { display: block; font-size: 16px; color: var(--accent); margin-bottom: 2px; }
+.card span { display: block; font-size: 13px; color: var(--muted); line-height: 1.7; }
+/* ページの下の「ほかの解説」 */
+.rel { margin: 34px 0 0; padding-top: 18px; border-top: 1px solid var(--line); }
+.rel-h { font-weight: 800; font-size: 14px; color: var(--muted); margin-bottom: 8px; }
+.rel-pn { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 10px; }
+.rel-pn a { display: block; text-decoration: none; background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 8px 12px; font-weight: 700; color: var(--ink); }
+.rel-pn a small { display: block; font-weight: 500; }
+.rel-next { text-align: right; }
+.rel-all { display: flex; flex-wrap: wrap; gap: 6px; }
+.rel-all a { font-size: 12.5px; text-decoration: none; padding: 4px 10px; border-radius: 999px; background: var(--surface-2); color: var(--ink); }
+/* 撮り方のコツ: 読み取り枠の見本（牌の絵で作る。写真は使わない） */
+.mock { margin: 10px 0 16px; }
+.mock-frame { position: relative; display: flex; align-items: center; justify-content: center; min-height: 92px; padding: 16px 10px;
+  border-radius: 14px; background: #1e5446; overflow: hidden; }
+.mock-frame::before { content: ''; position: absolute; inset: 8px; border: 2px solid rgb(255 255 255 / .9); border-radius: 10px; }
+.mock-frame .tiles { display: grid; grid-template-columns: repeat(13, 1fr); gap: 2px; width: 90%; margin: 0; vertical-align: 0; }
+.mock-frame .ti { width: 100%; }
+.mock.small .mock-frame .tiles { width: 42%; }
+.mock.tilt .mock-frame .tiles { width: 78%; transform: rotate(-9deg); }
+.mock-cap { margin: 6px 2px 0 !important; font-size: 13.5px; }
+.mock.ok .mock-cap b { color: var(--accent); }
+.mock.ng .mock-cap b { color: #C4302B; }
+/* v0.50: 待ちの練習問題（build.mjs の quizHTML が作る）。問題の牌は画面の幅に合わせて縮める（13枚で 320px でもはみ出さない） */
+.qz { background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 4px 14px 12px; margin: 0 0 14px; }
+.qz > h2 { margin: 12px 0 8px; font-size: 17px; }
+.qz-hand { margin: 0 0 10px !important; }
+.qz-hand .tiles { display: flex; gap: 2px; width: 100%; max-width: 420px; margin: 0; vertical-align: 0; }
+.qz-hand .ti { flex: 1 1 0; min-width: 0; width: auto; max-width: 30px; }
+.qz-ans > summary { display: inline-block; cursor: pointer; list-style: none; padding: 5px 14px; border-radius: 999px;
+  background: var(--accent); color: var(--surface); font-weight: 800; font-size: 14px; }
+.qz-ans > summary::-webkit-details-marker { display: none; }
+.qz-ans[open] > summary { background: var(--surface-2); color: var(--ink); }
+.qz-ans h3 { margin: 14px 0 4px; font-size: 14.5px; color: var(--muted); }
+.qz-w { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 8px; margin: 12px 0 4px !important; font-size: 16px; }
+.qz-w b { color: var(--accent); }
+.qz-w .tiles { margin: 0; }
+.qz-sh, .qz-fm { list-style: none; padding-left: 0 !important; margin-bottom: 6px !important; }
+.qz-sh li, .qz-fm li { display: flex; flex-wrap: wrap; align-items: center; gap: 2px 6px; margin-bottom: 4px; font-size: 14px; }
+.qz-sh li b { min-width: 4.5em; }
+.qz-sh .tiles, .qz-fm .tiles { margin: 0; }
+.qz-to { color: var(--muted); }
+.qz-ans p:last-child { margin-bottom: 0; }
+/* v0.51: 運営者情報の表・更新履歴 */
+.info { width: 100%; border-collapse: collapse; margin: 0 0 16px; font-size: 14.5px; background: var(--surface); border: 1px solid var(--line); border-radius: 12px; overflow: hidden; }
+.info th, .info td { text-align: left; vertical-align: top; padding: 9px 12px; border-top: 1px solid var(--line); }
+.info tr:first-child th, .info tr:first-child td { border-top: 0; }
+.info th { width: 7.5em; color: var(--muted); font-weight: 700; white-space: nowrap; }
+.log { display: grid; gap: 12px; margin: 0 0 18px; }
+.log-item { background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 4px 15px 6px; }
+.log-item > h2 { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 10px; margin: 10px 0 6px; padding-left: 0; border-left: 0; font-size: 16px; }
+.log-ver { font-family: var(--font-ui); font-size: 13px; font-weight: 800; color: var(--surface); background: var(--accent); border-radius: 999px; padding: 1px 10px; }
+.log-item ul { margin-bottom: 8px; }
+
+.sis-card,.sis-card:visited,.sis-card:hover{display:flex;align-items:center;gap:10px;box-sizing:border-box;width:100%;max-width:360px;padding:8px 12px;border:1px solid var(--line);border-radius:14px;background:var(--surface);color:var(--ink);text-decoration:none;text-align:left}.sis-card img{flex:none;display:block;width:40px;height:40px;border-radius:22%}.sis-t{flex:1 1 auto;min-width:0;display:flex;flex-direction:column;gap:1px}.sis-n{display:flex;align-items:center;gap:6px;flex-wrap:wrap}.sis-n b{font-size:14px;font-weight:800;color:var(--ink)}.sis-n em{font-style:normal;font-size:10px;font-weight:700;line-height:1.6;color:var(--muted);background:var(--surface-2);border-radius:999px;padding:0 7px}.sis-t small{font-size:11.5px;line-height:1.45;color:var(--muted);word-break:keep-all;overflow-wrap:anywhere}.sis-go{flex:none;width:16px;height:16px;color:var(--muted)}
+.pf-sis { margin: 4px 0 12px; }
 .tiles { display: inline-flex; gap: 2px; vertical-align: -7px; margin: 0 3px; }
 .ti { width: 25px; height: auto; filter: drop-shadow(0 1px 1px rgb(21 32 27 / .22)); }
 .hand { font-size: 14px; }
@@ -166,14 +260,14 @@ td:first-child { width: 34%; font-weight: 700; }
 <body>
 <header class="ph"><div class="ph-in">
 <a class="ph-brand" href="./"><img src="icon-180.png" width="30" height="30" alt=""><b>何待ち？</b></a>
-<nav><a href="features.html">できること</a><a href="help.html" aria-current="page">使い方</a><a href="waits.html">待ちの読み方</a><a class="go" href="./">アプリ</a></nav>
+<nav><a href="features.html">できること</a><a href="help.html" aria-current="page">使い方</a><a href="learn.html">解説</a><a class="go" href="./">アプリ</a></nav>
 </div></header>
 <main class="pg">
 <h1>使い方</h1>
 <p class="lead">手牌を写真に撮るだけで、シャンテン数・待ち牌・点数が出ます。写真は端末の外に送られません。</p>
 
 <div class="ok-note">
-  <b>はじめての方へ。</b>アプリを開いたら、いきなり写真を撮って大丈夫です。場風やドラなどの設定をしなくても、<b>待ちとシャンテン数は出ます</b>。設定が要るのは点数を出すときだけです。
+  <b>はじめての方へ。</b>アプリを開いたら、いきなり写真を撮って大丈夫です。場風やドラなどを入れなくても、<b>待ちとシャンテン数は出ます</b>。点数を出すときだけ、読み取ったあとに「点数条件」を1問ずつ聞きます。
 </div>
 
 <h2>写真から読み取る（7ステップ）</h2>
@@ -185,13 +279,14 @@ td:first-child { width: 34%; font-weight: 700; }
     <img src="help1.png" width="393" height="128" loading="lazy" decoding="async" alt="アプリの写真タブ。中央に「アルバムから選ぶ」ボタンがある">
     <figcaption><span class="mark">1</span> ここを押すとアルバムが開きます。「カメラ」タブを選べば、その場で手牌にかざして読み取ることもできます。</figcaption>
   </figure>
+  <p><small>「カメラ」で撮るときは、読み取り枠が画面の上（スマホの裏のカメラに近い所）にあるので、スマホを高く構えなくても手牌を枠に入れられます。もっと近くから撮りたいときは、<b>スマホを横にする</b>と、カメラだけの画面になって手牌の列が大きく写ります（右端の大きな「認識する」で撮ります）。iPhone で横にしても画面が変わらないときは、コントロールセンターの「画面縦向きのロック」をオフにしてください。読み取ったら、スマホを縦に戻すと待ち・点数が見られます。</small></p>
 </div>
 
 <div class="step">
   <h3><span class="num">2</span>手牌を枠の中に入れる</h3>
-  <p>写真を指でドラッグして動かし、2本指で広げると拡大できます。<b>手牌の列が枠いっぱいに入る</b>ように合わせてください。</p>
+  <p>写真を指でドラッグして動かし、2本指で広げると、指の間の所を中心に拡大できます。<b>手牌の列が枠いっぱいに入る</b>ように合わせてください。手牌が斜めに写っているとき（テレビ中継の画面など）は、<b>2本指で回して手牌を枠と平行に</b>します（枠の左上の「戻す」で0°に戻ります）。</p>
   <figure>
-    <img src="help2.png" width="373" height="122" loading="lazy" decoding="async" alt="読み取り枠に手牌を合わせたところ。右上に90°回転ボタンがある">
+    <img src="help2.png" width="385" height="122" loading="lazy" decoding="async" alt="読み取り枠に手牌を合わせたところ。右上に90°回転ボタンがある">
     <figcaption><span class="mark">2</span> この枠の中だけを読み取ります。&nbsp; <span class="mark">3</span> 縦向きで撮った写真は、ここを押すと90°回ります。</figcaption>
   </figure>
   <p><small>牌が小さく写っていると読み間違えます。手牌が枠の横幅いっぱいになるくらいが目安です。</small></p>
@@ -208,80 +303,110 @@ td:first-child { width: 34%; font-weight: 700; }
 
 <div class="step">
   <h3><span class="num">4</span>読み取りを確かめる</h3>
-  <p>読み取った牌が並びます。違う牌があれば<b>その牌をタップ</b>すると選び直せます。読み取れなかった牌は「？」になります。</p>
+  <p>読み取った牌が<b>枠のすぐ下</b>に並ぶので、写真と見比べられます。違う牌があれば<b>その牌をタップ</b>すると選び直せます。読み取れなかった牌は「？」になります。全部やり直したいときは、牌の下の<b>「リセット」</b>で牌を消してから、もう一度「認識する」を押します（写真はそのまま残ります。カメラのときは映像が動き出すので、そのまま撮り直せます）。</p>
   <figure>
-    <img src="help4.png" width="369" height="62" loading="lazy" decoding="async" alt="読み取った13枚の牌が並んでいる">
+    <img src="help4.png" width="381" height="43" loading="lazy" decoding="async" alt="読み取った13枚の牌が並んでいる">
     <figcaption><span class="mark">5</span> 牌をタップすると、候補から選んで直せます。並び順は写真のままです（左の「配牌整理」を押すと種類順に並べ替えできます）。<b>逆さまに置かれた牌もそのまま読めます。</b></figcaption>
   </figure>
 </div>
 
 <div class="step">
-  <h3><span class="num">5</span>待ち牌を見る</h3>
-  <p>13枚そろうと、左上に<b>テンパイかどうか</b>が出て、その下に<b>待ち牌</b>が牌の絵で並びます。ここまでは設定なしで見られます。</p>
+  <h3><span class="num">5</span>待ちを形で見る</h3>
+  <p>13枚そろうと、読み取った牌の下に<b>テンパイかどうか</b>が出て、その下に<b>待ちが形ごと</b>（両面・シャンポン・単騎・三面張…）に並びます。牌ごとに<b>つく役</b>も書いてあります。ここまでは条件なしで見られます。</p>
   <figure>
-    <img src="help5.png" width="365" height="152" loading="lazy" decoding="async" alt="左上にテンパイと大きく表示され、下に待ち牌の6筒と中が並んでいる">
-    <figcaption><span class="mark">6</span> この手は6筒と中の2種待ちです。待ち牌をタップすると、その待ちに関係する牌が浮き上がり、関係ない牌は薄くなります。</figcaption>
+    <img src="help5.png" width="377" height="235" loading="lazy" decoding="async" alt="テンパイと大きく表示され、その下にシャンポン待ちの6筒と中が形のカードで並んでいる">
+    <figcaption><span class="mark">6</span> この手は6筒と中のシャンポン待ちです。形を押すと、その形を作っている牌が浮き上がり、下から役と点数の内訳が出ます。</figcaption>
   </figure>
-  <p><small>テンパイでないときは「1シャンテン」「2シャンテン」のように、あと何回の入れ替えが要るかが出ます。1シャンテンなら、テンパイになる牌も1枚ずつ絵で並びます。</small></p>
+  <p><small>テンパイでないときは「1シャンテン」「2シャンテン」のように、あと何回の入れ替えが要るかが出ます。1シャンテンなら、テンパイになる牌が<b>役がつく牌・役なしの牌</b>に分かれて並び、押すといちばん高い切り方が出ます。</small></p>
 </div>
 
 <div class="step">
-  <h3><span class="num">6</span>条件を入れて「OK」を押す</h3>
-  <p>点数を出すには、場風・自分の家・リーチの有無・ドラなどを入れます。上の「条件/ルール 設定」の<b>＋</b>を押すと開きます。</p>
+  <h3><span class="num">6</span>点数条件を1問ずつ答える</h3>
+  <p>1シャンテン・テンパイ・アガリ形になると、画面の下から<b>「点数条件」</b>が出ます。1画面に1問ずつ、<b>押すと自動で次の質問</b>へ進みます（今は何場？ → あなたの自風は？ → 本場と供託 → ドラ表示牌 → リーチ…）。ドラ表示牌の枚数は最初から1枚になっているので、表示牌を押すだけで次へ進みます（カンがあれば枚数を増やします）。アガリ形では、続けて 一発 → ロン/ツモ → 特別な役 → 裏ドラ を聞きます。鳴いていたらリーチは聞かないなど、<b>要らない質問は飛ばします</b>。1シャンテンのときは、先に「アガリ想定に進みますか？」と聞くので、待ちだけ見たいときは「不要」を押してください。</p>
   <figure>
-    <img src="help6.png" width="389" height="156" loading="lazy" decoding="async" alt="条件の設定。場の設定とアガリ想定の2段があり、右にリセットとOKボタン">
-    <figcaption><span class="mark">7</span> 入れ終えたら「OK」を押します。押すまで点数は出ません（入れ忘れたまま点数を信じてしまわないようにするためです）。</figcaption>
+    <img src="help6.png" width="393" height="509" loading="lazy" decoding="async" alt="画面の下から出た「点数条件」。今は何場？の質問に東場・南場の大きなボタンが縦に並んでいる">
+    <figcaption><span class="mark">7</span> 答えは押すだけ。最後のまとめの画面の一番上にある「この条件で点数を見る」を押すと点数が出ます（答えた内容はその下に並び、押すと直せます）。あとで直すときは、写真の下の「点数条件」の「変更」から。</figcaption>
   </figure>
+  <p><small>すぐ待ちだけ見たいときは「あとで入れる」で閉じられます。点数条件は局ごとに聞き直します（前の局の答えは引き継ぎません）。人数や符などの卓のルールは、「点数条件」の枠の「ルール設定」で一度だけ合わせます。</small></p>
 </div>
 
 <div class="step">
   <h3><span class="num">7</span>点数が出る</h3>
-  <p>待ち牌の下に点数が出ます。<b>待ちが何種類かあるときは、牌ごとに出る</b>ので、どれでアガるのが得かを見比べられます。</p>
+  <p>「この条件で点数を見る」を押すと、まず<b>待ち・役・ロン／ツモ・翻・符・点数だけを大きく</b>重ねて出します。卓の上でも一目で読める大きさです。右上の <b>✖</b>（または下の「閉じる」）で元の画面に戻ります。もう一度大きく見たいときは、カードの下の<b>「点数を大きく表示」</b>から。</p>
+  <p>ロンとツモには印が付きます。<b>ロンは丸に「ロ」</b>、<b>ツモは丸に「ツ」</b>。色もロンは赤、ツモは緑です。</p>
+  <p>本場や供託があるときは、大きな点数（基本の点数）の下に、<b>本場・供託を入れた点数</b>を少し小さく出します。たとえば2本場・供託2本で子のツモ 1,300-2,600 なら「1,500-2,800(2本場)+2,000(供託2)」、親のツモなら「2,800オール(2本場)+2,000(供託2)」です。リーチしたテンパイの点数は<b>裏ドラ・一発を含みません</b>（大きな表示に注記が出ます。アガリ形では裏ドラ・一発も聞いて計算します）。</p>
   <figure>
-    <img src="help7.png" width="377" height="107" loading="lazy" decoding="async" alt="待ち牌の6筒には「ツモのみ」、中には1,300と表示されている">
-    <figcaption><span class="mark">8</span> この手は、中でアガれば1,300点。6筒は役がつかないので「ツモのみ」と出ています。</figcaption>
+    <img src="help9.png" width="369" height="675" loading="lazy" decoding="async" alt="点数の大きな表示。テンパイ・子・待ち2種・リーチなしの見出しと右上の✖。シャンポン待ちの6筒・中のうち、6筒でアガリはロン役なし・ツモ1翻30符（メンゼンツモ）300-500、中でアガリは役 役牌 中・ロン1翻40符 1,300点・ツモ2翻30符（＋メンゼンツモ）500-1,000 が大きな文字で並び、ロンには丸に「ロ」、ツモには丸に「ツ」の印が付いている">
+    <figcaption>点数の大きな表示。待ちの形と牌、役、ロン・ツモそれぞれの翻・符・点数を大きく出します。牌によって役か点数が違うときは牌ごとに分け、役も点数も同じ牌は「4索・7索でアガリ」のように1つにまとめます（形が違っても役も点数も同じなら、見出しに形を横に並べて1つにします）。ツモだけでつく役は「＋メンゼンツモ」のように添えます（翻・符の内訳や面子の分け方は、閉じたあとのカードを押すと出ます）。</figcaption>
   </figure>
-  <p>牌をタップすると、下の枠に中身が出ます。</p>
+  <p>元の画面では、待ちの形ごとに、牌ごとの役と<b>ロン・ツモ両方の点数と翻数</b>が出ます。リーチに「しない」と答えたときは、点数の上に「リーチなし」と出ます。同じ形の中で牌によって役が増えるときは、<b>増える役に色</b>が付くので、どれでアガるのが得かを見比べられます。ツモは支払いの形で、子なら「2,000-4,000」、親なら「4,000オール」のように出ます。アガリ形（14枚）のときは、アガリ牌・役・点数・受け取りをまとめたカードが手牌の下に出ます。</p>
   <figure>
-    <img src="help8.png" width="381" height="470" loading="lazy" decoding="async" alt="下の枠に「6筒でアガリ・シャンポン待ち」「ロン 役なし／ツモ 1,100」と、役がないためロンではアガれないという説明、面子の分け方が出ている">
-    <figcaption>ロンとツモの両方の点数、翻数と符、面子の分け方まで出ます。<b>役がなくてアガれないときは、その理由とどうすればアガれるかも出ます。</b>本場や供託を入れていれば、受け取る合計点も出ます。</figcaption>
+    <img src="help7.png" width="389" height="388" loading="lazy" decoding="async" alt="シャンポン待ちのカードに、リーチなしの札と、6筒は役なし（リーチなら1翻40符 1,300・ツモ1翻30符 300-500）、中は役牌 中でロン1翻40符 1,300・ツモ2翻30符 500-1,000と表示されている">
+    <figcaption><span class="mark">8</span> この手は、中でアガれば役牌がついてロン1,300点。6筒は役がつかないので「役なし」ですが、リーチをかければ1,300点、ツモなら300-500と出ています。</figcaption>
+  </figure>
+  <p>形を押すと、下から内訳が出ます。</p>
+  <figure>
+    <img src="help8.png" width="393" height="470" loading="lazy" decoding="async" alt="下から出た内訳。6筒でアガリ・中でアガリのそれぞれに役とロン・ツモの点数、翻数と符、面子の分け方が出ている">
+    <figcaption>牌ごとのロンとツモの点数、翻数と符、面子の分け方まで出ます。<b>役がなくてアガれないときは、リーチをかければ何点かも出ます。</b>本場や供託を入れていれば、本場・供託込みの点数も出ます。</figcaption>
   </figure>
 </div>
 
 <h2>ホーム画面に置いて使う</h2>
 <p>ブラウザで開くよりも、ホーム画面に置いたほうが速くて便利です。<b>一度置いておけば、電波が届かない場所でも使えます。</b></p>
+<p>スマホのブラウザで写真を読み取ると、画面の下に「<b>ホーム画面に追加しませんか</b>」の案内が出ます。「追加のしかた」を押すと、お使いのスマホに合わせた手順が出ます（× で閉じると、もう出ません）。</p>
+<h3>iPhone（Safari）</h3>
 <ol>
   <li>Safari でこのサイトを開く</li>
-  <li>下（または上）の<b>共有ボタン</b>を押す</li>
-  <li>「<b>ホーム画面に追加</b>」を選ぶ</li>
+  <li>アドレスバーの右の「<b>…</b>」を押して、「<b>共有</b>」を選ぶ</li>
+  <li>下にずらして「<b>ホーム画面に追加</b>」を選ぶ</li>
+  <li>「<b>Webアプリとして開く</b>」はオンのまま、右上の「<b>追加</b>」を押す</li>
 </ol>
-<p>アイコンから開くと、ブラウザのバーが消えて全画面になります。Android の Chrome では「アプリをインストール」と出ます。</p>
+<p><small>iOS 18 までの Safari や、iPhone の Chrome などは、共有ボタン（□に↑）から「ホーム画面に追加」を選びます。</small></p>
+<h3>Android（Chrome）</h3>
+<p>画面の下の案内の「追加のしかた」→「<b>ホーム画面に追加</b>」を押すか、Chrome の右上の「<b>︙</b>」→「<b>ホーム画面に追加</b>」（または「アプリをインストール」）を選びます。</p>
+<h3>LINE から開いたとき</h3>
+<p>LINE のトークのリンクから開くと、LINE の中のブラウザで表示され、そこからは追加できません。メニュー（︙ や共有）の「<b>Safariで開く</b>」（Android は「他のアプリで開く」）で開き直してから追加してください。このアプリの共有ボタンから送ったリンクは、LINE でも Safari・Chrome で開きます。</p>
+<p>アイコンから開くと、ブラウザのバーが消えて全画面になります。</p>
 <div class="ok-note">アプリが新しくなったときは、開いたときに画面の下に「新しい版があります／更新」と出ます。押すと切り替わります。</div>
+
+<h2>友だちに教える</h2>
+<p>画面の上の<b>共有ボタン</b>（「？」の左）を押すと、下から「友だちに教える」が出ます。</p>
+<ul>
+  <li><b>LINE などで送る</b> … スマホの共有メニュー（LINE・メッセージ・AirDrop など）で、このアプリのアドレスを送ります。</li>
+  <li><b>QRコードを見せる</b> … 卓を囲んでいる人に、その場でカメラ（LINE でも）で読み取ってもらえます。</li>
+  <li><b>リンクをコピー</b> … アドレスをコピーします。</li>
+</ul>
+<p>送るのはこのアプリのアドレスだけです。<b>写真や手牌は送りません。</b>いちばん下からは、姉妹アプリ「麻雀記録帳」（成績の記録）も開けます。</p>
 
 <h2>うまく読み取れないとき</h2>
 <table>
   <tr><th>症状</th><th>試すこと</th></tr>
-  <tr><td>枚数が合わない</td><td>手牌の列が枠いっぱいに入るまで拡大してください。牌が小さいと区切りを間違えます。</td></tr>
+  <tr><td>枚数が合わない</td><td>「リセット」を押してから、手牌の列が枠いっぱいに入るまで拡大して、もう一度「認識する」を押してください。牌が小さいと区切りを間違えます。</td></tr>
   <tr><td>牌を読み違える</td><td>その牌をタップして選び直してください。候補が3つ出ます。</td></tr>
   <tr><td>「手牌が見つかりません」と出る</td><td>手牌が横一列に並んで写っているか確認してください。斜めから撮った写真や、牌が重なっている写真は読めません。</td></tr>
   <tr><td>暗くてうまくいかない</td><td>手元の影が牌にかからないように撮り直すと読みやすくなります。</td></tr>
   <tr><td>縦向きの写真</td><td>枠の右上の「90°回転」で横向きにしてください。</td></tr>
+  <tr><td>手牌が斜めに写っている</td><td>2本指で写真を回して、手牌を枠と平行にしてください（パソコンは Shift を押しながらホイール）。斜め上から強い角度で写した画面は、枚数を読み違えることがあります。</td></tr>
+  <tr><td>カメラで手牌が枠に入らない</td><td>スマホを横にすると、近くから撮れます（カメラだけの画面になります）。iPhone で画面が横にならないときは「画面縦向きのロック」をオフにしてください。</td></tr>
 </table>
+<p>撮り方のコツ（角度・光・赤5の見分け方など）は、<a href="tips.html">きれいに読み取るコツ</a>にまとめています。</p>
 
 <h2>三人麻雀で使う</h2>
 <p>見出しの横の「<b>三人麻雀</b>」を押すと切り替わります。2〜8萬と赤5萬は使えない牌として扱い、チーも入力できなくなります。抜きドラ（北）の枚数も入れられます。</p>
-<p>三人麻雀の設定のまま2〜8萬を読み取ると、設定の間違いをお知らせします。</p>
+<p>三人麻雀の設定のまま2〜8萬を読み取ると、設定の間違いをお知らせします。四人麻雀との違い（ツモ損・抜きドラなど）は<a href="sanma.html">三人麻雀のルール</a>をどうぞ。</p>
 
 <h2>鳴いているとき</h2>
-<p>手牌が10枚・7枚・4枚で読み取れたときは、鳴きの入力に案内します。チー・ポン・明カン・アンカンを選んで、鳴いた牌をタップしてください。鳴きを入れないと待ちは出ますが、点数は出せません。</p>
+<p>手牌が10枚・7枚・4枚で読み取れたときは、鳴きの入力に案内します。チー・ポン・明カン・アンカンを選んで、鳴いた牌をタップしてください。2組以上鳴いているときは、枚数が合うまで「鳴き 2組目」「3組目」と続けて聞きます。鳴きを入れないと待ちは出ますが、点数は出せません。</p>
+<p>裸単騎（4組鳴いて手牌が1枚）は、写真では読み取れません。写真の画面の「<b>＋</b>」で手牌の1枚を入れてから、「<b>鳴</b>」で鳴いた4組を入れてください。待ちと点数が出ます。</p>
 
 <h2>写真はどこにも送られません</h2>
 <p>読み取りは<b>すべて端末の中</b>で行います。写真も手牌も、外部のサーバーに送られることはありません。通信していないので、電波が悪い雀荘でも同じ速さで動きます。くわしくは<a href="privacy.html">プライバシーポリシー</a>をご覧ください。</p>
 
 <a class="cta" href="./">アプリを開く</a>
-<p style="text-align:center"><small><a href="features.html">このアプリでできること</a>　<a href="waits.html">待ちの読み方</a></small></p>
+<p style="text-align:center"><small><a href="features.html">このアプリでできること</a>　<a href="tips.html">きれいに読み取るコツ</a>　<a href="learn.html">解説の一覧</a></small></p>
+
 
 </main>
-<footer class="pf"><div class="pf-in"><nav><a href="features.html">できること</a><a href="help.html">使い方</a><a href="waits.html">待ちの読み方</a><a href="privacy.html">プライバシーポリシー</a><a href="terms.html">免責事項・利用規約</a><a href="./">アプリ</a></nav><small>© 2026 Sakura-ya（桜屋）・何待ち？</small></div></footer>
+<footer class="pf"><div class="pf-in"><nav><a href="features.html">できること</a><a href="help.html">使い方</a><a href="tips.html">きれいに読み取るコツ</a><a href="learn.html">解説の一覧</a><a href="waits.html">待ちの読み方</a><a href="quiz-basic.html">待ちの練習問題（基本の形）</a><a href="quiz-chinitsu.html">清一色の待ち 練習問題</a><a href="shanten.html">シャンテン数と受け入れ</a><a href="yaku.html">役の一覧</a><a href="fu.html">符の数え方</a><a href="score.html">点数計算のしくみ</a><a href="sanma.html">三人麻雀のルール</a><a href="faq.html">よくある質問</a><a href="about.html">運営者情報</a><a href="changelog.html">更新履歴</a><a href="privacy.html">プライバシーポリシー</a><a href="terms.html">免責事項・利用規約</a><a href="./">アプリ</a></nav><div class="pf-sis"><a class="sis-card" href="https://kiroku.nanimachi.net/" target="_blank" rel="noopener"><img src="kiroku-icon-192.png" width="40" height="40" alt="" decoding="async"><span class="sis-t"><span class="sis-n"><b>麻雀記録帳</b><em>姉妹アプリ</em></span><small>持ち点を入れるだけで、<wbr>成績を自動で集計</small></span><svg class="sis-go" viewBox="0 0 24 24" aria-hidden="true"><path d="M14 4h6v6M20 4l-9 9M18 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></a></div><small>© 2026 Sakura-ya（桜屋）・何待ち？</small></div></footer>
 </body>
 </html>

@@ -4,20 +4,35 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>プライバシーポリシー | 何待ち？</title>
-<meta name="description" content="写真と手牌の取り扱い、端末内への保存、広告（Google AdSense）とCookieについて。">
+<meta name="description" content="写真と手牌の取り扱い、端末内への保存、広告（Google AdSense）・アクセス解析とCookieについて。">
 <meta name="theme-color" content="#edf1ec" media="(prefers-color-scheme: light)">
 <meta name="theme-color" content="#0c1310" media="(prefers-color-scheme: dark)">
-<link rel="canonical" href="https://meizenbb-sudo.github.io/nanimachi/privacy.html">
+<link rel="canonical" href="https://nanimachi.net/privacy.html">
+<link rel="icon" href="favicon.ico" sizes="16x16 32x32 48x48">
+<link rel="icon" href="icon-192.png" sizes="192x192" type="image/png">
 <link rel="apple-touch-icon" href="icon-180.png">
-<link rel="icon" href="icon-180.png" sizes="180x180" type="image/png">
 <meta property="og:type" content="article">
 <meta property="og:site_name" content="何待ち？">
 <meta property="og:title" content="プライバシーポリシー | 何待ち？">
-<meta property="og:description" content="写真と手牌の取り扱い、端末内への保存、広告（Google AdSense）とCookieについて。">
-<meta property="og:url" content="https://meizenbb-sudo.github.io/nanimachi/privacy.html">
-<meta property="og:image" content="https://meizenbb-sudo.github.io/nanimachi/ogp.png">
+<meta property="og:description" content="写真と手牌の取り扱い、端末内への保存、広告（Google AdSense）・アクセス解析とCookieについて。">
+<meta property="og:url" content="https://nanimachi.net/privacy.html">
+<meta property="og:image" content="https://nanimachi.net/ogp.png">
 <meta property="og:locale" content="ja_JP">
 <meta name="twitter:card" content="summary_large_image">
+<script>
+(function(){var k='nm-ga-off',s=location.search,m=/[?&]ga=(off|on)(?=&|$)/.exec(s),off=false;
+try{if(m){if(m[1]==='off')localStorage.setItem(k,'1');else localStorage.removeItem(k);}off=localStorage.getItem(k)==='1';}catch(e){}
+window['ga-disable-G-SQBR6QXW86']=off;window.nmGa={off:off,mark:m?m[1]:''};
+if(off)document.documentElement.setAttribute('data-ga','off');
+if(m)try{history.replaceState(history.state,'',location.pathname+s.replace(/([?&])ga=(?:off|on)(&|$)/,function(x,a,b){return b?a:''}).replace(/^\?$/,'')+location.hash);}catch(e){}})();
+window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}
+gtag('consent','default',{ad_storage:'denied',ad_user_data:'denied',ad_personalization:'denied',analytics_storage:'denied',region:["AT","BE","BG","HR","CY","CZ","DK","EE","FI","FR","DE","GR","HU","IE","IT","LV","LT","LU","MT","NL","PL","PT","RO","SK","SI","ES","SE","IS","LI","NO","GB","CH"],wait_for_update:500});
+gtag('js',new Date());
+gtag('config','G-SQBR6QXW86');
+</script>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-SQBR6QXW86"></script>
+<meta name="google-adsense-account" content="ca-pub-5521107706403454">
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5521107706403454" crossorigin="anonymous"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Shippori+Mincho+B1:wght@700;800&family=Zen+Kaku+Gothic+New:wght@400;500;700&family=Zen+Maru+Gothic:wght@700;900&display=swap">
@@ -158,6 +173,85 @@ td:first-child { width: 34%; font-weight: 700; }
 .pair figcaption { margin-top: 5px; font-size: 12px; }
 @media (max-width: 460px) { .pair { grid-template-columns: 1fr; } }
 
+/* ---- v0.38: 解説ページを増やしたときの部品 ---- */
+/* 式（基本点 = 符 × 2^(翻+2) など） */
+.formula { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 12px 14px; text-align: center; font-weight: 800; font-size: 16px; }
+/* 役の早見表（役・門前・鳴き）と、刻子・槓子の符の表: 数字の列は狭く・真ん中に */
+table.yk td:first-child, table.fu td:first-child, table.cmp td:first-child { width: auto; }
+table.yk td:not(:first-child), table.yk th:not(:first-child),
+table.fu td:not(:first-child), table.fu th:not(:first-child) { width: 4.6em; text-align: center; font-weight: 700; }
+table.cmp td, table.cmp th { text-align: center; white-space: nowrap; padding: 8px 3px; font-size: 13px; font-variant-numeric: tabular-nums; }
+table.cmp td:first-child { font-weight: 700; white-space: nowrap; }
+/* 点数の早見表（横にはみ出すときは表だけ横に動かせる） */
+.tbl-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; margin: 0 0 16px; }
+table.pts { font-size: 13px; font-variant-numeric: tabular-nums; margin: 0; min-width: 330px; }
+table.pts th, table.pts td { text-align: center; padding: 7px 4px; white-space: nowrap; }
+table.pts td:first-child { width: auto; }
+table.pts tr > th:first-child { color: var(--ink); }
+table.pts td.mg { background: var(--accent-soft); color: var(--accent); font-weight: 800; }
+table.pts td.na { color: var(--muted); opacity: .55; }
+table.pts .t2 { display: inline-block; line-height: 1.35; }
+.mg-key { background: var(--accent-soft); color: var(--accent); font-weight: 800; padding: 1px 6px; border-radius: 6px; }
+@media (prefers-color-scheme: dark) { table.pts td.mg, .mg-key { background: #17302a; } }
+/* 解説の一覧のカード */
+.cards { display: grid; gap: 10px; margin: 0 0 18px; }
+.card { display: block; text-decoration: none; color: var(--ink); background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 12px 15px; }
+.card b { display: block; font-size: 16px; color: var(--accent); margin-bottom: 2px; }
+.card span { display: block; font-size: 13px; color: var(--muted); line-height: 1.7; }
+/* ページの下の「ほかの解説」 */
+.rel { margin: 34px 0 0; padding-top: 18px; border-top: 1px solid var(--line); }
+.rel-h { font-weight: 800; font-size: 14px; color: var(--muted); margin-bottom: 8px; }
+.rel-pn { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 10px; }
+.rel-pn a { display: block; text-decoration: none; background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 8px 12px; font-weight: 700; color: var(--ink); }
+.rel-pn a small { display: block; font-weight: 500; }
+.rel-next { text-align: right; }
+.rel-all { display: flex; flex-wrap: wrap; gap: 6px; }
+.rel-all a { font-size: 12.5px; text-decoration: none; padding: 4px 10px; border-radius: 999px; background: var(--surface-2); color: var(--ink); }
+/* 撮り方のコツ: 読み取り枠の見本（牌の絵で作る。写真は使わない） */
+.mock { margin: 10px 0 16px; }
+.mock-frame { position: relative; display: flex; align-items: center; justify-content: center; min-height: 92px; padding: 16px 10px;
+  border-radius: 14px; background: #1e5446; overflow: hidden; }
+.mock-frame::before { content: ''; position: absolute; inset: 8px; border: 2px solid rgb(255 255 255 / .9); border-radius: 10px; }
+.mock-frame .tiles { display: grid; grid-template-columns: repeat(13, 1fr); gap: 2px; width: 90%; margin: 0; vertical-align: 0; }
+.mock-frame .ti { width: 100%; }
+.mock.small .mock-frame .tiles { width: 42%; }
+.mock.tilt .mock-frame .tiles { width: 78%; transform: rotate(-9deg); }
+.mock-cap { margin: 6px 2px 0 !important; font-size: 13.5px; }
+.mock.ok .mock-cap b { color: var(--accent); }
+.mock.ng .mock-cap b { color: #C4302B; }
+/* v0.50: 待ちの練習問題（build.mjs の quizHTML が作る）。問題の牌は画面の幅に合わせて縮める（13枚で 320px でもはみ出さない） */
+.qz { background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 4px 14px 12px; margin: 0 0 14px; }
+.qz > h2 { margin: 12px 0 8px; font-size: 17px; }
+.qz-hand { margin: 0 0 10px !important; }
+.qz-hand .tiles { display: flex; gap: 2px; width: 100%; max-width: 420px; margin: 0; vertical-align: 0; }
+.qz-hand .ti { flex: 1 1 0; min-width: 0; width: auto; max-width: 30px; }
+.qz-ans > summary { display: inline-block; cursor: pointer; list-style: none; padding: 5px 14px; border-radius: 999px;
+  background: var(--accent); color: var(--surface); font-weight: 800; font-size: 14px; }
+.qz-ans > summary::-webkit-details-marker { display: none; }
+.qz-ans[open] > summary { background: var(--surface-2); color: var(--ink); }
+.qz-ans h3 { margin: 14px 0 4px; font-size: 14.5px; color: var(--muted); }
+.qz-w { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 8px; margin: 12px 0 4px !important; font-size: 16px; }
+.qz-w b { color: var(--accent); }
+.qz-w .tiles { margin: 0; }
+.qz-sh, .qz-fm { list-style: none; padding-left: 0 !important; margin-bottom: 6px !important; }
+.qz-sh li, .qz-fm li { display: flex; flex-wrap: wrap; align-items: center; gap: 2px 6px; margin-bottom: 4px; font-size: 14px; }
+.qz-sh li b { min-width: 4.5em; }
+.qz-sh .tiles, .qz-fm .tiles { margin: 0; }
+.qz-to { color: var(--muted); }
+.qz-ans p:last-child { margin-bottom: 0; }
+/* v0.51: 運営者情報の表・更新履歴 */
+.info { width: 100%; border-collapse: collapse; margin: 0 0 16px; font-size: 14.5px; background: var(--surface); border: 1px solid var(--line); border-radius: 12px; overflow: hidden; }
+.info th, .info td { text-align: left; vertical-align: top; padding: 9px 12px; border-top: 1px solid var(--line); }
+.info tr:first-child th, .info tr:first-child td { border-top: 0; }
+.info th { width: 7.5em; color: var(--muted); font-weight: 700; white-space: nowrap; }
+.log { display: grid; gap: 12px; margin: 0 0 18px; }
+.log-item { background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 4px 15px 6px; }
+.log-item > h2 { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 10px; margin: 10px 0 6px; padding-left: 0; border-left: 0; font-size: 16px; }
+.log-ver { font-family: var(--font-ui); font-size: 13px; font-weight: 800; color: var(--surface); background: var(--accent); border-radius: 999px; padding: 1px 10px; }
+.log-item ul { margin-bottom: 8px; }
+
+.sis-card,.sis-card:visited,.sis-card:hover{display:flex;align-items:center;gap:10px;box-sizing:border-box;width:100%;max-width:360px;padding:8px 12px;border:1px solid var(--line);border-radius:14px;background:var(--surface);color:var(--ink);text-decoration:none;text-align:left}.sis-card img{flex:none;display:block;width:40px;height:40px;border-radius:22%}.sis-t{flex:1 1 auto;min-width:0;display:flex;flex-direction:column;gap:1px}.sis-n{display:flex;align-items:center;gap:6px;flex-wrap:wrap}.sis-n b{font-size:14px;font-weight:800;color:var(--ink)}.sis-n em{font-style:normal;font-size:10px;font-weight:700;line-height:1.6;color:var(--muted);background:var(--surface-2);border-radius:999px;padding:0 7px}.sis-t small{font-size:11.5px;line-height:1.45;color:var(--muted);word-break:keep-all;overflow-wrap:anywhere}.sis-go{flex:none;width:16px;height:16px;color:var(--muted)}
+.pf-sis { margin: 4px 0 12px; }
 .tiles { display: inline-flex; gap: 2px; vertical-align: -7px; margin: 0 3px; }
 .ti { width: 25px; height: auto; filter: drop-shadow(0 1px 1px rgb(21 32 27 / .22)); }
 .hand { font-size: 14px; }
@@ -166,7 +260,7 @@ td:first-child { width: 34%; font-weight: 700; }
 <body>
 <header class="ph"><div class="ph-in">
 <a class="ph-brand" href="./"><img src="icon-180.png" width="30" height="30" alt=""><b>何待ち？</b></a>
-<nav><a href="features.html">できること</a><a href="help.html">使い方</a><a href="waits.html">待ちの読み方</a><a class="go" href="./">アプリ</a></nav>
+<nav><a href="features.html">できること</a><a href="help.html">使い方</a><a href="learn.html">解説</a><a class="go" href="./">アプリ</a></nav>
 </div></header>
 <main class="pg">
 <h1>プライバシーポリシー</h1>
@@ -190,13 +284,14 @@ td:first-child { width: 34%; font-weight: 700; }
   <li>読み取った手牌や計算結果も、外部に送信しません。</li>
   <li>写真を運営者が保存・閲覧することはありません。</li>
 </ul>
-<p>読み取りに使う判定用のデータ（学習済みのモデル）は、あらかじめアプリの中に含まれています。読み取りのたびに通信することはありません。</p>
+<p>読み取りに使う判定用のデータ（学習済みのモデル）は、あらかじめアプリの中に含まれています。読み取りの処理のために外部と通信することはありません（利用状況の計測については「6. アクセス解析について」をご覧ください）。</p>
 
 <h2>3. 端末内への保存</h2>
 <p>本サービスは、使い勝手のために次の情報を利用者の端末内（ブラウザの保存領域）に保存します。これらが外部に送信されることはありません。</p>
 <ul>
   <li>入力中の手牌、場風・自風・ドラなどの条件、ルールの設定</li>
   <li>四人麻雀／三人麻雀の別、画面の表示状態</li>
+  <li>写真の読み取りがうまくいった回数と、「ホーム画面に追加」の案内を閉じたかどうか（案内を出すかどうかを決めるため）</li>
   <li>オフラインで動かすために保存したアプリ本体のデータ</li>
 </ul>
 <p>これらはブラウザの設定から削除できます（Safari の場合は「設定 → Safari → 履歴とWebサイトデータを消去」など）。</p>
@@ -221,7 +316,16 @@ td:first-child { width: 34%; font-weight: 700; }
 </ul>
 
 <h2>6. アクセス解析について</h2>
-<p>本サービスは、現時点でアクセス解析ツールを使用していません。今後導入する場合は、本ポリシーを改定したうえで、取得する情報と利用目的を明記します。</p>
+<p>本サービスは、利用状況を把握してサービスを改善するために、Google LLC のアクセス解析ツール「Google アナリティクス」を使用しています。</p>
+<ul>
+  <li>Google アナリティクスは Cookie を使用して、閲覧したページ、端末やブラウザの種類、おおよその地域、どこから訪れたか、といった情報を収集します。</li>
+  <li>あわせて、アプリの主な操作の回数（ホーム画面から開いたか、写真を選んだ・回した、読み取りに成功・失敗した、読み取った牌を直した、手入力・カメラを使った、共有の画面を開いた・送った・QRコードを出した・リンクをコピーした・姉妹アプリを開いた、ホーム画面への追加の案内を出した・手順を開いた・閉じた）を送信します。共有で送った相手や送り先のアプリは分かりません。<b>写真や手牌の内容は送信しません。</b></li>
+  <li>これらの情報は個人を特定するものではなく、統計として利用します。</li>
+  <li>欧州経済領域（EEA）・英国・スイスの利用者については、同意をいただくまで Cookie を使用しません。</li>
+  <li>計測を望まない場合は、<a href="./?ga=off" rel="nofollow">この端末での計測を止める</a> を開いてください。アプリが開き、以後この端末（このブラウザ）からは何も送信しません。ホーム画面に追加したアプリで止めるときは、アプリの中からこのページを開いてリンクを押してください。再開するときは <a href="./?ga=on" rel="nofollow">計測を再開する</a> を開きます（ブラウザのデータを消したときも元に戻ります）。</li>
+  <li>ブラウザの設定で Cookie をブロックする方法や、パソコンのブラウザで <a href="https://tools.google.com/dlpage/gaoptout?hl=ja" rel="noopener nofollow" target="_blank">Google アナリティクス オプトアウト アドオン</a> を使う方法もあります。</li>
+</ul>
+<p>Google による情報の取り扱いについては、<a href="https://policies.google.com/technologies/partner-sites?hl=ja" rel="noopener nofollow" target="_blank">Google のサービスを使用するサイトやアプリから収集した情報の Google による使用</a> をご覧ください。</p>
 
 <h2>7. 外部へのリンク</h2>
 <p>本サービスから他のウェブサイトへ移動した場合、移動先のサイトで提供される情報やサービスについては責任を負いません。</p>
@@ -233,11 +337,12 @@ td:first-child { width: 34%; font-weight: 700; }
 <p>本ポリシーの内容は、必要に応じて予告なく変更することがあります。変更後の内容は、本ページに掲載した時点から適用されます。</p>
 
 <hr>
-<p><small>制定日: 2026年9月20日</small></p>
+<p><small>制定日: 2026年9月20日 ／ 改定日: 2026年9月23日（アクセス解析の導入）・2026年9月26日（送信する操作に「写真を回した」を追加・この端末での計測を止める方法を追加）・2026年10月3日（送信する操作に共有・ホーム画面への追加の案内を追加、端末に保存する情報に案内の印を追加）</small></p>
 
 <a class="cta" href="./">アプリを開く</a>
 
+
 </main>
-<footer class="pf"><div class="pf-in"><nav><a href="features.html">できること</a><a href="help.html">使い方</a><a href="waits.html">待ちの読み方</a><a href="privacy.html">プライバシーポリシー</a><a href="terms.html">免責事項・利用規約</a><a href="./">アプリ</a></nav><small>© 2026 Sakura-ya（桜屋）・何待ち？</small></div></footer>
+<footer class="pf"><div class="pf-in"><nav><a href="features.html">できること</a><a href="help.html">使い方</a><a href="tips.html">きれいに読み取るコツ</a><a href="learn.html">解説の一覧</a><a href="waits.html">待ちの読み方</a><a href="quiz-basic.html">待ちの練習問題（基本の形）</a><a href="quiz-chinitsu.html">清一色の待ち 練習問題</a><a href="shanten.html">シャンテン数と受け入れ</a><a href="yaku.html">役の一覧</a><a href="fu.html">符の数え方</a><a href="score.html">点数計算のしくみ</a><a href="sanma.html">三人麻雀のルール</a><a href="faq.html">よくある質問</a><a href="about.html">運営者情報</a><a href="changelog.html">更新履歴</a><a href="privacy.html">プライバシーポリシー</a><a href="terms.html">免責事項・利用規約</a><a href="./">アプリ</a></nav><div class="pf-sis"><a class="sis-card" href="https://kiroku.nanimachi.net/" target="_blank" rel="noopener"><img src="kiroku-icon-192.png" width="40" height="40" alt="" decoding="async"><span class="sis-t"><span class="sis-n"><b>麻雀記録帳</b><em>姉妹アプリ</em></span><small>持ち点を入れるだけで、<wbr>成績を自動で集計</small></span><svg class="sis-go" viewBox="0 0 24 24" aria-hidden="true"><path d="M14 4h6v6M20 4l-9 9M18 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></a></div><small>© 2026 Sakura-ya（桜屋）・何待ち？</small></div></footer>
 </body>
 </html>
